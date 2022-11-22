@@ -20,6 +20,10 @@ public class UImanager : MonoBehaviour
     public GameObject cardSkillUi;
     public GameObject treeSkillBtn;
     public GameObject rockSkillBtn;
+    public GameObject TimberSkillBtn;
+    public GameObject ForgeSkillBtn;
+    public GameObject MineSkillBtn;
+    public GameObject WoodSkillBtn;
     public GameObject bananaTreeBtn;
 
     public GameObject tutoInfoUi;
@@ -42,8 +46,12 @@ public class UImanager : MonoBehaviour
     public TextMeshProUGUI WoodCountText;
     public TextMeshProUGUI StoneCountText;
     public TextMeshProUGUI IronCountText;
+    public TextMeshProUGUI GoldCountText;
     public TextMeshProUGUI PanelCountText;
     public TextMeshProUGUI BrickCountText;
+    public TextMeshProUGUI IronIngotCountText;
+    public TextMeshProUGUI GoldIngotCountText;
+    public TextMeshProUGUI BranchCountText;
 
     public TextMeshProUGUI GoldText;
     public TextMeshProUGUI FoodCount;
@@ -51,11 +59,16 @@ public class UImanager : MonoBehaviour
     public TextMeshProUGUI CardInfoText;
     public TextMeshProUGUI CardNameText;
     public TextMeshProUGUI CardCountText;
-    public TextMeshProUGUI CardOver;
     public TextMeshProUGUI DayText;
     public TextMeshProUGUI StoreUpText;
 
+    public GameObject ErrorMessage;
+    public GameObject GameOverMessage;
+    public TextMeshProUGUI StoreOver;
+    public TextMeshProUGUI gameOver;
+
     public TextMeshProUGUI GoalText;
+    public TextMeshProUGUI StartText;
 
     public Slider slTimer;
     float fSliderBarTime;
@@ -63,6 +76,7 @@ public class UImanager : MonoBehaviour
     int feedplayer;
     int notfeedplayer;
     bool feed = false;
+    bool Over = false; 
 
 
     private void Start()
@@ -78,9 +92,13 @@ public class UImanager : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene();
         if(scene.name == "Tuto") DataController.instance.gameData.tuto = true;
         else DataController.instance.gameData.tuto = false;
-        Debug.Log(DataController.instance.gameData.PlayerCount);
 
-        if(DataController.instance.gameData.PlayerCount == 0) SceneManager.LoadScene("MainScene");
+        if(DataController.instance.gameData.PlayerCount == 0)
+        {
+            GameOverMessage.SetActive(true);
+            Over = true;
+            slTimer.value = 0.0f;
+        }
 
         if (slTimer.value > 0.0f && DataController.instance.gameData.endDay == false && feed == false) //�ð��� �带��
         {
@@ -112,7 +130,7 @@ public class UImanager : MonoBehaviour
             CardSkillUI();
             TutoInfoOff();
         }
-        else if (slTimer.value == 0.0f) // �ð��� ��������
+        else if (slTimer.value == 0.0f && Over == false) // �ð��� ��������
         {
             if(DataController.instance.gameData.tuto == true && tutoday == false) 
             {
@@ -325,6 +343,72 @@ public class UImanager : MonoBehaviour
                         CardNameText.GetComponent<TextMeshProUGUI>().text = "바나나나무";
                         CardInfoText.GetComponent<TextMeshProUGUI>().text = "채집을 하면 바나나와 목재를 얻을수있다.";
                     }
+                    else if (touch.name == "Brick(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "벽돌";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "돌을 가공해 만든 벽돌 튼튼하다.";
+                    }
+                    else if (touch.name == "Forge(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "용광로";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "철과 금을 제련할 수 있다.";
+                    }
+                    else if (touch.name == "Gold(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "금광석";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "제련을 통해 빛나는 금괴로 만들 수 있다.";
+                    }
+                    else if (touch.name == "GoldIngot(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "금괴";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "비싸게 팔리는 금괴 다른 역할은?";
+                    }
+                    else if (touch.name == "Iron(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "철광석";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "제련을 통해 단단한 철괴를 만들 수 있다.";
+                    }
+                    else if (touch.name == "IronIngot(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "철괴";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "많은 것을 만들 수 있는 기본이면서 최강의 제료";
+                    }
+                    else if (touch.name == "Panel(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "판자";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "목재를 가공해 만드는 판때기 집만들때 사용한다";
+                    }
+                    else if (touch.name == "Player(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "주민";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "주민이 없으면 게임은 끝나버린다. 배가 고프지";
+                    }
+                    else if (touch.name == "Mine(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "벽돌공장";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "돌을 가공해 벽돌을 만드는 공장";
+                    }
+                    else if (touch.name == "Timber(Clone)")
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "제재소";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "목재를 가공해 판자를 만드는 공장";
+                    }
+                    else if (touch.name == "Branch(Clone)") 
+                    {
+                        cardInfoUi.SetActive(true);
+                        CardNameText.GetComponent<TextMeshProUGUI>().text = "나뭇가지";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "목재를 손질해 얻은 나뭇가지" + System.Environment.NewLine + "화로의 연료로 사용한다.";
+                    }
                 }
             }
         }
@@ -365,25 +449,83 @@ public class UImanager : MonoBehaviour
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(true);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     else if (touch.name == "Rock(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         rockSkillBtn.SetActive(true);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(false);
                         treeSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     else if (touch.name == "BananaTree(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         bananaTreeBtn.SetActive(true);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         treeSkillBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
+                    }
+                    if (touch.name == "Wood(Clone)")
+                    {
+                        cardSkillUi.SetActive(true);
+                        treeSkillBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(true);
+                        rockSkillBtn.SetActive(false);
+                        bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        DataController.instance.gameData.Skill = true;
+                    }
+                    if(touch.name == "Timber(Clone)")
+                    {
+                        cardSkillUi.SetActive(true);
+                        treeSkillBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(true);
+                        rockSkillBtn.SetActive(false);
+                        bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(true);
+                        MineSkillBtn.SetActive(false);
+                        DataController.instance.gameData.Skill = true;
+                    }
+                    if(touch.name == "Mine(Clone)")
+                    {
+                        cardSkillUi.SetActive(true);
+                        treeSkillBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(true);
+                        rockSkillBtn.SetActive(false);
+                        bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(true);
+                        DataController.instance.gameData.Skill = true;
+                    }
+                    if(touch.name == "House(Clone)")
+                    {
+
                     }
                 }
             }
@@ -405,24 +547,47 @@ public class UImanager : MonoBehaviour
             DataController.instance.gameData.storeUpgrade += 1;
             DataController.instance.gameData.gold -= 100;
         }
+        if(DataController.instance.gameData.gold < 100)
+        {
+
+        }
     }
 
     private void LateUpdate()
     {
         WoodCountText.GetComponent<TextMeshProUGUI>().text = "목재 : " + DataController.instance.gameData.WoodCard;
         StoneCountText.GetComponent<TextMeshProUGUI>().text = "석제 : " + DataController.instance.gameData.StoneCard;
+        IronCountText.GetComponent<TextMeshProUGUI>().text = "철광석 : " + DataController.instance.gameData.IronCard;
+        GoldCountText.GetComponent<TextMeshProUGUI>().text = "금광석 : " + DataController.instance.gameData.GoldCard;
+        GoldIngotCountText.GetComponent<TextMeshProUGUI>().text = "금괴 : " + DataController.instance.gameData.GoldIngotCard;
+        IronIngotCountText.GetComponent<TextMeshProUGUI>().text = "철괴 : " + DataController.instance.gameData.IronIngotCard;
+        BrickCountText.GetComponent<TextMeshProUGUI>().text = "벽돌 : " + DataController.instance.gameData.BrickCard;
+        PanelCountText.GetComponent<TextMeshProUGUI>().text = "판자 : " + DataController.instance.gameData.PanelCard;
+        BranchCountText.GetComponent<TextMeshProUGUI>().text = "나뭇가지 : " + DataController.instance.gameData.BranchCard;
+
         GoldText.GetComponent<TextMeshProUGUI>().text = "골드 : " + DataController.instance.gameData.gold;
         CardCountText.GetComponent<TextMeshProUGUI>().text = "카드제한 : " + DataController.instance.gameData.CardLimit + "/" + DataController.instance.gameData.CardCount;
         DayText.GetComponent<TextMeshProUGUI>().text = "생존일 : " + DataController.instance.gameData.Day;
         FoodCount.GetComponent<TextMeshProUGUI>().text = "음식 : " + DataController.instance.gameData.FoodCount + "/" + (DataController.instance.gameData.PlayerCount * 3);
         StoreUpText.GetComponent<TextMeshProUGUI>().text = "상점 레벨 : " + DataController.instance.gameData.storeUpgrade;
-        GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 10 / " + DataController.instance.gameData.GoldIngotCard; 
+        GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 10 / " + DataController.instance.gameData.GoldIngotCard;
 
         tutoBuyText.GetComponent<TextMeshProUGUI>().text = "3골드로 카드를 구매할수있다.";
         tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작할 수 있다.";
-        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다. /n 또한 하루가 지날떄마다 주민에게 음식을 줘야합니다./n 음식이 부족하면 주민이 굶어 죽습니다.";
+        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다." + System.Environment.NewLine + "또한 하루가 지날떄마다 주민에게 음식을 줘야합니다." +
+            System.Environment.NewLine + "음식이 부족하면 주민이 굶어 죽습니다.";
         tutoSellText.GetComponent<TextMeshProUGUI>().text = "카드를 팔 수 있습니다. 화면 위쪽 판매가 횔성화 되어있는지 확인할수있습니다. 조심하세요 카드를 누르면 판매됩니다.";
         tutoStoreUpText.GetComponent<TextMeshProUGUI>().text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나와요!";
+
+        //StoreOver.GetComponent<TextMeshProUGUI>().text = "100골드가 필요합니다!";
+        gameOver.GetComponent<TextMeshProUGUI>().text = "게임오버!" + System.Environment.NewLine + "모든 주민이 죽었습니다.";
+        StartText.GetComponent<TextMeshProUGUI>().text = "목적을 달성했습니다." + System.Environment.NewLine + "이제 본게임으로";
+    
+    }
+
+    public void GameOver()
+    {
+        SceneManager.LoadScene("MainScene");
     }
 
     public void MainSecne()

@@ -23,11 +23,7 @@ public class CraftManager : MonoBehaviour
 
     void Update()
     {
-        if(CraftUI.activeSelf == false)
-        {
-            CraftNum = 0;
-        }
-        if(HouseCraft == true && CraftNum < 2)
+        if(HouseCraft == true && CraftNum < 3)
         {
             CraftDelete(3);
             CraftDelete(4);
@@ -86,8 +82,8 @@ public class CraftManager : MonoBehaviour
 
         if(clickObject.name == "HouseCraft")
         {
-            if (DataController.instance.gameData.WoodCard >= 2 && 
-                DataController.instance.gameData.StoneCard >= 1)
+            if (DataController.instance.gameData.PanelCard >= 3 && 
+                DataController.instance.gameData.BranchCard >= 2)
             {
                 float randPosX = Random.Range(-5, 5);
                 float randPosY = Random.Range(-4, 4);
@@ -95,9 +91,10 @@ public class CraftManager : MonoBehaviour
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
                 HouseCraft = true;
+                CraftNum = 0;
 
-                DataController.instance.gameData.WoodCard -= 2;
-                DataController.instance.gameData.StoneCard -= 1;
+                DataController.instance.gameData.PanelCard -= 3;
+                DataController.instance.gameData.BranchCard -= 2;
                 DataController.instance.gameData.HouseCard += 1;
                 DataController.instance.gameData.CardLimit += 3;
 
@@ -117,6 +114,7 @@ public class CraftManager : MonoBehaviour
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
                 ForgeCraft = true;
+                CraftNum = 0;
 
                 DataController.instance.gameData.WoodCard -= 1;
                 DataController.instance.gameData.StoneCard -= 2;
@@ -138,6 +136,7 @@ public class CraftManager : MonoBehaviour
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
                 TimberCraft = true;
+                CraftNum = 0;
 
                 DataController.instance.gameData.WoodCard -= 3;
                 DataController.instance.gameData.StoneCard -= 1;
@@ -159,6 +158,7 @@ public class CraftManager : MonoBehaviour
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
                 MineCraft = true;
+                CraftNum = 0;
 
                 DataController.instance.gameData.WoodCard -= 1;
                 DataController.instance.gameData.StoneCard -= 3;
@@ -222,6 +222,10 @@ public class CraftManager : MonoBehaviour
             case 4:
                 GameObject _delBrickCard = GameObject.Find("Brick(Clone)");
                 Destroy(_delBrickCard);
+                break;
+            case 5:
+                GameObject _delBranchCard = GameObject.Find("Branch(Clone)");
+                Destroy(_delBranchCard);
                 break;
         }
     }

@@ -19,6 +19,17 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.BananaTreeCard = 0;
         DataController.instance.gameData.TreeCard = 0;
         DataController.instance.gameData.RockCard = 0;
+        DataController.instance.gameData.BranchCard = 0;
+        DataController.instance.gameData.BrickCard = 0;
+        DataController.instance.gameData.IronCard = 0;
+        DataController.instance.gameData.IronIngotCard = 0;
+        DataController.instance.gameData.GoldCard = 0;
+        DataController.instance.gameData.GoldIngotCard = 0;
+        DataController.instance.gameData.TimberCard = 0;
+        DataController.instance.gameData.MineCard = 0;
+        DataController.instance.gameData.RockCard = 0;
+        DataController.instance.gameData.TreeCard = 0;
+
         DataController.instance.gameData.gold = 100;
         DataController.instance.gameData.CardLimit =15;
         DataController.instance.gameData.CardCount = 0;
@@ -40,7 +51,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameOverScene();
         DataController.instance.gameData.CardCount = (DataController.instance.gameData.WoodCard + DataController.instance.gameData.StoneCard +
         DataController.instance.gameData.TreeCard + DataController.instance.gameData.RockCard + DataController.instance.gameData. BananaTreeCard +
         DataController.instance.gameData.IronCard + DataController.instance.gameData.GoldCard + DataController.instance.gameData.HouseCard +
@@ -59,14 +69,5 @@ public class GameManager : MonoBehaviour
     void MainSecne()
     {
         SceneManager.LoadScene("MainScene");
-    }
-
-    void GameOverScene()
-    {
-        if(DataController.instance.gameData.PlayerCount == 0)
-        {
-            Debug.Log("end");
-            SceneManager.LoadScene("GameOver");
-        }
     }
 }
