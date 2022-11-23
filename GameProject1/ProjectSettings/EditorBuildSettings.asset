@@ -9,11 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScene.unity
     guid: 88e632105c41c452193c5c7b50fe94dd
   - enabled: 1
+    path: Assets/Scenes/Tuto.unity
+    guid: eefa376a00db3494089bcb9c012b03cb
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/FIght.unity
     guid: a1f62f4b7c8794f008b64551621665b2
+  - enabled: 1
+    path: Assets/Scenes/Goal.unity
+    guid: ff62f320dccfe394fb0b7fb994340372
   - enabled: 1
     path: Assets/Scenes/GameOver.unity
     guid: 79c106ac160b3406ea3138014ea3fa8d

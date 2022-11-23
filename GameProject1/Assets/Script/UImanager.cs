@@ -43,6 +43,7 @@ public class UImanager : MonoBehaviour
     bool tutoday;
     bool tutocraft;
     bool StoreUp;
+    public GameObject tutoStart;
 
     public TextMeshProUGUI WoodCountText;
     public TextMeshProUGUI StoneCountText;
@@ -80,12 +81,18 @@ public class UImanager : MonoBehaviour
     bool Over = false; 
     bool foodfull = false;
 
+    int craftsibling;
+
     private void Start()
     {
         cardInfoUi.SetActive(false);
         slTimer.value = 120.0f;
         tutoday = false;
         tutocraft = false;
+        Time.timeScale = 0f;
+        craftsibling = craftUiBtn.transform.GetSiblingIndex();
+        tutoInfoUi.SetActive(true);
+        tutoStart.SetActive(true);
     }
 
     private void Update()
@@ -278,14 +285,14 @@ public class UImanager : MonoBehaviour
             tutoInfoUi.SetActive(true);
             tutoBtnUi.SetActive(true);
             tutoCraft.SetActive(true);
+            craftUiBtn.transform.SetAsLastSibling();
             Time.timeScale =0;
             tutocraft = true;
         }
         craftUi.SetActive(true);
         craftListUi.SetActive(true);
-        craftUiBtn.SetActive(false);
         buyBtn.SetActive(false);
-        craftUiBtn.SetActive(false);
+        SellBtn.SetActive(false);
         cardInfoUi.SetActive(false);
     }
     public void CraftUiCloseBtn()
@@ -448,6 +455,9 @@ public class UImanager : MonoBehaviour
                 tutoDay.SetActive(false);
                 tutoDayUi.SetActive(false);
                 tutoBtnUi.SetActive(false);
+                tutoStart.SetActive(false);
+                tutoStoreUp.SetActive(false);
+                craftUiBtn.transform.SetSiblingIndex(craftsibling);
                 Time.timeScale =1;
             }
         }
@@ -518,7 +528,7 @@ public class UImanager : MonoBehaviour
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        WoodSkillBtn.SetActive(true);
+                        WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(true);
@@ -530,7 +540,7 @@ public class UImanager : MonoBehaviour
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        WoodSkillBtn.SetActive(true);
+                        WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
@@ -542,7 +552,7 @@ public class UImanager : MonoBehaviour
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        WoodSkillBtn.SetActive(true);
+                        WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);

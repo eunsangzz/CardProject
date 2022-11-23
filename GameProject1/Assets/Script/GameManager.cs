@@ -56,13 +56,13 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.IronCard + DataController.instance.gameData.GoldCard + DataController.instance.gameData.HouseCard +
         DataController.instance.gameData.GoldIngotCard + DataController.instance.gameData.IronIngotCard + DataController.instance.gameData.BrickCard +
         DataController.instance.gameData.PanelCard + DataController.instance.gameData.TimberCard+ DataController.instance.gameData.MineCard +
-        DataController.instance.gameData.ForgeCard);
+        DataController.instance.gameData.ForgeCard + DataController.instance.gameData.BananaCard + DataController.instance.gameData.PlayerCount);
 
         DataController.instance.gameData.FoodCount = DataController.instance.gameData.BananaCard;
 
         if(DataController.instance.gameData.GoldIngotCard == 10)
         {
-            SceneManager.LoadScene("MainScene");
+            SceneManager.LoadScene("Goal");
         }
     }
 
