@@ -24,6 +24,7 @@ public class UImanager : MonoBehaviour
     public GameObject ForgeSkillBtn;
     public GameObject MineSkillBtn;
     public GameObject WoodSkillBtn;
+    public GameObject HouseSkillBtn;
     public GameObject bananaTreeBtn;
 
     public GameObject tutoInfoUi;
@@ -77,7 +78,7 @@ public class UImanager : MonoBehaviour
     int notfeedplayer;
     bool feed = false;
     bool Over = false; 
-
+    bool foodfull = false;
 
     private void Start()
     {
@@ -93,6 +94,21 @@ public class UImanager : MonoBehaviour
         if(scene.name == "Tuto") DataController.instance.gameData.tuto = true;
         else DataController.instance.gameData.tuto = false;
 
+        if(foodfull == true)
+        {
+            Debug.Log("foodtrue");
+            for(int i = 0; i < DataController.instance.gameData.PlayerCount; i++)
+            {
+                GameObject food = GameObject.FindGameObjectWithTag("Food");
+                Destroy(food);
+                DataController.instance.gameData.BananaCard -=1;
+                if(i == DataController.instance.gameData.PlayerCount - 1)
+                {
+                    foodfull = false;
+                }
+            }
+        }
+
         if(DataController.instance.gameData.PlayerCount == 0)
         {
             GameOverMessage.SetActive(true);
@@ -102,7 +118,7 @@ public class UImanager : MonoBehaviour
 
         if (slTimer.value > 0.0f && DataController.instance.gameData.endDay == false && feed == false) //�ð��� �带��
         {
-            slTimer.value -= 0.8f * Time.deltaTime;
+            slTimer.value -= 1.0f * Time.deltaTime;
             feedplayer = 0;
             DataController.instance.gameData.PlayerCount = DataController.instance.gameData.PlayerCount - notfeedplayer;
             notfeedplayer = 0;
@@ -157,9 +173,9 @@ public class UImanager : MonoBehaviour
                     SellUi.SetActive(true);
                     if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true) //���� ������ �÷��̾� ī�尡 ������
                     {
-                        if (DataController.instance.gameData.FoodCount >= (DataController.instance.gameData.PlayerCount * 2))
+                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount )
                         {
-                            DataController.instance.gameData.FoodCount -= (DataController.instance.gameData.PlayerCount * 2);
+                            foodfull = true;
                             feed = false;
                         }
                         else
@@ -170,7 +186,9 @@ public class UImanager : MonoBehaviour
                                 {
                                     if (DataController.instance.gameData.PlayerCount != 0)
                                     {
-                                        DataController.instance.gameData.FoodCount -= 2;
+                                        GameObject food = GameObject.FindGameObjectWithTag("Food");
+                                        Destroy(food);
+                                        DataController.instance.gameData.FoodCount -= 1;
                                         feedplayer++;
                                     }
                                     else SceneManager.LoadScene("MainScene");
@@ -201,23 +219,24 @@ public class UImanager : MonoBehaviour
                 {
                     if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true) //���� ������ �÷��̾� ī�尡 ������
                     {
-                        if (DataController.instance.gameData.FoodCount >= (DataController.instance.gameData.PlayerCount * 2))
+                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount)
                         {
-                            DataController.instance.gameData.FoodCount -= (DataController.instance.gameData.PlayerCount * 2);
+                            foodfull = true;
                             feed = false;
                         }
                         else
                         {
                             if (feedplayer != DataController.instance.gameData.PlayerCount)
                             {
-                                if (DataController.instance.gameData.FoodCount > 1)
+                                if (DataController.instance.gameData.FoodCount >= 1)
                                 {
                                     if (DataController.instance.gameData.PlayerCount != 0)
                                     {
-                                        DataController.instance.gameData.FoodCount -= 2;
+                                        GameObject food = GameObject.FindGameObjectWithTag("Food");
+                                        Destroy(food);
+                                        DataController.instance.gameData.FoodCount -= 1;
                                         feedplayer++;
                                     }
-                                    else SceneManager.LoadScene("MainScene");
                                 }
                                 else
                                 {
@@ -228,14 +247,12 @@ public class UImanager : MonoBehaviour
                                         feedplayer++;
                                         notfeedplayer++;
                                     }
-                                    else SceneManager.LoadScene("MainScene");
                                 }
                             }
                         }
                     }
                     if (feedplayer == DataController.instance.gameData.PlayerCount)
                     {
-                        Debug.Log("3");
                         feed = false;
                     }
                     if (feed == false)
@@ -276,6 +293,10 @@ public class UImanager : MonoBehaviour
         craftUi.SetActive(false);
         craftUiBtn.SetActive(true);
         buyBtn.SetActive(true);
+    }
+    public void CardSkillCloseBtn()
+    {
+        cardSkillUi.SetActive(false);
     }
     public void MenuUiBtn()
     {
@@ -449,83 +470,85 @@ public class UImanager : MonoBehaviour
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(true);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
                         MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     else if (touch.name == "Rock(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         rockSkillBtn.SetActive(true);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(false);
                         treeSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
                         MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     else if (touch.name == "BananaTree(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         bananaTreeBtn.SetActive(true);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(false);
                         rockSkillBtn.SetActive(false);
                         treeSkillBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
                         MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     if (touch.name == "Wood(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(true);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
                         MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     if(touch.name == "Timber(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(true);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(true);
                         MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     if(touch.name == "Mine(Clone)")
                     {
                         cardSkillUi.SetActive(true);
                         treeSkillBtn.SetActive(false);
-                        TimberSkillBtn.SetActive(false);
-                        MineSkillBtn.SetActive(false);
                         WoodSkillBtn.SetActive(true);
                         rockSkillBtn.SetActive(false);
                         bananaTreeBtn.SetActive(false);
                         TimberSkillBtn.SetActive(false);
                         MineSkillBtn.SetActive(true);
+                        HouseSkillBtn.SetActive(false);
                         DataController.instance.gameData.Skill = true;
                     }
                     if(touch.name == "House(Clone)")
                     {
-
+                        cardSkillUi.SetActive(true);
+                        treeSkillBtn.SetActive(false);
+                        WoodSkillBtn.SetActive(true);
+                        rockSkillBtn.SetActive(false);
+                        bananaTreeBtn.SetActive(false);
+                        TimberSkillBtn.SetActive(false);
+                        MineSkillBtn.SetActive(false);
+                        HouseSkillBtn.SetActive(true);
+                        DataController.instance.gameData.Skill = true;
                     }
                 }
             }
@@ -542,7 +565,7 @@ public class UImanager : MonoBehaviour
             Time.timeScale =0;
             StoreUp = true;
         }
-        if (DataController.instance.gameData.gold >= 100 && DataController.instance.gameData.storeUpgrade == 0)
+        if (DataController.instance.gameData.gold >= 100 && DataController.instance.gameData.storeUpgrade == 0 && Time.timeScale != 0)
         {
             DataController.instance.gameData.storeUpgrade += 1;
             DataController.instance.gameData.gold -= 100;
@@ -574,7 +597,7 @@ public class UImanager : MonoBehaviour
 
         tutoBuyText.GetComponent<TextMeshProUGUI>().text = "3골드로 카드를 구매할수있다.";
         tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작할 수 있다.";
-        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다." + System.Environment.NewLine + "또한 하루가 지날떄마다 주민에게 음식을 줘야합니다." +
+        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다." + System.Environment.NewLine + "또한 하루가 지날때마다 주민에게 음식을 줘야합니다." +
             System.Environment.NewLine + "음식이 부족하면 주민이 굶어 죽습니다.";
         tutoSellText.GetComponent<TextMeshProUGUI>().text = "카드를 팔 수 있습니다. 화면 위쪽 판매가 횔성화 되어있는지 확인할수있습니다. 조심하세요 카드를 누르면 판매됩니다.";
         tutoStoreUpText.GetComponent<TextMeshProUGUI>().text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나와요!";

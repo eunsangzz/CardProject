@@ -8,6 +8,7 @@ public class CardManager : MonoBehaviour
     public GameObject PlayerCard;
     public GameObject[] BasicCardSet = new GameObject[8];
     public GameObject[] IntermediatCardSet = new GameObject[5];
+    public GameObject playerPre;
     public GameObject SellUI;
 
     public GameObject tutoSell;
@@ -33,7 +34,7 @@ public class CardManager : MonoBehaviour
     {
         tutobuy = false;
         tutosell = false;
-        GameObject _Card = Instantiate(PlayerCard, new Vector3(3, 3, 0), Quaternion.identity);
+        GameObject _Card = Instantiate(PlayerCard, new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     private void Update()
@@ -95,11 +96,39 @@ public class CardManager : MonoBehaviour
             tutoBuy.SetActive(true);
             tutobuy = true; 
         }
-        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3)//업그레이드 없음
+        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3 && Time.timeScale != 0)//업그레이드 없음
         {
+            if(DataController.instance.gameData.PlayerCount == 1)
+            {
+                int rand1 = Random.Range(0,10);
+                if(rand1 > 9)
+                {
+                    float randPosX = Random.Range(-5.0f, 5.0f);
+                    float randPosY = Random.Range(-4.0f, 2.0f);
+                    GameObject _Card = Instantiate(playerPre, new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+                    DataController.instance.gameData.PlayerCount += 1;
+                }
+                else
+                {
+                    int rand = Random.Range(0, 5);
+                    float randPosX = Random.Range(-5.0f, 5.0f);
+                    float randPosY = Random.Range(-4.0f, 2.0f);
+                    GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+                    DataController.instance.gameData.BasicCardList.Add(_Card);
+                    if (rand == 0) DataController.instance.gameData.WoodCard += 1;
+                    if (rand == 1) DataController.instance.gameData.StoneCard += 1;
+                    if (rand == 2) DataController.instance.gameData.TreeCard += 1;
+                    if (rand == 3) DataController.instance.gameData.RockCard += 1;
+                    if (rand == 4) DataController.instance.gameData.BananaTreeCard += 1;
+                    if (rand == 5) DataController.instance.gameData.BananaCard += 1;
+                    DataController.instance.gameData.gold -= 3;
+                }
+            }
+            else
+            {
             int rand = Random.Range(0, 5);
             float randPosX = Random.Range(-5.0f, 5.0f);
-            float randPosY = Random.Range(-4.0f, 4.0f);
+            float randPosY = Random.Range(-4.0f, 2.0f);
             GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             DataController.instance.gameData.BasicCardList.Add(_Card);
             if (rand == 0) DataController.instance.gameData.WoodCard += 1;
@@ -109,12 +138,13 @@ public class CardManager : MonoBehaviour
             if (rand == 4) DataController.instance.gameData.BananaTreeCard += 1;
             if (rand == 5) DataController.instance.gameData.BananaCard += 1;
             DataController.instance.gameData.gold -= 3;
+            }
         }
         if (DataController.instance.gameData.storeUpgrade == 1 && DataController.instance.gameData.gold >= 3)//업그레이드 없음
         {
             int rand = Random.Range(0, 5);
             float randPosX = Random.Range(-5.0f, 5.0f);
-            float randPosY = Random.Range(-4.0f, 4.0f);
+            float randPosY = Random.Range(-4.0f, 2.0f);
             GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             DataController.instance.gameData.BasicCardList.Add(_Card);
             if (rand == 0) DataController.instance.gameData.WoodCard += 1;
@@ -140,7 +170,7 @@ public class CardManager : MonoBehaviour
             tutoSell.SetActive(true);
             tutosell = true;
         }
-        if (DataController.instance.gameData.Sell == false)
+        if (DataController.instance.gameData.Sell == false && Time.timeScale != 0)
         {
             DataController.instance.gameData.Sell = true;
         }
@@ -274,8 +304,8 @@ public class CardManager : MonoBehaviour
         {
             for (int i = 0; i < 2; i++)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(BasicCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             }
 
@@ -291,8 +321,8 @@ public class CardManager : MonoBehaviour
         {
             for (int i = 0; i < 2; i++)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(BasicCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             }
 
@@ -308,8 +338,8 @@ public class CardManager : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(BasicCardSet[5], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             }
             GameObject _delCard1 = GameObject.Find("BananaTree(Clone)");
@@ -324,8 +354,8 @@ public class CardManager : MonoBehaviour
             if(DataController.instance.gameData.gold >= 1)
             {
                 DataController.instance.gameData.gold -= 1;
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(IntermediatCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 GameObject _delCard1 = GameObject.Find("Wood(Clone)");
                 Destroy(_delCard1);
@@ -343,8 +373,8 @@ public class CardManager : MonoBehaviour
             if(DataController.instance.gameData.gold >= 1)
             {
                 DataController.instance.gameData.gold -= 1;
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(IntermediatCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 mine1 = true;
                 mine2 = 0;
@@ -357,8 +387,8 @@ public class CardManager : MonoBehaviour
         if (Btn == "ForgeIron" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.IronCard >= 1
             && DataController.instance.gameData.BranchCard >= 1)
         {
-            float randPosX = Random.Range(-5, 5);
-            float randPosY = Random.Range(-4, 4);
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
             GameObject _Card1 = Instantiate(IntermediatCardSet[2], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
 
             ironforge1 = true;
@@ -372,8 +402,8 @@ public class CardManager : MonoBehaviour
         if(Btn == "ForgeGold" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.GoldCard >= 1
             && DataController.instance.gameData.BranchCard >= 1)
         {
-            float randPosX = Random.Range(-5, 5);
-            float randPosY = Random.Range(-4, 4);
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
             GameObject _Card1 = Instantiate(IntermediatCardSet[3], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
 
             goldforge1 = true;
@@ -388,8 +418,8 @@ public class CardManager : MonoBehaviour
         {
             for(int i = 0; i < 3; i++)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card1 = Instantiate(IntermediatCardSet[4], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
             }
             GameObject _delCard1 = GameObject.Find("Wood(Clone)");
@@ -397,6 +427,15 @@ public class CardManager : MonoBehaviour
 
             DataController.instance.gameData.WoodCard -= 1;
             DataController.instance.gameData.BranchCard += 3;
+            DataController.instance.gameData.Skill = false;
+        }
+        if(Btn == "House" && DataController.instance.gameData.PlayerCount >=2 && DataController.instance.gameData.gold >15)
+        {
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
+            GameObject _Card1 = Instantiate(playerPre, new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+
+            DataController.instance.gameData.gold -= 15;
             DataController.instance.gameData.Skill = false;
         }
     }

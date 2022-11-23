@@ -35,14 +35,14 @@ public class CraftManager : MonoBehaviour
         }
         if(ForgeCraft == true && CraftNum < 2)
         {
-            CraftDelete(2);
+            CraftDelete(4);//벽돌제거
             if(CraftNum == 1)
             {
                 ForgeCraft = false;
             }
             if(CraftNum == 0)
             {
-                CraftDelete(1);
+                CraftDelete(5);//나뭇가지제거
             }
             CraftNum += 1;
         }
@@ -85,8 +85,8 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.PanelCard >= 3 && 
                 DataController.instance.gameData.BranchCard >= 2)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
@@ -108,16 +108,16 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 2)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
                 ForgeCraft = true;
                 CraftNum = 0;
 
-                DataController.instance.gameData.WoodCard -= 1;
-                DataController.instance.gameData.StoneCard -= 2;
+                DataController.instance.gameData.BranchCard -= 1;
+                DataController.instance.gameData.BrickCard -= 2;
                 DataController.instance.gameData.ForgeCard += 1;
 
                 CraftUI.SetActive(false);
@@ -130,8 +130,8 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[2], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
@@ -152,8 +152,8 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 3)
             {
-                float randPosX = Random.Range(-5, 5);
-                float randPosY = Random.Range(-4, 4);
+                float randPosX = Random.Range(-5f, 5f);
+                float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[3], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                 DataController.instance.gameData.CraftCardList.Add(_Card);
 
@@ -179,21 +179,34 @@ public class CraftManager : MonoBehaviour
         {
             CraftList.SetActive(false);
             HouseCraftUI.SetActive(true);
+            ForgeCraftUi.SetActive(false);
+            TimberCraftUi.SetActive(false);
+            MineCraftUi.SetActive(false);
         }
         if(clickObject.name == "Forge")
         {
             CraftList.SetActive(false);
             ForgeCraftUi.SetActive(true);
+            HouseCraftUI.SetActive(false);
+            TimberCraftUi.SetActive(false);
+            MineCraftUi.SetActive(false);
         }
         if(clickObject.name == "Timber")
         {
             CraftList.SetActive(false);
             TimberCraftUi.SetActive(true);
+            HouseCraftUI.SetActive(false);
+            ForgeCraftUi.SetActive(false);
+            MineCraftUi.SetActive(false);
         }
         if(clickObject.name == "Mine")
         {
             CraftList.SetActive(false);
             MineCraftUi.SetActive(true);
+            HouseCraftUI.SetActive(false);
+            ForgeCraftUi.SetActive(false);
+            TimberCraftUi.SetActive(false);
+            
         }
     }
 
@@ -208,7 +221,6 @@ public class CraftManager : MonoBehaviour
         {
             case 1:
                 GameObject _delWoodCard1 = GameObject.Find("Wood(Clone)");
-                Debug.Log("1");
                 Destroy(_delWoodCard1);
                 break;
             case 2:
@@ -228,6 +240,15 @@ public class CraftManager : MonoBehaviour
                 Destroy(_delBranchCard);
                 break;
         }
+    }
+
+    public void backspaceBtn()
+    {
+        CraftList.SetActive(true);
+        MineCraftUi.SetActive(false);
+        HouseCraftUI.SetActive(false);
+        ForgeCraftUi.SetActive(false);
+        TimberCraftUi.SetActive(false);
     }
 
 }
