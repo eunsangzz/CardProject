@@ -26,6 +26,7 @@ public class UImanager : MonoBehaviour
     public GameObject WoodSkillBtn;
     public GameObject HouseSkillBtn;
     public GameObject bananaTreeBtn;
+    public GameObject StoreUpBtn;
 
     public GameObject tutoInfoUi;
     public GameObject tutoDayUi;
@@ -65,6 +66,7 @@ public class UImanager : MonoBehaviour
     public TextMeshProUGUI StoreUpText;
 
     public GameObject ErrorMessage;
+    public TextMeshProUGUI ErrorMessageText;
     public GameObject GameOverMessage;
     public TextMeshProUGUI StoreOver;
     public TextMeshProUGUI gameOver;
@@ -314,6 +316,10 @@ public class UImanager : MonoBehaviour
     {
         menuUi.SetActive(false);
         menuUiBtn.SetActive(true);
+    }
+    public void ErrorMessageClose()
+    {
+        ErrorMessage.SetActive(false);
     }
     private void CardInfo()
     {
@@ -575,14 +581,17 @@ public class UImanager : MonoBehaviour
             Time.timeScale =0;
             StoreUp = true;
         }
-        if (DataController.instance.gameData.gold >= 100 && DataController.instance.gameData.storeUpgrade == 0 && Time.timeScale != 0)
+        if (DataController.instance.gameData.gold >= 100 && DataController.instance.gameData.storeUpgrade == 0 
+            && Time.timeScale != 0 && DataController.instance.gameData.tuto == false)
         {
             DataController.instance.gameData.storeUpgrade += 1;
             DataController.instance.gameData.gold -= 100;
+            StoreUpBtn.SetActive(false);
         }
-        if(DataController.instance.gameData.gold < 100)
+        else if (DataController.instance.gameData.gold < 100 && Time.timeScale != 0) 
         {
-
+            ErrorMessage.SetActive(true);
+            ErrorMessageText.GetComponent<TextMeshProUGUI>().text = "상점을 업그레이드" + System.Environment.NewLine + "하려면 100골드가 필요합니다!";
         }
     }
 
@@ -615,7 +624,6 @@ public class UImanager : MonoBehaviour
         //StoreOver.GetComponent<TextMeshProUGUI>().text = "100골드가 필요합니다!";
         gameOver.GetComponent<TextMeshProUGUI>().text = "게임오버!" + System.Environment.NewLine + "모든 주민이 죽었습니다.";
         StartText.GetComponent<TextMeshProUGUI>().text = "목적을 달성했습니다." + System.Environment.NewLine + "이제 본게임으로";
-    
     }
 
     public void GameOver()
