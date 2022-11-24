@@ -80,7 +80,7 @@ public class CraftManager : MonoBehaviour
     {
         GameObject clickObject = EventSystem.current.currentSelectedGameObject;
 
-        if(clickObject.name == "HouseCraft")
+        if(clickObject.name == "HouseCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.PanelCard >= 3 && 
                 DataController.instance.gameData.BranchCard >= 2)
@@ -103,7 +103,7 @@ public class CraftManager : MonoBehaviour
             }
             else ErrorUi.SetActive(true);
         }
-        if(clickObject.name == "ForgeCraft")
+        if(clickObject.name == "ForgeCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 2)
@@ -128,7 +128,7 @@ public class CraftManager : MonoBehaviour
         if(clickObject.name == "TimberCraft")
         {
             if (DataController.instance.gameData.WoodCard >= 3 && 
-                DataController.instance.gameData.StoneCard >= 1)
+                DataController.instance.gameData.StoneCard >= 1 && DataController.instance.gameData.Woker != 0)
             {
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);
@@ -150,7 +150,7 @@ public class CraftManager : MonoBehaviour
         if(clickObject.name == "MineCraft")
         {
             if (DataController.instance.gameData.WoodCard >= 1 && 
-                DataController.instance.gameData.StoneCard >= 3)
+                DataController.instance.gameData.StoneCard >= 3 && DataController.instance.gameData.Woker != 0)
             {
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);

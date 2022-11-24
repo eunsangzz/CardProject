@@ -54,7 +54,7 @@ public class GameData
     public bool Attack;
     public bool tuto;
 
-    
+    public int Woker;
 
     public GameObject[] Card = new GameObject[2]; // 카드 프리팹 저장
     public int storeUpgrade; // 상점 단계에 따라 나오는 재료카드 많아짐
