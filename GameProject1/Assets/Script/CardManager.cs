@@ -364,7 +364,7 @@ public class CardManager : MonoBehaviour
 
         if (Btn == "BananaTree" && DataController.instance.gameData.BananaTreeCard >=1)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);
@@ -373,7 +373,7 @@ public class CardManager : MonoBehaviour
             GameObject _delCard1 = GameObject.Find("BananaTree(Clone)");
             Destroy(_delCard1);
 
-            DataController.instance.gameData.BananaCard += 3;
+            DataController.instance.gameData.BananaCard += 2;
             DataController.instance.gameData.BananaTreeCard -= 1;
             DataController.instance.gameData.Skill = false;
         }

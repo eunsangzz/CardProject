@@ -375,7 +375,7 @@ public class UImanager : MonoBehaviour
                     {
                         cardInfoUi.SetActive(true);
                         CardNameText.GetComponent<TextMeshProUGUI>().text = "바나나나무";
-                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "채집을 하면 바나나와 목재를 얻을수있다.";
+                        CardInfoText.GetComponent<TextMeshProUGUI>().text = "채집을 하면 바나나를 얻을 수 있다.";
                     }
                     else if (touch.name == "Brick(Clone)")
                     {
@@ -610,7 +610,7 @@ public class UImanager : MonoBehaviour
         GoldText.GetComponent<TextMeshProUGUI>().text = "골드 : " + DataController.instance.gameData.gold;
         CardCountText.GetComponent<TextMeshProUGUI>().text = "카드제한 : " + DataController.instance.gameData.CardLimit + "/" + DataController.instance.gameData.CardCount;
         DayText.GetComponent<TextMeshProUGUI>().text = "생존일 : " + DataController.instance.gameData.Day;
-        FoodCount.GetComponent<TextMeshProUGUI>().text = "음식 : " + DataController.instance.gameData.FoodCount + "/" + (DataController.instance.gameData.PlayerCount * 3);
+        FoodCount.GetComponent<TextMeshProUGUI>().text = "음식 : " + DataController.instance.gameData.FoodCount + "/" + DataController.instance.gameData.PlayerCount;
         StoreUpText.GetComponent<TextMeshProUGUI>().text = "상점 레벨 : " + DataController.instance.gameData.storeUpgrade;
         GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 10 / " + DataController.instance.gameData.GoldIngotCard;
 
@@ -618,7 +618,8 @@ public class UImanager : MonoBehaviour
         tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작할 수 있다.";
         tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다." + System.Environment.NewLine + "또한 하루가 지날때마다 주민에게 음식을 줘야합니다." +
             System.Environment.NewLine + "음식이 부족하면 주민이 굶어 죽습니다.";
-        tutoSellText.GetComponent<TextMeshProUGUI>().text = "카드를 팔 수 있습니다. 화면 위쪽 판매가 횔성화 되어있는지 확인할수있습니다. 조심하세요 카드를 누르면 판매됩니다.";
+        tutoSellText.GetComponent<TextMeshProUGUI>().text = "상단 판매가"+ System.Environment.NewLine + "활성화 되어있으면" + System.Environment.NewLine + "카드를 클릭해" 
+        + System.Environment.NewLine + "팔 수 있습니다";
         tutoStoreUpText.GetComponent<TextMeshProUGUI>().text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나와요!";
 
         //StoreOver.GetComponent<TextMeshProUGUI>().text = "100골드가 필요합니다!";
