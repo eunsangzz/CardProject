@@ -627,6 +627,11 @@ public class UImanager : MonoBehaviour
         StartText.GetComponent<TextMeshProUGUI>().text = "목적을 달성했습니다." + System.Environment.NewLine + "이제 본게임으로";
     }
 
+    public void Quest()
+    {
+        
+    }
+
     public void GameOver()
     {
         SceneManager.LoadScene("MainScene");
