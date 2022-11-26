@@ -108,6 +108,10 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 2)
             {
+                if(DataController.instance.gameData.QusetNum == 3)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
@@ -130,6 +134,10 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1 && DataController.instance.gameData.Woker != 0)
             {
+                if (DataController.instance.gameData.QusetNum == 3)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[2], new Vector3(randPosX, randPosY, 0), Quaternion.identity);

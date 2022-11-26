@@ -48,6 +48,8 @@ public class CardManager : MonoBehaviour
     int woodcre = 0;
 
     int Woker = 0;
+
+    public GameObject wokerError;
     //카드 구매버튼 눌렀을때 저장해둔 프리팹중에 랜덤으로 하나 생성 
     //구매 버튼 업그레이드 적용해서 1단계 나무 돌 2단계 철 금 등등 으로 세팅
 
@@ -65,15 +67,19 @@ public class CardManager : MonoBehaviour
         {
             delayTime += Time.deltaTime;
         }        
-        if(tree == true && delayTime >= 5)
+        if(tree == true && delayTime >= 2)
         {
             if(treecre == 0)
             {
                 CreatCard(1);
                 treecre += 1;
             }
-            if(delayTime >=10)
+            if(delayTime >=4)
             {
+                if(DataController.instance.gameData.QusetNum == 1)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 CreatCard(1);
                 delayTime = 0;
                 Woker = -1;
@@ -81,14 +87,14 @@ public class CardManager : MonoBehaviour
                 treecre = 0;
             }
         }
-        if(rock == true && delayTime >= 5)
+        if(rock == true && delayTime >= 2)
         {
             if(rockcre == 0)
             {
                 CreatCard(2);
                 rockcre += 1;
             };
-            if (delayTime >= 10) 
+            if (delayTime >= 4 && rockcre == 1) 
             {
                 CreatCard(2);
                 delayTime = 0;
@@ -111,6 +117,10 @@ public class CardManager : MonoBehaviour
             }
             if(delayTime >= 6 && bananacre ==2)
             {
+                if(DataController.instance.gameData.QusetNum == 2)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 CreatCard(3);
                 bananatree = false;
                 Woker = -1;
@@ -118,39 +128,44 @@ public class CardManager : MonoBehaviour
                 delayTime = 0;
             }
         }
-        if(goldforge == true && delayTime >= 30)
+        if(goldforge == true && delayTime >= 15)
         {
+            if(DataController.instance.gameData.QusetNum == 6)
+            {
+                DataController.instance.gameData.QusetNum += 1;
+            }
             goldforge = false;
             CreatCard(4);
             Woker = -1;
             delayTime = 0;
         }
-        if(ironforge == true && delayTime >=30)
+        if (ironforge == true && delayTime >= 15) 
         {
             ironforge = false;
             CreatCard(5);
             Woker = -1;
             delayTime = 0;
         }
-        if(timber == true && delayTime >= 15)
+        if(timber == true && delayTime >= 5)
         {
             timber = false;
             CreatCard(6);
             Woker = -1;
             delayTime = 0;
         }
-        if(mine == true && delayTime >=15)
+        if (mine == true && delayTime >= 5)
         {
             mine = false;
             CreatCard(7);
             Woker = -1;
             delayTime = 0;
         }
-        if(wood == true && delayTime >=2)
+        if (wood == true && delayTime >= 2)
         {
             if(woodcre == 0)
             {
                 CreatCard(8);
+                woodcre += 1;
             }
             if(delayTime >=4 && woodcre == 1)
             {
@@ -159,6 +174,10 @@ public class CardManager : MonoBehaviour
             }    
             if(delayTime >= 6 && woodcre == 2)
             {
+                if (DataController.instance.gameData.QusetNum == 1)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 CreatCard(8);
                 Woker = -1;
                 woodcre = 0;
@@ -247,9 +266,9 @@ public class CardManager : MonoBehaviour
             tutoBuy.SetActive(true);
             tutobuy = true; 
         }
-        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3 && Time.timeScale != 0)//업그레이드 없음
+        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3 && Time.timeScale != 0 )//업그레이드 없음
         {
-            if(DataController.instance.gameData.PlayerCount == 1)
+            if(DataController.instance.gameData.PlayerCount == 1 && DataController.instance.gameData.QusetNum != 0)
             {
                 int rand1 = Random.Range(0,10);
                 if(rand1 > 9)
@@ -265,7 +284,6 @@ public class CardManager : MonoBehaviour
                     float randPosX = Random.Range(-5.0f, 5.0f);
                     float randPosY = Random.Range(-4.0f, 2.0f);
                     GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                    DataController.instance.gameData.BasicCardList.Add(_Card);
                     if (rand == 0) DataController.instance.gameData.WoodCard += 1;
                     if (rand == 1) DataController.instance.gameData.StoneCard += 1;
                     if (rand == 2) DataController.instance.gameData.TreeCard += 1;
@@ -275,7 +293,7 @@ public class CardManager : MonoBehaviour
                     DataController.instance.gameData.gold -= 3;
                 }
             }
-            else
+            else if(DataController.instance.gameData.QusetNum != 1 && DataController.instance.gameData.QusetNum != 0)
             {
             int rand = Random.Range(0, 5);
             float randPosX = Random.Range(-5.0f, 5.0f);
@@ -290,8 +308,15 @@ public class CardManager : MonoBehaviour
             if (rand == 5) DataController.instance.gameData.BananaCard += 1;
             DataController.instance.gameData.gold -= 3;
             }
+            if (DataController.instance.gameData.QusetNum == 0)
+            {
+                DataController.instance.gameData.QusetNum += 1;
+                float randPosX = Random.Range(-5.0f, 5.0f);
+                float randPosY = Random.Range(-4.0f, 2.0f);
+                GameObject _Card = Instantiate(BasicCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+            }
         }
-        if (DataController.instance.gameData.storeUpgrade == 1 && DataController.instance.gameData.gold >= 3)//업그레이드 없음
+        if (DataController.instance.gameData.storeUpgrade == 1 && DataController.instance.gameData.gold >= 3 && DataController.instance.gameData.QusetNum != 0)//업그레이드 없음
         {
             int rand = Random.Range(0, 5);
             float randPosX = Random.Range(-5.0f, 5.0f);
@@ -516,12 +541,13 @@ public class CardManager : MonoBehaviour
     public void CardSkill()
     {
         string Btn = EventSystem.current.currentSelectedGameObject.name;
-
-        if (Btn == "Tree" && DataController.instance.gameData.TreeCard >= 1 && DataController.instance.gameData.Woker  != 0)
+        if(DataController.instance.gameData.Woker == 0)
+        {
+            wokerError.SetActive(true);
+        }
+        if (Btn == "Tree" && DataController.instance.gameData.TreeCard >= 1 && DataController.instance.gameData.Woker != 0)
         {
             tree = true;
-            
-            
             GameObject _delCard1 = GameObject.Find("Tree(Clone)");
             Destroy(_delCard1);
 
@@ -550,64 +576,68 @@ public class CardManager : MonoBehaviour
             Destroy(_delCard1);
 
             Woker += 1;
-            DataController.instance.gameData.BananaCard += 2;
+            DataController.instance.gameData.BananaCard += 3;
             DataController.instance.gameData.BananaTreeCard -= 1;
             DataController.instance.gameData.Skill = false;
         }
-        if (Btn == "Timber" && DataController.instance.gameData.WoodCard >= 2 && DataController.instance.gameData.BranchCard >= 1 && DataController.instance.gameData.Woker != 0) 
+        if (Btn == "Timber" && DataController.instance.gameData.WoodCard >= 2 && DataController.instance.gameData.BranchCard >= 1) 
         {
-            if(DataController.instance.gameData.gold >= 1)
+            Debug.Log("timber");
+            if (DataController.instance.gameData.gold >= 1)
             {
+                Debug.Log("timber");
+                if (DataController.instance.gameData.QusetNum == 3)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 DataController.instance.gameData.gold -= 1;
                 timber = true;
                 Timber1 = true;
                 Timber2 = 0;
-
-                Woker += 1;
-                DataController.instance.gameData.WoodCard -= 1;
+                DataController.instance.gameData.WoodCard -= 2;
                 DataController.instance.gameData.BranchCard -= 1;
                 DataController.instance.gameData.PanelCard += 1;
                 DataController.instance.gameData.Skill = false;
             }
         }
-        if(Btn == "Mine" && DataController.instance.gameData.StoneCard >= 2 && DataController.instance.gameData.Woker != 0)
+        if(Btn == "Mine" && DataController.instance.gameData.StoneCard >= 2)
         {
-            if(DataController.instance.gameData.gold >= 1)
+            Debug.Log("timber");
+            if (DataController.instance.gameData.gold >= 1)
             {
+                Debug.Log("mine");
+                if (DataController.instance.gameData.QusetNum == 3)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 DataController.instance.gameData.gold -= 1;
                 mine = true;
                 mine1 = true;
                 mine2 = 0;
-
-                Woker += 1;
                 DataController.instance.gameData.StoneCard -= 2;
                 DataController.instance.gameData.BrickCard += 1;
                 DataController.instance.gameData.Skill = false;
             }
         }
         if (Btn == "ForgeIron" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.IronCard >= 1
-            && DataController.instance.gameData.BranchCard >= 1 && DataController.instance.gameData.Woker != 0)
+            && DataController.instance.gameData.BranchCard >= 1)
         {
             ironforge = true;
 
             ironforge1 = true;
             ironforge2 = 0;
-
-            Woker += 1;
             DataController.instance.gameData.WoodCard -= 2;
             DataController.instance.gameData.IronCard -= 1;
             DataController.instance.gameData.IronIngotCard += 1;
             DataController.instance.gameData.Skill = false;
         }
         if(Btn == "ForgeGold" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.GoldCard >= 1
-            && DataController.instance.gameData.BranchCard >= 1 && DataController.instance.gameData.Woker != 0)
+            && DataController.instance.gameData.BranchCard >= 1)
         {
             goldforge = true;
 
             goldforge1 = true;
             goldforge2 = 0;
-
-            Woker += 1;
             DataController.instance.gameData.WoodCard -= 2;
             DataController.instance.gameData.GoldCard -= 1;
             DataController.instance.gameData.GoldIngotCard += 1;
@@ -633,6 +663,11 @@ public class CardManager : MonoBehaviour
             DataController.instance.gameData.gold -= 15;
             DataController.instance.gameData.Skill = false;
         }
+    }
+
+    public void WokerErrorClose()
+    {
+        wokerError.SetActive(false);
     }
 
     public void StoreUpgrade()

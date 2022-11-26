@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.BossStage = false;
         DataController.instance.gameData.storeUpgrade = 0;
         DataController.instance.gameData.Woker = 0;
+        DataController.instance.gameData.QusetNum = 0;
 
         DataController.instance.gameData.Sell = false;
         DataController.instance.gameData.Skill = false;

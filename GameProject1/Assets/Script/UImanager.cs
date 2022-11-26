@@ -73,9 +73,13 @@ public class UImanager : MonoBehaviour
 
     public TextMeshProUGUI GoalText;
     public TextMeshProUGUI StartText;
+    public TextMeshProUGUI QuestText;
+    public TextMeshProUGUI QuestNumText;
 
     public Slider slTimer;
     float fSliderBarTime;
+
+    float delayQuest;
 
     int feedplayer;
     int notfeedplayer;
@@ -102,6 +106,18 @@ public class UImanager : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene();
         if(scene.name == "Tuto") DataController.instance.gameData.tuto = true;
         else DataController.instance.gameData.tuto = false;
+
+        if(DataController.instance.gameData.QusetNum == 1)
+        {
+            if (DataController.instance.gameData.FoodCount >= 3) 
+            {
+                delayQuest += Time.deltaTime;
+                if(delayQuest >= 2)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
+            }
+        }
 
         if(foodfull == true)
         {
@@ -584,6 +600,10 @@ public class UImanager : MonoBehaviour
         if (DataController.instance.gameData.gold >= 100 && DataController.instance.gameData.storeUpgrade == 0 
             && Time.timeScale != 0 && DataController.instance.gameData.tuto == false)
         {
+            if(DataController.instance.gameData.QusetNum == 5)
+            {
+                DataController.instance.gameData.QusetNum += 1;
+            }
             DataController.instance.gameData.storeUpgrade += 1;
             DataController.instance.gameData.gold -= 100;
             StoreUpBtn.SetActive(false);
@@ -625,12 +645,43 @@ public class UImanager : MonoBehaviour
         //StoreOver.GetComponent<TextMeshProUGUI>().text = "100골드가 필요합니다!";
         gameOver.GetComponent<TextMeshProUGUI>().text = "게임오버!" + System.Environment.NewLine + "모든 주민이 죽었습니다.";
         StartText.GetComponent<TextMeshProUGUI>().text = "목적을 달성했습니다." + System.Environment.NewLine + "이제 본게임으로";
+
+        QuestNumText.GetComponent<TextMeshProUGUI>().text = DataController.instance.gameData.QusetNum + " :";
+
+        if (DataController.instance.gameData.QusetNum == 0)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "구매 버튼을 눌러 카드를 구매하세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 1)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "목재카드 선택 후 나뭇가지를 만드세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 2)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "나뭇가지를 판매하고 바나나를 채집하세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 3)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "제작에서 제제소 또는 벽돌공장을 만드세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 4)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "벽돌 또는 판자를 만드세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 5)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "100골드를 모아 상점을 업그레이드 하세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 6)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "화로를 만들어 금괴를 만드세요";
+        }
+        if(DataController.instance.gameData.QusetNum == 7)
+        {
+            QuestText.GetComponent<TextMeshProUGUI>().text = "퀘스트 완료! 목적을 달성하세요";
+        }
     }
 
-    public void Quest()
-    {
-        
-    }
 
     public void GameOver()
     {
