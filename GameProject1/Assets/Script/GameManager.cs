@@ -29,8 +29,10 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.MineCard = 0;
         DataController.instance.gameData.RockCard = 0;
         DataController.instance.gameData.TreeCard = 0;
+        DataController.instance.gameData.PanelCard = 0;
+        DataController.instance.gameData.ForgeCard = 0;
 
-        DataController.instance.gameData.gold = 100;
+        DataController.instance.gameData.gold = 500;
         DataController.instance.gameData.CardLimit =15;
         DataController.instance.gameData.CardCount = 0;
         DataController.instance.gameData.PlayerCount = 1;
@@ -58,11 +60,11 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.IronCard + DataController.instance.gameData.GoldCard + DataController.instance.gameData.HouseCard +
         DataController.instance.gameData.GoldIngotCard + DataController.instance.gameData.IronIngotCard + DataController.instance.gameData.BrickCard +
         DataController.instance.gameData.PanelCard + DataController.instance.gameData.TimberCard+ DataController.instance.gameData.MineCard +
-        DataController.instance.gameData.ForgeCard + DataController.instance.gameData.BananaCard + DataController.instance.gameData.PlayerCount);
+        DataController.instance.gameData.ForgeCard + DataController.instance.gameData.BananaCard + DataController.instance.gameData.PlayerCount + DataController.instance.gameData.BranchCard);
 
         DataController.instance.gameData.FoodCount = DataController.instance.gameData.BananaCard;
 
-        if(DataController.instance.gameData.GoldIngotCard == 10)
+        if(DataController.instance.gameData.GoldIngotCard == 1)
         {
             SceneManager.LoadScene("Goal");
         }

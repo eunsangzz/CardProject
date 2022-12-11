@@ -46,13 +46,17 @@ public class CraftManager : MonoBehaviour
             }
             CraftNum += 1;
         }
-        if(TimberCraft == true && CraftNum < 2)
+        if(TimberCraft == true && CraftNum < 3)
         {
             CraftDelete(1);
-            if(CraftNum == 1)
+            if(CraftNum == 2)
             {
                 CraftDelete(1);
                 TimberCraft = false;
+            }
+            if(CraftNum == 1)
+            {
+                CraftDelete(1);
             }
             if(CraftNum == 0)
             {
@@ -60,13 +64,17 @@ public class CraftManager : MonoBehaviour
             }
             CraftNum += 1;
         }
-        if(MineCraft == true && CraftNum < 2)
+        if(MineCraft == true && CraftNum < 3)
         {
             CraftDelete(2);
-            if(CraftNum == 1)
+            if(CraftNum == 2)
             {
                 CraftDelete(2);
                 MineCraft = false;
+            }
+            if(CraftNum == 1)
+            {
+                CraftDelete(2);
             }
             if(CraftNum == 0)
             {
@@ -103,10 +111,10 @@ public class CraftManager : MonoBehaviour
             }
             else ErrorUi.SetActive(true);
         }
-        if(clickObject.name == "ForgeCraft" && DataController.instance.gameData.Woker != 0)
+        if(clickObject.name == "ForgeCraft")
         {
-            if (DataController.instance.gameData.WoodCard >= 1 && 
-                DataController.instance.gameData.StoneCard >= 2)
+            if (DataController.instance.gameData.BranchCard >= 1 && 
+                DataController.instance.gameData.BrickCard >= 2)
             {
                 if(DataController.instance.gameData.QusetNum == 3)
                 {
@@ -131,8 +139,9 @@ public class CraftManager : MonoBehaviour
         }
         if(clickObject.name == "TimberCraft")
         {
+            Debug.Log(DataController.instance.gameData.Woker);
             if (DataController.instance.gameData.WoodCard >= 3 && 
-                DataController.instance.gameData.StoneCard >= 1 && DataController.instance.gameData.Woker != 0)
+                DataController.instance.gameData.StoneCard >= 1)
             {
                 if (DataController.instance.gameData.QusetNum == 3)
                 {
@@ -157,9 +166,14 @@ public class CraftManager : MonoBehaviour
         }
         if(clickObject.name == "MineCraft")
         {
+            Debug.Log(DataController.instance.gameData.Woker);
             if (DataController.instance.gameData.WoodCard >= 1 && 
-                DataController.instance.gameData.StoneCard >= 3 && DataController.instance.gameData.Woker != 0)
+                DataController.instance.gameData.StoneCard >= 3)
             {
+                if (DataController.instance.gameData.QusetNum == 3)
+                {
+                    DataController.instance.gameData.QusetNum += 1;
+                }
                 float randPosX = Random.Range(-5f, 5f);
                 float randPosY = Random.Range(-4f, 2f);
                 GameObject _Card = Instantiate(CraftCardSet[3], new Vector3(randPosX, randPosY, 0), Quaternion.identity);

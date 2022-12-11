@@ -174,14 +174,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.28235295}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 9a7b46632dbf94639a959eab1b6d275c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -382,6 +382,7 @@ MonoBehaviour:
   WoodSkillBtn: {fileID: 0}
   HouseSkillBtn: {fileID: 0}
   bananaTreeBtn: {fileID: 0}
+  StoreUpBtn: {fileID: 0}
   tutoInfoUi: {fileID: 0}
   tutoDayUi: {fileID: 0}
   tutoBtnUi: {fileID: 0}
@@ -395,6 +396,7 @@ MonoBehaviour:
   tutoDayText: {fileID: 0}
   tutoStoreUp: {fileID: 0}
   tutoStoreUpText: {fileID: 0}
+  tutoStart: {fileID: 0}
   WoodCountText: {fileID: 0}
   StoneCountText: {fileID: 0}
   IronCountText: {fileID: 0}
@@ -412,11 +414,14 @@ MonoBehaviour:
   DayText: {fileID: 0}
   StoreUpText: {fileID: 0}
   ErrorMessage: {fileID: 0}
+  ErrorMessageText: {fileID: 0}
   GameOverMessage: {fileID: 0}
   StoreOver: {fileID: 0}
   gameOver: {fileID: 0}
   GoalText: {fileID: 0}
   StartText: {fileID: 0}
+  QuestText: {fileID: 0}
+  QuestNumText: {fileID: 0}
   slTimer: {fileID: 0}
 --- !u!1 &1183173462
 GameObject:
@@ -486,8 +491,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
