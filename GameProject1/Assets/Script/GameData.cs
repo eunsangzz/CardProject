@@ -16,6 +16,8 @@ public class GameData
     public int TreeCard;
     public int BananaTreeCard;
     public int BananaCard;
+    public int StrawBerryCard;
+    public int StrawBerryTreeCard;
     public int HouseCard;
     public int ForgeCard;
     public int TimberCard;

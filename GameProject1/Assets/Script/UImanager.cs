@@ -121,7 +121,6 @@ public class UImanager : MonoBehaviour
 
         if(foodfull == true && slTimer.value > 0.0f)
         {
-            Debug.Log("foodtrue");
             for(int i = 0; i < DataController.instance.gameData.PlayerCount; i++)
             {
                 GameObject food = GameObject.FindGameObjectWithTag("Food");
@@ -136,18 +135,7 @@ public class UImanager : MonoBehaviour
 
         if(DataController.instance.gameData.PlayerCount == 0)
         {
-            tutoInfoUi.SetActive(false);
-            tutoBuy.SetActive(false);
-            tutoCraft.SetActive(false);
-            tutoSell.SetActive(false);
-            tutoDay.SetActive(false);
-            tutoDayUi.SetActive(false);
-            tutoBtnUi.SetActive(false);
-            tutoStart.SetActive(false);
-            tutoStoreUp.SetActive(false);
-            GameOverMessage.SetActive(true);
-            Over = true;
-            slTimer.value = 0.0f;
+            Fail();
         }
 
         if (slTimer.value > 0.0f && DataController.instance.gameData.endDay == false && feed == false) //�ð��� �带��
@@ -326,30 +314,36 @@ public class UImanager : MonoBehaviour
         SellBtn.SetActive(false);
         cardInfoUi.SetActive(false);
     }
+
     public void CraftUiCloseBtn()
     {
         craftUi.SetActive(false);
         craftUiBtn.SetActive(true);
         buyBtn.SetActive(true);
     }
+
     public void CardSkillCloseBtn()
     {
         cardSkillUi.SetActive(false);
     }
+
     public void MenuUiBtn()
     {
         menuUi.SetActive(true);
         menuUiBtn.SetActive(false);
     }
+
     public void MenuUiCloseBtn()
     {
         menuUi.SetActive(false);
         menuUiBtn.SetActive(true);
     }
+
     public void ErrorMessageClose()
     {
         ErrorMessage.SetActive(false);
     }
+
     private void CardInfo()
     {
         if (Input.GetMouseButton(0))
@@ -664,16 +658,15 @@ public class UImanager : MonoBehaviour
         CardCountText.GetComponent<TextMeshProUGUI>().text = "카드제한 : " + DataController.instance.gameData.CardLimit + "/" + DataController.instance.gameData.CardCount;
         DayText.GetComponent<TextMeshProUGUI>().text = "생존일 : " + DataController.instance.gameData.Day;
         FoodCount.GetComponent<TextMeshProUGUI>().text = "음식 : " + DataController.instance.gameData.FoodCount + "/" + DataController.instance.gameData.PlayerCount;
-        StoreUpText.GetComponent<TextMeshProUGUI>().text = "상점 레벨 : " + DataController.instance.gameData.storeUpgrade;
         GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 1 / " + DataController.instance.gameData.GoldIngotCard;
 
-        tutoBuyText.GetComponent<TextMeshProUGUI>().text = "3골드로 카드를 구매할수있다.";
-        tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작할 수 있다.";
-        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되었습니다. 제한된 카드보다 소유한 카드가 많다면 카드를 팔아야합니다." + System.Environment.NewLine + "또한 하루가 지날때마다 주민에게 음식을 줘야합니다." +
-            System.Environment.NewLine + "음식이 부족하면 주민이 굶어 죽습니다.";
+        tutoBuyText.GetComponent<TextMeshProUGUI>().text = "3골드로 카드를 구매 가능합니다.";
+        tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작이 가능합니다..";
+        tutoDayText.GetComponent<TextMeshProUGUI>().text = "밤이 되면 제한된 카드에 맞추어 카드를 팔아야합니다." + System.Environment.NewLine + "또한 주민은 음식을 필요로 하고" +
+            System.Environment.NewLine + "음식이 부족한 만큼 주민이 죽게됩니다.";
         tutoSellText.GetComponent<TextMeshProUGUI>().text = "상단 판매가"+ System.Environment.NewLine + "활성화 되어있으면" + System.Environment.NewLine + "카드를 클릭해" 
         + System.Environment.NewLine + "팔 수 있습니다";
-        tutoStoreUpText.GetComponent<TextMeshProUGUI>().text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나와요!";
+        tutoStoreUpText.GetComponent<TextMeshProUGUI>().text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나옵니다.";
 
         //StoreOver.GetComponent<TextMeshProUGUI>().text = "100골드가 필요합니다!";
         gameOver.GetComponent<TextMeshProUGUI>().text = "게임오버!" + System.Environment.NewLine + "모든 주민이" + System.Environment.NewLine  + "음식이 없어 굶어 죽었습니다.";
@@ -734,4 +727,19 @@ public class UImanager : MonoBehaviour
         SceneManager.LoadScene("Tuto");
     }
 
+    public void Fail()
+    {
+        tutoInfoUi.SetActive(false);
+        tutoBuy.SetActive(false);
+        tutoCraft.SetActive(false);
+        tutoSell.SetActive(false);
+        tutoDay.SetActive(false);
+        tutoDayUi.SetActive(false);
+        tutoBtnUi.SetActive(false);
+        tutoStart.SetActive(false);
+        tutoStoreUp.SetActive(false);
+        GameOverMessage.SetActive(true);
+        Over = true;
+        slTimer.value = 0.0f;
+    }
 }

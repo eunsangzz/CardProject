@@ -139,7 +139,6 @@ public class CraftManager : MonoBehaviour
         }
         if(clickObject.name == "TimberCraft")
         {
-            Debug.Log(DataController.instance.gameData.Woker);
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1)
             {
