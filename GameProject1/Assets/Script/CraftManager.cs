@@ -27,7 +27,7 @@ public class CraftManager : MonoBehaviour
         {
             CraftDelete(3);
             CraftDelete(4);
-            if(CraftNum == 1)
+            if(CraftNum == 2)
             {
                 HouseCraft = false;
             }
@@ -91,12 +91,9 @@ public class CraftManager : MonoBehaviour
         if(clickObject.name == "HouseCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.PanelCard >= 3 && 
-                DataController.instance.gameData.BranchCard >= 2)
+                DataController.instance.gameData.BrickCard >= 3)
             {
-                float randPosX = Random.Range(-5f, 5f);
-                float randPosY = Random.Range(-4f, 2f);
-                GameObject _Card = Instantiate(CraftCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                DataController.instance.gameData.CraftCardList.Add(_Card);
+                createCard(0);
 
                 HouseCraft = true;
                 CraftNum = 0;
@@ -111,6 +108,7 @@ public class CraftManager : MonoBehaviour
             }
             else ErrorUi.SetActive(true);
         }
+
         if(clickObject.name == "ForgeCraft")
         {
             if (DataController.instance.gameData.BranchCard >= 1 && 
@@ -120,10 +118,7 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                float randPosX = Random.Range(-5f, 5f);
-                float randPosY = Random.Range(-4f, 2f);
-                GameObject _Card = Instantiate(CraftCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                DataController.instance.gameData.CraftCardList.Add(_Card);
+                createCard(1);
 
                 ForgeCraft = true;
                 CraftNum = 0;
@@ -137,6 +132,7 @@ public class CraftManager : MonoBehaviour
             }
             else ErrorUi.SetActive(true);
         }
+
         if(clickObject.name == "TimberCraft")
         {
             if (DataController.instance.gameData.WoodCard >= 3 && 
@@ -146,10 +142,7 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                float randPosX = Random.Range(-5f, 5f);
-                float randPosY = Random.Range(-4f, 2f);
-                GameObject _Card = Instantiate(CraftCardSet[2], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                DataController.instance.gameData.CraftCardList.Add(_Card);
+                createCard(2);
 
                 TimberCraft = true;
                 CraftNum = 0;
@@ -163,9 +156,9 @@ public class CraftManager : MonoBehaviour
             }
             else ErrorUi.SetActive(true);
         }
+
         if(clickObject.name == "MineCraft")
         {
-            Debug.Log(DataController.instance.gameData.Woker);
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 3)
             {
@@ -173,10 +166,7 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                float randPosX = Random.Range(-5f, 5f);
-                float randPosY = Random.Range(-4f, 2f);
-                GameObject _Card = Instantiate(CraftCardSet[3], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                DataController.instance.gameData.CraftCardList.Add(_Card);
+                createCard(3);
 
                 MineCraft = true;
                 CraftNum = 0;
@@ -263,6 +253,12 @@ public class CraftManager : MonoBehaviour
         }
     }
 
+    void createCard(int i)
+    {
+        float randPosX = Random.Range(-5f, 5f);
+        float randPosY = Random.Range(-4f, 2f);
+        GameObject _Card = Instantiate(CraftCardSet[i], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+    }
     public void backspaceBtn()
     {
         CraftList.SetActive(true);

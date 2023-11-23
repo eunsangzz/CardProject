@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.HouseCard = 0;
         DataController.instance.gameData.BananaCard = 0;
         DataController.instance.gameData.BananaTreeCard = 0;
+        DataController.instance.gameData.StrawBerryCard = 0;
+        DataController.instance.gameData.StrawBerryTreeCard = 0;
         DataController.instance.gameData.TreeCard = 0;
         DataController.instance.gameData.RockCard = 0;
         DataController.instance.gameData.BranchCard = 0;
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.Fight = false;
         DataController.instance.gameData.Boss1Hp = 45;
         DataController.instance.gameData.Boss2Hp = 70;
+        DataController.instance.gameData.Woker = 1;
     }
 
     // Update is called once per frame
@@ -62,12 +65,7 @@ public class GameManager : MonoBehaviour
         DataController.instance.gameData.PanelCard + DataController.instance.gameData.TimberCard+ DataController.instance.gameData.MineCard +
         DataController.instance.gameData.ForgeCard + DataController.instance.gameData.BananaCard + DataController.instance.gameData.BranchCard);
 
-        DataController.instance.gameData.FoodCount = DataController.instance.gameData.BananaCard;
-
-        if(DataController.instance.gameData.GoldIngotCard == 10)
-        {
-            SceneManager.LoadScene("Goal");
-        }
+        DataController.instance.gameData.FoodCount = DataController.instance.gameData.BananaCard + DataController.instance.gameData.StrawBerryCard;
     }
 
     void MainSecne()

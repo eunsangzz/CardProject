@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,8 +19,6 @@ public class CardManager : MonoBehaviour
     bool tutobuy;
     bool tutosell;
 
-    int Woker = 0;
-
     public GameObject wokerError;
     //카드 구매버튼 눌렀을때 저장해둔 프리팹중에 랜덤으로 하나 생성 
     //구매 버튼 업그레이드 적용해서 1단계 나무 돌 2단계 철 금 등등 으로 세팅
@@ -35,95 +32,69 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-        DataController.instance.gameData.Woker = DataController.instance.gameData.PlayerCount - Woker;       
         SellCard();
     }
 
     public void CardBuy()//카드 살때
     {
-        if(DataController.instance.gameData.tuto == true && tutobuy == false)
+        if (DataController.instance.gameData.tuto == true && tutobuy == false) //튜토리얼
         {
-            Time.timeScale =0;
+            Time.timeScale = 0;
             tutoUi.SetActive(true);
             tutoBtnUi.SetActive(true);
             tutoBuy.SetActive(true);
-            tutobuy = true; 
+            tutobuy = true;
         }
-        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3 && Time.timeScale != 0 )//업그레이드 없음
+
+        if (DataController.instance.gameData.storeUpgrade == 0 && DataController.instance.gameData.gold >= 3 && Time.timeScale != 0)//업그레이드 없음
         {
-            if(DataController.instance.gameData.PlayerCount == 1 && DataController.instance.gameData.QusetNum > 2)
+            if (DataController.instance.gameData.PlayerCount == 1 && DataController.instance.gameData.QusetNum > 2) //필드 내 플레이어가 1명일때
             {
-                int rand1 = Random.Range(0,10);
-                if(rand1 > 7)
+                int rand1 = Random.Range(0, 10);
+                if (rand1 > 7) // 랜덤값이 7초과면 플레이어 카드 생성
                 {
                     float randPosX = Random.Range(-5.0f, 5.0f);
                     float randPosY = Random.Range(-4.0f, 2.0f);
                     GameObject _Card = Instantiate(playerPre, new Vector3(randPosX, randPosY, 0), Quaternion.identity);
                     DataController.instance.gameData.PlayerCount += 1;
                 }
-                else
+                else // 랜덤값이 7이하일때 
                 {
                     int rand = Random.Range(0, 5);
-                    float randPosX = Random.Range(-5.0f, 5.0f);
-                    float randPosY = Random.Range(-4.0f, 2.0f);
-                    GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-                    if (rand == 0) DataController.instance.gameData.WoodCard += 1;
-                    if (rand == 1) DataController.instance.gameData.StoneCard += 1;
-                    if (rand == 2) DataController.instance.gameData.TreeCard += 1;
-                    if (rand == 3) DataController.instance.gameData.RockCard += 1;
-                    if (rand == 4) DataController.instance.gameData.BananaTreeCard += 1;
-                    if (rand == 5) DataController.instance.gameData.BananaCard += 1;
+                    CreateCard(0, rand);
+                    addCardCount(rand);
                     DataController.instance.gameData.gold -= 3;
                 }
             }
-            else if(DataController.instance.gameData.QusetNum != 1 && DataController.instance.gameData.QusetNum > 2)
+
+            else if (DataController.instance.gameData.QusetNum != 1 && DataController.instance.gameData.QusetNum > 2) //필드내 플레이어가 2명이상 일때
             {
-            int rand = Random.Range(0, 6);
-            float randPosX = Random.Range(-5.0f, 5.0f);
-            float randPosY = Random.Range(-4.0f, 2.0f);
-            GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BasicCardList.Add(_Card);
-            if (rand == 0) DataController.instance.gameData.WoodCard += 1;
-            if (rand == 1) DataController.instance.gameData.StoneCard += 1;
-            if (rand == 2) DataController.instance.gameData.TreeCard += 1;
-            if (rand == 3) DataController.instance.gameData.RockCard += 1;
-            if (rand == 4) DataController.instance.gameData.BananaTreeCard += 1;
-            if (rand == 5) DataController.instance.gameData.BananaCard += 1;
-            DataController.instance.gameData.gold -= 3;
+                int rand = Random.Range(0, 8); //랜덤값으로 카드 생성
+                CreateCard(0, rand);
+                addCardCount(rand);
+                DataController.instance.gameData.gold -= 3;
             }
+
             if (DataController.instance.gameData.QusetNum == 2)
             {
                 DataController.instance.gameData.BananaTreeCard += 1;
                 DataController.instance.gameData.gold -= 3;
-                float randPosX = Random.Range(-5.0f, 5.0f);
-                float randPosY = Random.Range(-4.0f, 2.0f);
-                GameObject _Card = Instantiate(BasicCardSet[4], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+                CreateCard(0, 4);
             }
+
             if (DataController.instance.gameData.QusetNum == 0)
             {
                 DataController.instance.gameData.QusetNum += 1;
                 DataController.instance.gameData.gold -= 3;
                 DataController.instance.gameData.WoodCard += 1;
-                float randPosX = Random.Range(-5.0f, 5.0f);
-                float randPosY = Random.Range(-4.0f, 2.0f);
-                GameObject _Card = Instantiate(BasicCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+                CreateCard(0, 0);
             }
         }
         if (DataController.instance.gameData.storeUpgrade == 1 && DataController.instance.gameData.gold >= 3 && DataController.instance.gameData.QusetNum != 0)//업그레이드 없음
         {
             int rand = Random.Range(2, 10);
-            float randPosX = Random.Range(-5.0f, 5.0f);
-            float randPosY = Random.Range(-4.0f, 2.0f);
-            GameObject _Card = Instantiate(BasicCardSet[rand], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BasicCardList.Add(_Card);
-            if (rand == 2) DataController.instance.gameData.TreeCard += 1;
-            if (rand == 3) DataController.instance.gameData.RockCard += 1;
-            if (rand == 4) DataController.instance.gameData.BananaTreeCard += 1;
-            if (rand == 5) DataController.instance.gameData.BananaCard += 1;
-            if (rand == 6) DataController.instance.gameData.StrawBerryCard += 1;
-            if (rand == 7) DataController.instance.gameData.StrawBerryTreeCard += 1;
-            if (rand == 8) DataController.instance.gameData.IronCard += 1;
-            if (rand == 9) DataController.instance.gameData.GoldCard += 1;
+            CreateCard(0, rand);
+            addCardCount(rand);
             DataController.instance.gameData.gold -= 3;
         }
 
@@ -140,9 +111,9 @@ public class CardManager : MonoBehaviour
 
     public void SellActive()
     {
-        if(DataController.instance.gameData.tuto == true && tutosell == false)
+        if (DataController.instance.gameData.tuto == true && tutosell == false)
         {
-            Time.timeScale =0;
+            Time.timeScale = 0;
             tutoUi.SetActive(true);
             tutoBtnUi.SetActive(true);
             tutoSell.SetActive(true);
@@ -214,12 +185,12 @@ public class CardManager : MonoBehaviour
                         DataController.instance.gameData.gold += 15;
                         DataController.instance.gameData.HouseCard -= 1;
                     }
-                    if(touch.name == "Player(Clone)")
+                    if (touch.name == "Player(Clone)")
                     {
                         DataController.instance.gameData.gold += 5;
                         DataController.instance.gameData.PlayerCount -= 1;
                     }
-                    if(touch.name == "Branch(Clone)")
+                    if (touch.name == "Branch(Clone)")
                     {
                         DataController.instance.gameData.BranchCard -= 1;
                         DataController.instance.gameData.gold += 3;
@@ -269,6 +240,16 @@ public class CardManager : MonoBehaviour
                         DataController.instance.gameData.PanelCard -= 1;
                         DataController.instance.gameData.gold += 6;
                     }
+                    if(touch.name == "StrawBerry(Clone)")
+                    {
+                        DataController.instance.gameData.StrawBerryCard -= 1;
+                        DataController.instance.gameData.gold += 1;
+                    }
+                    if(touch.name == "StrawBerryTree(Clone)")
+                    {
+                        DataController.instance.gameData.StrawBerryTreeCard -= 1;
+                        DataController.instance.gameData.gold += 2;
+                    }
                 }
             }
         }
@@ -282,72 +263,84 @@ public class CardManager : MonoBehaviour
         {
             wokerError.SetActive(true);
         }
-
-        if (Btn == "Tree" && DataController.instance.gameData.TreeCard >= 1 && DataController.instance.gameData.Woker != 0)
+        else
         {
-            StartCoroutine(delay(1));
-        }
-
-        if (Btn == "Rock" && DataController.instance.gameData.RockCard >= 1 && DataController.instance.gameData.Woker != 0)
-        {
-            StartCoroutine(delay(2));
-        }
-
-        if (Btn == "BananaTree" && DataController.instance.gameData.BananaTreeCard >= 1 && DataController.instance.gameData.Woker != 0) 
-        {
-            StartCoroutine(delay(3));
-            
-        }
-
-        if (Btn == "Timber" && DataController.instance.gameData.WoodCard >= 2 && DataController.instance.gameData.BranchCard >= 1) //판자
-        {
-            if (DataController.instance.gameData.gold >= 1)
+            if (Btn == "Tree" && DataController.instance.gameData.Woker != 0)
             {
-                if (DataController.instance.gameData.QusetNum == 4)
+                StartCoroutine(delay(1));
+            }
+
+            if (Btn == "Wood" && DataController.instance.gameData.Woker != 0)
+            {
+                StartCoroutine(delay(8));
+            }
+
+            if (Btn == "Rock" && DataController.instance.gameData.Woker != 0)
+            {
+                StartCoroutine(delay(2));
+            }
+
+            if (Btn == "BananaTree" && DataController.instance.gameData.Woker != 0)
+            {
+                StartCoroutine(delay(3));
+                if (DataController.instance.gameData.QusetNum == 2)
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
+            }
+
+            if (Btn == "StrawBerryTree" && DataController.instance.gameData.Woker != 0)
+            {
+                StartCoroutine(delay(9));
+            }
+
+            if (Btn == "Timber" && DataController.instance.gameData.WoodCard >= 2 && DataController.instance.gameData.BranchCard >= 1
+                && DataController.instance.gameData.Woker != 0) //판자
+            {
+                if (DataController.instance.gameData.gold >= 1)
+                {
+                    if (DataController.instance.gameData.QusetNum == 4)
+                    {
+                        DataController.instance.gameData.QusetNum += 1;
+                    }
+                    removeCard(1);
+                    StartCoroutine(delay(6));
+                }
+            }
+
+            if (Btn == "Mine" && DataController.instance.gameData.StoneCard >= 2 && DataController.instance.gameData.Woker != 0)
+            {
+                if (DataController.instance.gameData.gold >= 1)
+                {
+                    if (DataController.instance.gameData.QusetNum == 4)
+                    {
+                        DataController.instance.gameData.QusetNum += 1;
+                    }
+                    removeCard(2);
+                    StartCoroutine(delay(7));
+                }
+            }
+
+            if (Btn == "ForgeIron" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.IronCard >= 1
+                && DataController.instance.gameData.BranchCard >= 2)
+            {
                 removeCard(1);
-                StartCoroutine(delay(6));
+                StartCoroutine(delay(4));
             }
-        }
 
-        if (Btn == "Mine" && DataController.instance.gameData.StoneCard >= 2)
-        {
-            if (DataController.instance.gameData.gold >= 1)
+            if (Btn == "ForgeGold" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.GoldCard >= 1
+                && DataController.instance.gameData.BranchCard >= 1)
             {
-                if (DataController.instance.gameData.QusetNum == 4)
-                {
-                    DataController.instance.gameData.QusetNum += 1;
-                }
-                removeCard(2);
-                StartCoroutine(delay(7));
+                removeCard(1);
+                StartCoroutine(delay(5));
             }
-        }
 
-        if (Btn == "ForgeIron" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.IronCard >= 1
-            && DataController.instance.gameData.BranchCard >= 2)
-        {
-            removeCard(1);
-            StartCoroutine(delay(4));
-        }
-
-        if(Btn == "ForgeGold" && DataController.instance.gameData.WoodCard >= 2 & DataController.instance.gameData.GoldCard >= 1
-            && DataController.instance.gameData.BranchCard >= 1)
-        {
-            removeCard(1);
-            StartCoroutine(delay(5));
-        }
-
-        if(Btn == "Wood" && DataController.instance.gameData.Woker != 0)
-        {
-            StartCoroutine(delay(8));
-        }
-
-        if (Btn == "House" && DataController.instance.gameData.PlayerCount >= 2 && DataController.instance.gameData.gold > 15 && DataController.instance.gameData.Woker >= 2) 
-        {
-            StartCoroutine(delay(9));
-            DataController.instance.gameData.gold -= 15;
+            if (Btn == "House" && DataController.instance.gameData.PlayerCount >= 2 && DataController.instance.gameData.gold > 15
+                && DataController.instance.gameData.Woker >= 2)
+            {
+                StartCoroutine(delay(10));
+                DataController.instance.gameData.gold -= 15;
+            }
         }
     }
 
@@ -368,9 +361,215 @@ public class CardManager : MonoBehaviour
         }
     }
 
+    IEnumerator delay(int i)
+    {
+        DataController.instance.gameData.Skill = false;
+        Debug.Log(DataController.instance.gameData.Woker);
+
+        if (i < 10) { DataController.instance.gameData.Woker -= 1; }
+        else { DataController.instance.gameData.Woker -= 2; }
+
+        Debug.Log(DataController.instance.gameData.Woker);
+
+        if (i == 1) //나무
+        {
+            removeCard(3);
+            DataController.instance.gameData.TreeCard -= 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 0);
+            DataController.instance.gameData.WoodCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 0);
+            DataController.instance.gameData.WoodCard += 1;
+        }
+
+        if (i == 2) // 돌
+        {
+            removeCard(4);
+            DataController.instance.gameData.RockCard -= 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 1);
+            DataController.instance.gameData.StoneCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 1);
+            DataController.instance.gameData.StoneCard += 1;
+        }
+
+        if (i == 3) //바나나
+        {
+            removeCard(5);
+            DataController.instance.gameData.BananaTreeCard -= 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 5);
+            DataController.instance.gameData.BananaCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 5);
+            DataController.instance.gameData.BananaCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 5);
+            DataController.instance.gameData.BananaCard += 1;
+        }
+
+        if (i == 4) //은
+        {
+            removeCard(1);
+            removeCard(6);
+            removeCard(8);
+            DataController.instance.gameData.WoodCard -= 2;
+            DataController.instance.gameData.BranchCard -= 1;
+            DataController.instance.gameData.IronIngotCard -= 1;
+
+            yield return new WaitForSeconds(5.0f);
+
+            CreateCard(1, 2);
+            DataController.instance.gameData.IronCard += 1;
+        }
+
+        if (i == 5) //금
+        {
+            removeCard(1);
+            removeCard(7);
+            removeCard(8);
+
+            DataController.instance.gameData.WoodCard -= 2;
+            DataController.instance.gameData.BranchCard -= 1;
+            DataController.instance.gameData.GoldCard -= 1;
+
+            yield return new WaitForSeconds(5.0f);
+
+            CreateCard(1, 3);
+            DataController.instance.gameData.GoldIngotCard += 1;
+        }
+
+        if (i == 6) //판자
+        {
+            removeCard(1);
+            removeCard(8);
+            DataController.instance.gameData.WoodCard -= 2;
+            DataController.instance.gameData.BranchCard -= 1;
+
+            if (DataController.instance.gameData.QusetNum == 6)
+            {
+                DataController.instance.gameData.QusetNum += 1;
+            }
+
+            yield return new WaitForSeconds(5.0f);
+
+            CreateCard(1, 0);
+            DataController.instance.gameData.PanelCard += 1;
+        }
+
+        if (i == 7) //벽돌
+        {
+            removeCard(2);
+            DataController.instance.gameData.StoneCard -= 2;
+
+            yield return new WaitForSeconds(5.0f);
+
+            CreateCard(1, 1);
+            DataController.instance.gameData.BrickCard += 1;
+        }
+
+        if (i == 8) //나뭇가지
+        {
+            removeCard(1);
+            DataController.instance.gameData.WoodCard -= 1;
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(1, 4);
+            DataController.instance.gameData.BranchCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(1, 4);
+            DataController.instance.gameData.BranchCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(1, 4);
+            DataController.instance.gameData.BranchCard += 1;
+
+            if (DataController.instance.gameData.QusetNum == 1)
+            {
+                DataController.instance.gameData.QusetNum += 1;
+            }
+        }
+
+        if (i == 10)//주민
+        {
+            yield return new WaitForSeconds(60.0f);
+
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
+            GameObject _Card1 = Instantiate(playerPre, new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+            DataController.instance.gameData.PlayerCount += 1;
+        }
+
+        if (i == 9)
+        {
+            removeCard(9);
+            DataController.instance.gameData.StrawBerryTreeCard -= 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 6);
+            DataController.instance.gameData.StrawBerryCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 6);
+            DataController.instance.gameData.StrawBerryCard += 1;
+
+            yield return new WaitForSeconds(2.0f);
+
+            CreateCard(0, 6);
+            DataController.instance.gameData.StrawBerryCard += 1;
+        }
+
+        Debug.Log(DataController.instance.gameData.Woker);
+
+        if (i < 10) { DataController.instance.gameData.Woker += 1; }
+        else { DataController.instance.gameData.Woker -= 2; }
+
+        Debug.Log(DataController.instance.gameData.Woker);
+        StopCoroutine(delay(0));
+        yield return null;
+    }
+
+    void CreateCard(int i , int j)
+    {
+        if (i == 0)
+        {
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
+
+            GameObject _Card1 = Instantiate(BasicCardSet[j], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+        }
+        if (i == 1)
+        {
+            float randPosX = Random.Range(-5f, 5f);
+            float randPosY = Random.Range(-4f, 2f);
+            GameObject _Card1 = Instantiate(IntermediatCardSet[j], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+        }
+    }
+
     void removeCard(int i)
     {
-        switch(i)
+        switch (i)
         {
             case 1: //나무 삭제
                 GameObject _delCard1 = GameObject.Find("Wood(Clone)");
@@ -404,209 +603,39 @@ public class CardManager : MonoBehaviour
                 GameObject _delCard8 = GameObject.Find("Branch(Clone)");
                 Destroy(_delCard8);
                 break;
+            case 9:
+                GameObject _delCard9 = GameObject.Find("StrawBerryTree(Clone)");
+                Destroy(_delCard9);
+                break;
         }
 
     }
 
-    IEnumerator delay(int i)
+    void addCardCount(int i)
     {
-        DataController.instance.gameData.Skill = false;
-        if (i < 8)
-        { Woker += 1;}
-        else
-        { Woker += 2; }
+        if (i == 0) DataController.instance.gameData.WoodCard += 1;
+        if (i == 1) DataController.instance.gameData.StoneCard += 1;
+        if (i == 2) DataController.instance.gameData.TreeCard += 1;
+        if (i == 3) DataController.instance.gameData.RockCard += 1;
+        if (i == 4) DataController.instance.gameData.BananaTreeCard += 1;
+        if (i == 5) DataController.instance.gameData.BananaCard += 1;
+        if (i == 6) DataController.instance.gameData.StrawBerryCard += 1;
+        if (i == 7) DataController.instance.gameData.StrawBerryTreeCard += 1;
+        if (i == 8) DataController.instance.gameData.IronCard += 1;
+        if (i == 9) DataController.instance.gameData.GoldCard += 1;
+    }
 
-        if (i == 1) //나무
-        {
-            removeCard(3);
-            DataController.instance.gameData.TreeCard -= 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-
-            GameObject _Card1 = Instantiate(BasicCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.WoodCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-
-            _Card1 = Instantiate(BasicCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.WoodCard += 1;
-        }
-
-        if (i == 2) // 돌
-        {
-            removeCard(4);
-
-            DataController.instance.gameData.RockCard -= 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-
-            GameObject _Card1 = Instantiate(BasicCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.StoneCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-
-            _Card1 = Instantiate(BasicCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.StoneCard += 1;
-        }
-
-        if (i == 3) //바나나
-        {
-            removeCard(5);
-            DataController.instance.gameData.BananaTreeCard -= 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-
-            GameObject _Card1 = Instantiate(BasicCardSet[5], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BananaCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-
-            _Card1 = Instantiate(BasicCardSet[5], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BananaCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-
-            _Card1 = Instantiate(BasicCardSet[5], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BananaCard += 1;
-
-            if (DataController.instance.gameData.QusetNum == 2)
-            {
-                DataController.instance.gameData.QusetNum += 1;
-            }
-        }
-
-        if (i == 4) //은
-        {
-            removeCard(1);
-            removeCard(6);
-            removeCard(8);
-            DataController.instance.gameData.WoodCard -= 2;
-            DataController.instance.gameData.BranchCard -= 1;
-            DataController.instance.gameData.IronIngotCard -= 1;
-
-            yield return new WaitForSeconds(5.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(IntermediatCardSet[2], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.IronCard += 1;
-        }
-
-        if (i == 5) //금
-        {
-            removeCard(1);
-            removeCard(7);
-            removeCard(8);
-
-            DataController.instance.gameData.WoodCard -= 2;
-            DataController.instance.gameData.BranchCard -= 1;
-            DataController.instance.gameData.GoldCard -= 1;
-
-            yield return new WaitForSeconds(5.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(IntermediatCardSet[3], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.GoldIngotCard += 1;
-        }
-
-        if (i == 6) //판자
-        {
-            removeCard(1);
-            removeCard(8);
-            DataController.instance.gameData.WoodCard -= 2;
-            DataController.instance.gameData.BranchCard -= 1;
-
-            if (DataController.instance.gameData.QusetNum == 6)
-            {
-                DataController.instance.gameData.QusetNum += 1;
-            }
-
-            yield return new WaitForSeconds(5.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(IntermediatCardSet[0], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.PanelCard += 1;
-        }
-        
-        if (i == 7) //벽돌
-        {
-            removeCard(2);
-            DataController.instance.gameData.StoneCard -= 2;
-
-            yield return new WaitForSeconds(5.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(IntermediatCardSet[1], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BrickCard += 1;
-        }
-
-        if (i == 8) //나뭇가지
-        {
-            removeCard(1);
-            DataController.instance.gameData.WoodCard -= 2;
-            yield return new WaitForSeconds(2.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(IntermediatCardSet[4], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BranchCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-            _Card1 = Instantiate(IntermediatCardSet[4], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BranchCard += 1;
-
-            yield return new WaitForSeconds(2.0f);
-
-            randPosX = Random.Range(-5f, 5f);
-            randPosY = Random.Range(-4f, 2f);
-            _Card1 = Instantiate(IntermediatCardSet[4], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.BranchCard += 1;
-
-            if (DataController.instance.gameData.QusetNum == 1)
-            {
-                DataController.instance.gameData.QusetNum += 1;
-            }
-        }
-
-        if (i == 9)//주민
-        {
-            yield return new WaitForSeconds(60.0f);
-
-            float randPosX = Random.Range(-5f, 5f);
-            float randPosY = Random.Range(-4f, 2f);
-            GameObject _Card1 = Instantiate(playerPre, new Vector3(randPosX, randPosY, 0), Quaternion.identity);
-            DataController.instance.gameData.PlayerCount += 1;
-        }
-        if (i < 8) { Woker -= 1; }
-        else { Woker -= 2; }
-        StopCoroutine(delay(0));
-        yield return null;
+    void stdCardCount(int i)
+    {
+        if (i == 0) DataController.instance.gameData.WoodCard -= 1;
+        if (i == 1) DataController.instance.gameData.StoneCard -= 1;
+        if (i == 2) DataController.instance.gameData.TreeCard -= 1;
+        if (i == 3) DataController.instance.gameData.RockCard -= 1;
+        if (i == 4) DataController.instance.gameData.BananaTreeCard -= 1;
+        if (i == 5) DataController.instance.gameData.BananaCard -= 1;
+        if (i == 6) DataController.instance.gameData.StrawBerryCard -= 1;
+        if (i == 7) DataController.instance.gameData.StrawBerryTreeCard -= 1;
+        if (i == 8) DataController.instance.gameData.IronCard -= 1;
+        if (i == 9) DataController.instance.gameData.GoldCard -= 1;
     }
 }
