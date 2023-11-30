@@ -59,6 +59,7 @@ public class UImanager : MonoBehaviour
 
     public TextMeshProUGUI GoldText;
     public TextMeshProUGUI FoodCount;
+    public TextMeshProUGUI WokerCount;
 
     public TextMeshProUGUI CardInfoText;
     public TextMeshProUGUI CardNameText;
@@ -674,7 +675,8 @@ public class UImanager : MonoBehaviour
         CardCountText.GetComponent<TextMeshProUGUI>().text = "카드제한 : " + DataController.instance.gameData.CardLimit + "/" + DataController.instance.gameData.CardCount;
         DayText.GetComponent<TextMeshProUGUI>().text = "생존일 : " + DataController.instance.gameData.Day;
         FoodCount.GetComponent<TextMeshProUGUI>().text = "음식 : " + DataController.instance.gameData.FoodCount + "/" + DataController.instance.gameData.PlayerCount;
-        GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 1 / " + DataController.instance.gameData.GoldIngotCard;
+        GoalText.GetComponent<TextMeshProUGUI>().text = "목표 : 금괴 10 / " + DataController.instance.gameData.GoldIngotCard;
+        WokerCount.GetComponent<TextMeshProUGUI>().text = "일꾼 : " + DataController.instance.gameData.Woker + " / " + DataController.instance.gameData.PlayerCount;
 
         tutoBuyText.GetComponent<TextMeshProUGUI>().text = "3골드로 카드를 구매 가능합니다.";
         tutoCraftText.GetComponent<TextMeshProUGUI>().text = "재료를 모아 제작이 가능합니다..";

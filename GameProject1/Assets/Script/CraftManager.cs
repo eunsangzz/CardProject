@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class CraftManager : MonoBehaviour
 {
     public GameObject[] CraftCardSet = new GameObject[4];
+    List<GameObject> Card = new List<GameObject>();
     public GameObject ErrorUi;
     public GameObject CraftUI;
 
@@ -15,73 +16,9 @@ public class CraftManager : MonoBehaviour
     public GameObject TimberCraftUi;
     public GameObject MineCraftUi;
 
-    bool HouseCraft = false;
-    bool ForgeCraft = false;
-    bool TimberCraft = false;
-    bool MineCraft = false;
-    int CraftNum = 0;
-
     void Update()
     {
-        if(HouseCraft == true && CraftNum < 3)
-        {
-            CraftDelete(3);
-            CraftDelete(4);
-            if(CraftNum == 2)
-            {
-                HouseCraft = false;
-            }
-            CraftNum += 1;
-        }
-        if(ForgeCraft == true && CraftNum < 2)
-        {
-            CraftDelete(4);//벽돌제거
-            if(CraftNum == 1)
-            {
-                ForgeCraft = false;
-            }
-            if(CraftNum == 0)
-            {
-                CraftDelete(5);//나뭇가지제거
-            }
-            CraftNum += 1;
-        }
-        if(TimberCraft == true && CraftNum < 3)
-        {
-            CraftDelete(1);
-            if(CraftNum == 2)
-            {
-                CraftDelete(1);
-                TimberCraft = false;
-            }
-            if(CraftNum == 1)
-            {
-                CraftDelete(1);
-            }
-            if(CraftNum == 0)
-            {
-                CraftDelete(2);
-            }
-            CraftNum += 1;
-        }
-        if(MineCraft == true && CraftNum < 3)
-        {
-            CraftDelete(2);
-            if(CraftNum == 2)
-            {
-                CraftDelete(2);
-                MineCraft = false;
-            }
-            if(CraftNum == 1)
-            {
-                CraftDelete(2);
-            }
-            if(CraftNum == 0)
-            {
-                CraftDelete(1);
-            }
-            CraftNum += 1;
-        }
+       
     }
 
     public void CardCraft()
@@ -93,23 +30,12 @@ public class CraftManager : MonoBehaviour
             if (DataController.instance.gameData.PanelCard >= 3 && 
                 DataController.instance.gameData.BrickCard >= 3)
             {
-                createCard(0);
-
-                HouseCraft = true;
-                CraftNum = 0;
-
-                DataController.instance.gameData.PanelCard -= 3;
-                DataController.instance.gameData.BranchCard -= 2;
-                DataController.instance.gameData.HouseCard += 1;
-                DataController.instance.gameData.CardLimit += 3;
-
-                CraftUI.SetActive(false);
-                HouseCraftUI.SetActive(false);
+                StartCoroutine(delay(1));
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "ForgeCraft")
+        if(clickObject.name == "ForgeCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.BranchCard >= 1 && 
                 DataController.instance.gameData.BrickCard >= 2)
@@ -118,22 +44,12 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                createCard(1);
-
-                ForgeCraft = true;
-                CraftNum = 0;
-
-                DataController.instance.gameData.BranchCard -= 1;
-                DataController.instance.gameData.BrickCard -= 2;
-                DataController.instance.gameData.ForgeCard += 1;
-
-                CraftUI.SetActive(false);
-                ForgeCraftUi.SetActive(false);
+                StartCoroutine(delay(3));
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "TimberCraft")
+        if(clickObject.name == "TimberCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1)
@@ -142,22 +58,12 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                createCard(2);
-
-                TimberCraft = true;
-                CraftNum = 0;
-
-                DataController.instance.gameData.WoodCard -= 3;
-                DataController.instance.gameData.StoneCard -= 1;
-                DataController.instance.gameData.TimberCard += 1;
-
-                CraftUI.SetActive(false);
-                TimberCraftUi.SetActive(false);
+                StartCoroutine(delay(4));
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "MineCraft")
+        if(clickObject.name == "MineCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 3)
@@ -166,17 +72,18 @@ public class CraftManager : MonoBehaviour
                 {
                     DataController.instance.gameData.QusetNum += 1;
                 }
-                createCard(3);
+                StartCoroutine(delay(2));
+            }
+            else ErrorUi.SetActive(true);
+        }
 
-                MineCraft = true;
-                CraftNum = 0;
-
-                DataController.instance.gameData.WoodCard -= 1;
-                DataController.instance.gameData.StoneCard -= 3;
-                DataController.instance.gameData.MineCard += 1;
-
-                CraftUI.SetActive(false);
-                MineCraftUi.SetActive(false);
+        if(clickObject.name == "Kitchen")
+        {
+            if(DataController.instance.gameData.WoodCard >= 2 &&
+                DataController.instance.gameData.StoneCard >= 2&&
+                DataController.instance.gameData.IronIngotCard >= 2)
+            {
+                createCard(5);
             }
             else ErrorUi.SetActive(true);
         }
@@ -226,38 +133,88 @@ public class CraftManager : MonoBehaviour
         ErrorUi.SetActive(false);
     }
 
-    void CraftDelete(int CardNum)
-    {
-        switch(CardNum)
-        {
-            case 1:
-                GameObject _delWoodCard1 = GameObject.Find("Wood(Clone)");
-                Destroy(_delWoodCard1);
-                break;
-            case 2:
-                GameObject _delStoneCard = GameObject.Find("Stone(Clone)");
-                Destroy(_delStoneCard);
-                break;
-            case 3:
-                GameObject _delPanelCard = GameObject.Find("Panel(Clone)");
-                Destroy(_delPanelCard);
-                break;
-            case 4:
-                GameObject _delBrickCard = GameObject.Find("Brick(Clone)");
-                Destroy(_delBrickCard);
-                break;
-            case 5:
-                GameObject _delBranchCard = GameObject.Find("Branch(Clone)");
-                Destroy(_delBranchCard);
-                break;
-        }
-    }
 
     void createCard(int i)
     {
         float randPosX = Random.Range(-5f, 5f);
         float randPosY = Random.Range(-4f, 2f);
-        GameObject _Card = Instantiate(CraftCardSet[i], new Vector3(randPosX, randPosY, 0), Quaternion.identity);
+        DataController.instance.gameData.Card.Add(Instantiate(CraftCardSet[i], new Vector3(randPosX, randPosY, 0), Quaternion.identity));
+    }
+
+    IEnumerator delay(int i)
+    {
+        if (i < 10) { DataController.instance.gameData.Woker -= 1; }
+        CraftUI.SetActive(false);
+        MineCraftUi.SetActive(false);
+
+        if (i == 1)//집
+        {
+            for (int u = 0; u < 3; u++)
+            {
+                removeCard(13);
+                removeCard(14);
+            }
+            yield return new WaitForSeconds(60.0f);
+
+            createCard(0);
+        }
+
+        if (i == 2)//채석장
+        {
+            removeCard(0);
+            for (int u = 0; u < 3; u++)
+            {
+                removeCard(1);
+            }
+            yield return new WaitForSeconds(60.0f);
+
+            createCard(1);
+
+        }
+
+        if (i == 3)//용광로
+        {
+            removeCard(10);
+            for (int u = 0; u < 2; u++)
+            {
+                removeCard(13);
+            }
+            yield return new WaitForSeconds(60.0f);
+
+            createCard(2);
+
+        }
+
+        if (i == 4)//제재소
+        {
+            removeCard(1);
+            for (int u = 0; u < 3; u++)
+            {
+                removeCard(0);
+            }
+            yield return new WaitForSeconds(60.0f);
+
+            createCard(3);
+
+        }
+
+        if (i == 4)//주방
+        {
+            for (int u = 0; u < 2; u++)
+            {
+                removeCard(0);
+                removeCard(1);
+                removeCard(11);
+            }
+            yield return new WaitForSeconds(60.0f);
+
+            createCard(4);
+
+        }
+
+        if (i < 10) { DataController.instance.gameData.Woker += 1; }
+        StopCoroutine(delay(0));
+        yield return null;
     }
     public void backspaceBtn()
     {
@@ -267,5 +224,266 @@ public class CraftManager : MonoBehaviour
         ForgeCraftUi.SetActive(false);
         TimberCraftUi.SetActive(false);
     }
+
+    void removeCard(int i)
+    {
+        switch (i)
+        {
+            case 0: //통나무 삭제
+                foreach (GameObject wood in DataController.instance.gameData.Card)
+                {
+                    if (wood.name == "Wood(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(wood);
+                        Destroy(wood);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 1://돌삭제
+                foreach (GameObject stone in DataController.instance.gameData.Card)
+                {
+                    if (stone.name == "Stone(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(stone);
+                        Destroy(stone);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 2://나무 삭제
+                foreach (GameObject tree in DataController.instance.gameData.Card)
+                {
+                    if (tree.name == "Tree(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(tree);
+                        Destroy(tree);
+                        DataController.instance.gameData.stdCardCount(3);
+                        break;
+                    }
+                };
+                break;
+            case 3://암석삭제
+                foreach (GameObject rock in DataController.instance.gameData.Card)
+                {
+                    if (rock.name == "Rock(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(rock);
+                        Destroy(rock);
+                        DataController.instance.gameData.stdCardCount(3);
+                        break;
+                    }
+                }
+                break;
+            case 4://바나나나무
+                foreach (GameObject bananatree in DataController.instance.gameData.Card)
+                {
+                    if (bananatree.name == "BananaTree(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(bananatree);
+                        Destroy(bananatree);
+                        DataController.instance.gameData.stdCardCount(4);
+                        break;
+                    }
+                }
+                break;
+            case 5: //바나나
+                foreach (GameObject banana in DataController.instance.gameData.Card)
+                {
+                    if (banana.name == "Banana(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(banana);
+                        Destroy(banana);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 6: //딸기
+                foreach (GameObject berry in DataController.instance.gameData.Card)
+                {
+                    if (berry.name == "StrawBerry(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(berry);
+                        Destroy(berry);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 7://딸기나무
+                foreach (GameObject berry in DataController.instance.gameData.Card)
+                {
+                    if (berry.name == "StrawBerryTree(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(berry);
+                        Destroy(berry);
+                        DataController.instance.gameData.stdCardCount(7);
+                        break;
+                    }
+                }
+                break;
+            case 8://철광석
+                foreach (GameObject iron in DataController.instance.gameData.Card)
+                {
+                    if (iron.name == "Iron(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(iron);
+                        Destroy(iron);
+                        DataController.instance.gameData.stdCardCount(8);
+                        break;
+                    }
+                };
+                break;
+            case 9://금광석
+                foreach (GameObject gold in DataController.instance.gameData.Card)
+                {
+                    if (gold.name == "Gold(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(gold);
+                        Destroy(gold);
+                        DataController.instance.gameData.stdCardCount(9);
+                        break;
+                    }
+                }
+                break;
+            case 10://나뭇가지
+                foreach (GameObject branch in DataController.instance.gameData.Card)
+                {
+                    if (branch.name == "Branch(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(branch);
+                        Destroy(branch);
+                        DataController.instance.gameData.stdCardCount(10);
+                        break;
+                    }
+                }
+                break;
+            case 11: //은괴
+                foreach (GameObject iron in DataController.instance.gameData.Card)
+                {
+                    if (iron.name == "IronIngot(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(iron);
+                        Destroy(iron);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 12: //금괴
+                foreach (GameObject gold in DataController.instance.gameData.Card)
+                {
+                    if (gold.name == "GoldIngot(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(gold);
+                        Destroy(gold);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 13: //벽돌
+                foreach (GameObject brick in DataController.instance.gameData.Card)
+                {
+                    if (brick.name == "Brick(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(brick);
+                        Destroy(brick);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 14: //판자
+                foreach (GameObject panel in DataController.instance.gameData.Card)
+                {
+                    if (panel.name == "Panel(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(panel);
+                        Destroy(panel);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 15: //집
+                foreach (GameObject house in DataController.instance.gameData.Card)
+                {
+                    if (house.name == "House(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(house);
+                        Destroy(house);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 16: //용광로
+                foreach (GameObject forge in DataController.instance.gameData.Card)
+                {
+                    if (forge.name == "Forge(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(forge);
+                        Destroy(forge);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 17: //제재소
+                foreach (GameObject timber in DataController.instance.gameData.Card)
+                {
+                    if (timber.name == "Timber(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(timber);
+                        Destroy(timber);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 18: //벽돌공장
+                foreach (GameObject mine in DataController.instance.gameData.Card)
+                {
+                    if (mine.name == "Mine(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(mine);
+                        Destroy(mine);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 19: //주방
+                foreach (GameObject kitchen in DataController.instance.gameData.Card)
+                {
+                    if (kitchen.name == "Kitchen(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(kitchen);
+                        Destroy(kitchen);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+            case 20://주민
+                foreach (GameObject player in DataController.instance.gameData.Card)
+                {
+                    if (player.name == "Player(Clone)")
+                    {
+                        DataController.instance.gameData.Card.Remove(player);
+                        Destroy(player);
+                        DataController.instance.gameData.stdCardCount(1);
+                        break;
+                    }
+                }
+                break;
+        }
+
+    }
+
 
 }
