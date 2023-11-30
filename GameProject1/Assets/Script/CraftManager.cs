@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class CraftManager : MonoBehaviour
 {
     public GameObject[] CraftCardSet = new GameObject[4];
-    List<GameObject> Card = new List<GameObject>();
     public GameObject ErrorUi;
     public GameObject CraftUI;
 
@@ -23,19 +22,20 @@ public class CraftManager : MonoBehaviour
 
     public void CardCraft()
     {
-        GameObject clickObject = EventSystem.current.currentSelectedGameObject;
+        string clickObject = EventSystem.current.currentSelectedGameObject.name;
 
-        if(clickObject.name == "HouseCraft" && DataController.instance.gameData.Woker != 0)
+        if (clickObject == "HouseCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.PanelCard >= 3 && 
                 DataController.instance.gameData.BrickCard >= 3)
             {
                 StartCoroutine(delay(1));
+                DataController.instance.gameData.HouseCard += 1;
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "ForgeCraft" && DataController.instance.gameData.Woker != 0)
+        if(clickObject == "ForgeCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.BranchCard >= 1 && 
                 DataController.instance.gameData.BrickCard >= 2)
@@ -45,11 +45,12 @@ public class CraftManager : MonoBehaviour
                     DataController.instance.gameData.QusetNum += 1;
                 }
                 StartCoroutine(delay(3));
+                DataController.instance.gameData.ForgeCard += 1;
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "TimberCraft" && DataController.instance.gameData.Woker != 0)
+        if(clickObject == "TimberCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1)
@@ -59,11 +60,12 @@ public class CraftManager : MonoBehaviour
                     DataController.instance.gameData.QusetNum += 1;
                 }
                 StartCoroutine(delay(4));
+                DataController.instance.gameData.TimberCard += 1;
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "MineCraft" && DataController.instance.gameData.Woker != 0)
+        if(clickObject == "MineCraft" && DataController.instance.gameData.Woker != 0)
         {
             if (DataController.instance.gameData.WoodCard >= 1 && 
                 DataController.instance.gameData.StoneCard >= 3)
@@ -73,17 +75,19 @@ public class CraftManager : MonoBehaviour
                     DataController.instance.gameData.QusetNum += 1;
                 }
                 StartCoroutine(delay(2));
+                DataController.instance.gameData.MineCard += 1;
             }
             else ErrorUi.SetActive(true);
         }
 
-        if(clickObject.name == "Kitchen")
+        if(clickObject == "Kitchen")
         {
             if(DataController.instance.gameData.WoodCard >= 2 &&
                 DataController.instance.gameData.StoneCard >= 2&&
                 DataController.instance.gameData.IronIngotCard >= 2)
             {
                 createCard(5);
+                DataController.instance.gameData.KitchenCard += 1;
             }
             else ErrorUi.SetActive(true);
         }
@@ -143,6 +147,7 @@ public class CraftManager : MonoBehaviour
 
     IEnumerator delay(int i)
     {
+        Debug.Log("startCraft");
         if (i < 10) { DataController.instance.gameData.Woker -= 1; }
         CraftUI.SetActive(false);
         MineCraftUi.SetActive(false);
@@ -166,9 +171,9 @@ public class CraftManager : MonoBehaviour
             {
                 removeCard(1);
             }
-            yield return new WaitForSeconds(60.0f);
+            yield return new WaitForSeconds(30.0f);
 
-            createCard(1);
+            createCard(3);
 
         }
 
@@ -179,9 +184,9 @@ public class CraftManager : MonoBehaviour
             {
                 removeCard(13);
             }
-            yield return new WaitForSeconds(60.0f);
+            yield return new WaitForSeconds(30.0f);
 
-            createCard(2);
+            createCard(1);
 
         }
 
@@ -192,10 +197,9 @@ public class CraftManager : MonoBehaviour
             {
                 removeCard(0);
             }
-            yield return new WaitForSeconds(60.0f);
+            yield return new WaitForSeconds(5.0f);
 
-            createCard(3);
-
+            createCard(2);
         }
 
         if (i == 4)//주방
@@ -206,16 +210,18 @@ public class CraftManager : MonoBehaviour
                 removeCard(1);
                 removeCard(11);
             }
-            yield return new WaitForSeconds(60.0f);
+            yield return new WaitForSeconds(30.0f);
 
             createCard(4);
 
         }
 
         if (i < 10) { DataController.instance.gameData.Woker += 1; }
+
         StopCoroutine(delay(0));
         yield return null;
     }
+
     public void backspaceBtn()
     {
         CraftList.SetActive(true);
@@ -237,6 +243,7 @@ public class CraftManager : MonoBehaviour
                         DataController.instance.gameData.Card.Remove(wood);
                         Destroy(wood);
                         DataController.instance.gameData.stdCardCount(1);
+                        Debug.Log("wooddel");
                         break;
                     }
                 }

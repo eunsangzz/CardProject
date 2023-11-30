@@ -12,7 +12,6 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
-    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridBrush
     - UnityEditor.Tilemaps.GridPaintingState
@@ -1671,7 +1670,7 @@ ScriptsOnlyBuild:
     className: ScrollRect
   - hash:
       serializedVersion: 2
-      Hash: 91e0fe0fb2f308c9a7d89ea6450530fd
+      Hash: 07f36bcef0e0e06d2cda46f8477c9925
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: DataController

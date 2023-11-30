@@ -74,9 +74,22 @@ public class CardManager : MonoBehaviour
             else if (DataController.instance.gameData.QusetNum != 1 && DataController.instance.gameData.QusetNum > 2) //필드내 플레이어가 2명이상 일때
             {
                 int rand = Random.Range(0, 8); //랜덤값으로 카드 생성
-                CreateCard(0, rand);
-                DataController.instance.gameData.addCardCount(rand);
-                DataController.instance.gameData.gold -= 3;
+                if(rand > 6) //음식 생성
+                {
+                    int rand2 = Random.Range(4, 8);
+                    CreateCard(0, rand2);
+                    DataController.instance.gameData.addCardCount(rand2);
+                    DataController.instance.gameData.gold -= 3;
+
+                }
+                else
+                {
+                    int rand3 = Random.Range(0, 4);
+                    CreateCard(0, rand3);
+                    DataController.instance.gameData.addCardCount(rand3);
+                    DataController.instance.gameData.gold -= 3;
+
+                };
             }
 
             if (DataController.instance.gameData.QusetNum == 2)
@@ -425,8 +438,9 @@ public class CardManager : MonoBehaviour
 
         if (i == 4) //은
         {
-            removeCard(1);
-            removeCard(6);
+            removeCard(0);
+            removeCard(0);
+            removeCard(10);
             removeCard(8);
 
             yield return new WaitForSeconds(5.0f);
@@ -437,10 +451,10 @@ public class CardManager : MonoBehaviour
 
         if (i == 5) //금
         {
-            removeCard(1);
-            removeCard(1);
-            removeCard(7);
-            removeCard(8);
+            removeCard(0);
+            removeCard(0);
+            removeCard(10);
+            removeCard(9);
 
             yield return new WaitForSeconds(5.0f);
 
@@ -452,9 +466,9 @@ public class CardManager : MonoBehaviour
         {
             for (int u = 0; u < 2; u++)
             {
-                removeCard(1);
+                removeCard(0);
             }
-            removeCard(8);
+            removeCard(10);
 
             if (DataController.instance.gameData.QusetNum == 6)
             {
@@ -471,7 +485,7 @@ public class CardManager : MonoBehaviour
         {
             for (int u = 0; u < 2; u++)
             {
-                removeCard(2);
+                removeCard(1);
             }
 
             yield return new WaitForSeconds(5.0f);
@@ -518,7 +532,7 @@ public class CardManager : MonoBehaviour
 
         if (i == 9) //딸기
         {
-            removeCard(9);
+            removeCard(7);
 
             yield return new WaitForSeconds(2.0f);
 
@@ -572,7 +586,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(wood);
                         Destroy(wood);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(0);
                         break;
                     }
                 }
@@ -632,7 +646,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(banana);
                         Destroy(banana);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(5);
                         break;
                     }
                 }
@@ -644,7 +658,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(berry);
                         Destroy(berry);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(6);
                         break;
                     }
                 }
@@ -704,7 +718,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(iron);
                         Destroy(iron);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(11);
                         break;
                     }
                 }
@@ -716,7 +730,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(gold);
                         Destroy(gold);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(12);
                         break;
                     }
                 }
@@ -728,7 +742,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(brick);
                         Destroy(brick);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(13);
                         break;
                     }
                 }
@@ -740,7 +754,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(panel);
                         Destroy(panel);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(14);
                         break;
                     }
                 }
@@ -752,7 +766,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(house);
                         Destroy(house);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(15);
                         break;
                     }
                 }
@@ -764,7 +778,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(forge);
                         Destroy(forge);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(16);
                         break;
                     }
                 }
@@ -776,7 +790,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(timber);
                         Destroy(timber);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(17);
                         break;
                     }
                 }
@@ -788,7 +802,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(mine);
                         Destroy(mine);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(18);
                         break;
                     }
                 }
@@ -800,7 +814,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(kitchen);
                         Destroy(kitchen);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(19);
                         break;
                     }
                 }
@@ -812,7 +826,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(player);
                         Destroy(player);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(20);
                         break;
                     }
                 }
