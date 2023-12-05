@@ -52,6 +52,7 @@ public class CraftManager : MonoBehaviour
 
         if(clickObject == "TimberCraft" && DataController.instance.gameData.Woker != 0)
         {
+            Debug.Log("제재소 생성");
             if (DataController.instance.gameData.WoodCard >= 3 && 
                 DataController.instance.gameData.StoneCard >= 1)
             {
@@ -147,7 +148,6 @@ public class CraftManager : MonoBehaviour
 
     IEnumerator delay(int i)
     {
-        Debug.Log("startCraft");
         if (i < 10) { DataController.instance.gameData.Woker -= 1; }
         CraftUI.SetActive(false);
         MineCraftUi.SetActive(false);
@@ -171,10 +171,10 @@ public class CraftManager : MonoBehaviour
             {
                 removeCard(1);
             }
-            yield return new WaitForSeconds(30.0f);
+
+            yield return new WaitForSeconds(5.0f);
 
             createCard(3);
-
         }
 
         if (i == 3)//용광로
@@ -192,17 +192,19 @@ public class CraftManager : MonoBehaviour
 
         if (i == 4)//제재소
         {
+            Debug.Log("제재소 코루틴");
             removeCard(1);
             for (int u = 0; u < 3; u++)
             {
                 removeCard(0);
             }
+
             yield return new WaitForSeconds(5.0f);
 
             createCard(2);
         }
 
-        if (i == 4)//주방
+        if (i == 5)//주방
         {
             for (int u = 0; u < 2; u++)
             {
@@ -213,7 +215,6 @@ public class CraftManager : MonoBehaviour
             yield return new WaitForSeconds(30.0f);
 
             createCard(4);
-
         }
 
         if (i < 10) { DataController.instance.gameData.Woker += 1; }
@@ -233,6 +234,7 @@ public class CraftManager : MonoBehaviour
 
     void removeCard(int i)
     {
+        Debug.Log("카드삭제 시작");
         switch (i)
         {
             case 0: //통나무 삭제
@@ -242,8 +244,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(wood);
                         Destroy(wood);
-                        DataController.instance.gameData.stdCardCount(1);
-                        Debug.Log("wooddel");
+                        DataController.instance.gameData.stdCardCount(0);
                         break;
                     }
                 }
@@ -267,7 +268,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(tree);
                         Destroy(tree);
-                        DataController.instance.gameData.stdCardCount(3);
+                        DataController.instance.gameData.stdCardCount(2);
                         break;
                     }
                 };
@@ -303,7 +304,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(banana);
                         Destroy(banana);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(5);
                         break;
                     }
                 }
@@ -315,7 +316,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(berry);
                         Destroy(berry);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(6);
                         break;
                     }
                 }
@@ -375,7 +376,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(iron);
                         Destroy(iron);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(11);
                         break;
                     }
                 }
@@ -387,7 +388,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(gold);
                         Destroy(gold);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(12);
                         break;
                     }
                 }
@@ -399,7 +400,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(brick);
                         Destroy(brick);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(13);
                         break;
                     }
                 }
@@ -411,7 +412,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(panel);
                         Destroy(panel);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(14);
                         break;
                     }
                 }
@@ -423,7 +424,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(house);
                         Destroy(house);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(15);
                         break;
                     }
                 }
@@ -435,7 +436,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(forge);
                         Destroy(forge);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(16);
                         break;
                     }
                 }
@@ -447,7 +448,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(timber);
                         Destroy(timber);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(17);
                         break;
                     }
                 }
@@ -459,7 +460,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(mine);
                         Destroy(mine);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(18);
                         break;
                     }
                 }
@@ -471,7 +472,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(kitchen);
                         Destroy(kitchen);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(19);
                         break;
                     }
                 }
@@ -483,7 +484,7 @@ public class CraftManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(player);
                         Destroy(player);
-                        DataController.instance.gameData.stdCardCount(1);
+                        DataController.instance.gameData.stdCardCount(20);
                         break;
                     }
                 }

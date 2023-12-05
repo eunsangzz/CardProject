@@ -216,7 +216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &26486321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2768,7 +2768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &437835388
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3458,6 +3458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d828c425f6f1b4276ad48edfe142d304, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Function: {fileID: 519420028}
   craftUi: {fileID: 1817777810}
   craftListUi: {fileID: 1036259591}
   craftUiBtn: {fileID: 179364959}
@@ -3553,8 +3554,8 @@ MonoBehaviour:
   - {fileID: 2683548558265663452, guid: 9c295f9a9c8e8dc4cb51766a7742547d, type: 3}
   - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
   - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
-  - {fileID: 2683548558265663452, guid: a543c58962bee70409c0e11a0e6c5a1d, type: 3}
-  - {fileID: 2683548558265663452, guid: 31c77a33f5eebf3438571f95e189abf4, type: 3}
+  - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
+  - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
   - {fileID: 2683548558265663452, guid: 003ada5f2a8ff4469951c35bd380c72e, type: 3}
   - {fileID: 2683548558265663452, guid: 53ec162b16a74454ab15132c3b50718c, type: 3}
   IntermediatCardSet:

@@ -76,7 +76,7 @@ public class CardManager : MonoBehaviour
                 int rand = Random.Range(0, 8); //랜덤값으로 카드 생성
                 if(rand > 6) //음식 생성
                 {
-                    int rand2 = Random.Range(4, 8);
+                    int rand2 = Random.Range(4, 5);
                     CreateCard(0, rand2);
                     DataController.instance.gameData.addCardCount(rand2);
                     DataController.instance.gameData.gold -= 3;
@@ -87,6 +87,7 @@ public class CardManager : MonoBehaviour
                     int rand3 = Random.Range(0, 4);
                     CreateCard(0, rand3);
                     DataController.instance.gameData.addCardCount(rand3);
+                    Debug.Log(DataController.instance.gameData.StoneCard);
                     DataController.instance.gameData.gold -= 3;
 
                 };
@@ -110,6 +111,8 @@ public class CardManager : MonoBehaviour
         if (DataController.instance.gameData.storeUpgrade == 1 && DataController.instance.gameData.gold >= 3 && DataController.instance.gameData.QusetNum != 0)//업그레이드 없음
         {
             int rand = Random.Range(2, 10);
+            if (rand == 6) rand = 4;
+            if (rand == 7) rand = 5;
             CreateCard(0, rand);
             DataController.instance.gameData.addCardCount(rand);
             DataController.instance.gameData.gold -= 3;
@@ -331,6 +334,7 @@ public class CardManager : MonoBehaviour
 
             if (Btn == "Mine" && DataController.instance.gameData.StoneCard >= 2 && DataController.instance.gameData.Woker != 0)
             {
+                Debug.Log("Mine");
                 if (DataController.instance.gameData.gold >= 1)
                 {
                     if (DataController.instance.gameData.QusetNum == 4)
@@ -575,7 +579,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    void removeCard(int i)
+    public void removeCard(int i)
     {
         switch (i)
         {
@@ -610,7 +614,7 @@ public class CardManager : MonoBehaviour
                     {
                         DataController.instance.gameData.Card.Remove(tree);
                         Destroy(tree);
-                        DataController.instance.gameData.stdCardCount(3);
+                        DataController.instance.gameData.stdCardCount(2);
                         break;
                     }
                 };

@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class UImanager : MonoBehaviour
 {
+    public GameObject Function;
+
     public GameObject craftUi;
     public GameObject craftListUi;
     public GameObject craftUiBtn;
@@ -96,7 +98,7 @@ public class UImanager : MonoBehaviour
     private void Start()
     {
         cardInfoUi.SetActive(false);
-        slTimer.value = 120.0f;
+        slTimer.value = 30.0f;
         tutoday = false;
         tutocraft = false;
         Time.timeScale = 0f;
@@ -107,15 +109,18 @@ public class UImanager : MonoBehaviour
 
     private void Update()
     {
+        //목표
         if (DataController.instance.gameData.GoldIngotCard == 10)
         {
             tutoEndUI.SetActive(true);
         }
 
+        //씬 저장
         Scene scene = SceneManager.GetActiveScene();
+        //튜토 실행
         if(scene.name == "Tuto") DataController.instance.gameData.tuto = true;
         else DataController.instance.gameData.tuto = false;
-
+        //퀘스트 1번 음식
         if(DataController.instance.gameData.QusetNum == 1)
         {
             if (DataController.instance.gameData.FoodCount >= 3) 
@@ -127,32 +132,31 @@ public class UImanager : MonoBehaviour
                 }
             }
         }
-
-        if(foodfull == true && slTimer.value > 0.0f)
+        //음식이 충분할 때 다음날 음식 삭제
+        if(foodfull == true && slTimer.value != 0.0f)
         {
             for(int i = 0; i < DataController.instance.gameData.PlayerCount; i++)
             {
-                GameObject food = GameObject.FindGameObjectWithTag("Food");
-                Destroy(food);
-                DataController.instance.gameData.BananaCard -=1;
-                if(i == DataController.instance.gameData.PlayerCount - 1)
+                Function.GetComponent<CardManager>().removeCard(5);
+                if (i == DataController.instance.gameData.PlayerCount - 1)
                 {
                     foodfull = false;
                 }
             }
         }
-
+        //주민 카드가0개일때 실패
         if(DataController.instance.gameData.PlayerCount == 0)
         {
             Fail();
         }
 
-        if (slTimer.value > 0.0f && DataController.instance.gameData.endDay == false && feed == false) //�ð��� �带��
+        //시간이 흐를때
+        if (slTimer.value > 0.0f && DataController.instance.gameData.endDay == false && feed == false)
         {
-            slTimer.value -= 1.0f * Time.deltaTime;
-            feedplayer = 0;
-            DataController.instance.gameData.PlayerCount = DataController.instance.gameData.PlayerCount - notfeedplayer;
-            notfeedplayer = 0;
+            slTimer.value -= 1.0f * Time.deltaTime; //시간 감소
+            feedplayer = 0; //밥을 먹은 주민 수
+            DataController.instance.gameData.PlayerCount = DataController.instance.gameData.PlayerCount - notfeedplayer; //음식을 안먹은 플레이어가 있다면 주민수 감소?
+            notfeedplayer = 0; //밥을 못먹은 주민수 0으로 초기화
             if (DataController.instance.gameData.Sell == true) SellUi.SetActive(true);
             else if (DataController.instance.gameData.Sell == false) SellUi.SetActive(false);
 
@@ -177,9 +181,11 @@ public class UImanager : MonoBehaviour
             CardSkillUI();
             TutoInfoOff();
         }
-
-        else if (slTimer.value == 0.0f && Over == false) // �ð��� ��������
+        
+        //시간이 흐르지 않을 때 밤
+        else if (slTimer.value == 0.0f && Over == false)
         {
+            //튜토리얼 재생
             if(DataController.instance.gameData.tuto == true && tutoday == false) 
             {
                 tutoday = true;
@@ -191,50 +197,57 @@ public class UImanager : MonoBehaviour
             craftUi.SetActive(false);
             cardInfoUi.SetActive(false);
             cardSkillUi.SetActive(false);
+            //주민이 0명이 아니라면
             if (DataController.instance.gameData.PlayerCount != 0)
             {
+                //하루끝 활성화
                 DataController.instance.gameData.endDay = true;
+                //밥을 먹은 주민과 주민수가 같지않을때 
                 if (feedplayer != DataController.instance.gameData.PlayerCount)
                 {
+                    //밥먹기 활성화
                     feed = true;
                 }
-                if (DataController.instance.gameData.CardCount >= DataController.instance.gameData.CardLimit) //ī�尡 ������
+
+                //카드의 수가 제한량 보다 많을때
+                if (DataController.instance.gameData.CardCount > DataController.instance.gameData.CardLimit)
                 {
+                    //판매 활성화
                     DataController.instance.gameData.Sell = true;
                     cardInfoUi.SetActive(false);
                     SellBtn.SetActive(false);
                     buyBtn.SetActive(false);
                     craftUiBtn.SetActive(false);
                     SellUi.SetActive(true);
-                    if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true) //���� ������ �÷��̾� ī�尡 ������
+
+                    //밥을 먹은 주민이 더 적고 밥먹기가 활성화 되어있을때
+                    if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true)
                     {
-                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount )
+                        //음식이 필요량 보다 많을때
+                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount)
                         {
-                            foodfull = true;
-                            feed = false;
+                            foodfull = true; //음식 충분
+                            feed = false; // 밥먹기 비활성화
                         }
                         else
                         {
+                            //음식이 부족한데 밥을 못먹은 플레이어가 있다면
                             if (feedplayer != DataController.instance.gameData.PlayerCount)
                             {
-                                if (DataController.instance.gameData.FoodCount > 1)
+                                if (DataController.instance.gameData.FoodCount > 0) //음식이 한개라도 있다
                                 {
                                     if (DataController.instance.gameData.PlayerCount != 0)
                                     {
-                                        GameObject food = GameObject.FindGameObjectWithTag("Food");
-                                        Destroy(food);
-                                        DataController.instance.gameData.FoodCount -= 1;
+                                        Function.GetComponent<CardManager>().removeCard(5);
                                         feedplayer++;
                                     }
                                     else SceneManager.LoadScene("MainScene");
                                 }
-                                else
+                                else //음식이 하나도없다
                                 {
-                                    if (DataController.instance.gameData.PlayerCount != 0)
+                                    if (DataController.instance.gameData.PlayerCount != 0) //주민이 있다면
                                     {
-                                        GameObject cantfeedplayer1 = GameObject.FindGameObjectWithTag("Player");
-                                        Destroy(cantfeedplayer1);
-                                        DataController.instance.gameData.PlayerCount -=1;
+                                        Function.GetComponent<CardManager>().removeCard(20); //주민을 죽인다
                                         feedplayer++;
                                         notfeedplayer++;
                                     }
@@ -243,18 +256,16 @@ public class UImanager : MonoBehaviour
                             }
                         }
                     }
-
                     if (feedplayer == DataController.instance.gameData.PlayerCount)
                     {
-                        Debug.Log("3");
                         feed = false;
                     }
                 }
-                else //ī�尡 ������
+                else  //카드가 제한량보다 적을때
                 {
-                    if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true) //���� ������ �÷��̾� ī�尡 ������
+                    if (feedplayer != DataController.instance.gameData.PlayerCount && feed == true)
                     {
-                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount)
+                        if (DataController.instance.gameData.FoodCount >= DataController.instance.gameData.PlayerCount) //음식이 더 많다면
                         {
                             foodfull = true;
                             feed = false;
@@ -267,9 +278,7 @@ public class UImanager : MonoBehaviour
                                 {
                                     if (DataController.instance.gameData.PlayerCount != 0)
                                     {
-                                        GameObject food = GameObject.FindGameObjectWithTag("Food");
-                                        Destroy(food);
-                                        DataController.instance.gameData.FoodCount -= 1;
+                                        Function.GetComponent<CardManager>().removeCard(5);
                                         feedplayer++;
                                     }
                                 }
@@ -277,8 +286,7 @@ public class UImanager : MonoBehaviour
                                 {
                                     if (DataController.instance.gameData.PlayerCount != 0)
                                     {
-                                        GameObject cantfeedplayer1 = GameObject.FindGameObjectWithTag("Player");
-                                        Destroy(cantfeedplayer1);
+                                        Function.GetComponent<CardManager>().removeCard(20);
                                         feedplayer++;
                                         notfeedplayer++;
                                     }

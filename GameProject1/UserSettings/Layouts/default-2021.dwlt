@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1357
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Hierarchy
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 19
+  controlID: 25
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 20
+  controlID: 26
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -165,8 +165,8 @@ MonoBehaviour:
     y: 0
     width: 1730
     height: 968
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 11}
   m_Panes:
   - {fileID: 11}
@@ -192,8 +192,8 @@ MonoBehaviour:
     y: 968
     width: 1730
     height: 339
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 13}
@@ -499,9 +499,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 1320.0002, y: 516, z: 0}
+    m_Target: {x: 639.8033, y: 562.19666, z: -18.51884}
     speed: 2
-    m_Value: {x: 1320.0002, y: 516, z: 0}
+    m_Value: {x: 639.8033, y: 562.19666, z: -18.51884}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -552,9 +552,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 442.70093
+    m_Target: 677.8147
     speed: 2
-    m_Value: 442.70093
+    m_Value: 677.8147
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -712,21 +712,21 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Script
+    - Assets/Prefab/Prefab
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Script
+  - Assets/Prefab/Prefab
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\ajffj\Desktop\CardProject\GameProject1
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 42}
-    m_SelectedIDs: 626a0000
-    m_LastClickedID: 27234
+    m_SelectedIDs: f67d0000
+    m_LastClickedID: 32246
     m_ExpandedIDs: 00000000386a00003a6a00003c6a00003e6a0000406a000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -780,8 +780,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 3c630000
-    m_LastClickedInstanceID: 25404
+    m_SelectedInstanceIDs: 60610000
+    m_LastClickedInstanceID: 24928
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300002c73000094630000dc630000c863000054710000e67f0000267c0000d06f0000c2760000bc630000707b0000867f00002864000044be000068680000f8660000fc73000004740000b074000024740000447400003a7500006c74000084740000107400005c740000507c0000206400001c740000f67a0000367500002e7500007c740000f8740000287400002c740000ec74000038740000687400004e750000d8740000da640000de640000fa66000094650000168900008e6500006866000092650000b06800006c6c0000746a00000e690000c68900008a8500007c7f000044720000987c000000660000ba650000127b0000646b0000a46b0000646a0000446900007ed5000078d5000084d500008ad80000e6d8000046d80000aada00005ada00001cda0000bed800006ada0000d6d70000c8d70000a4d600003eda0000d6da000012d7000038d80000a0d7000096d800001adb000088da000064d9000022d90000c66d0000086b000026b700008888000010b90000586600005a800000327e00003a7e00008a6d0000706f000000000000226b00001e6b0000606c0000
     m_RenameOverlay:
@@ -870,9 +870,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 3c630000
-      m_LastClickedID: 25404
-      m_ExpandedIDs: 2afbfffff26000006c6200003c630000e0630000f2640000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
