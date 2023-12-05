@@ -216,7 +216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &26486321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2768,7 +2768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &437835388
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7067,8 +7067,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uBCBD\uB3CC\uC744 \uC81C\uC791\uD560\uC218\uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC\n\uC11D\uC7AC
-    3\uAC1C \uBAA9\uC7AC 1\uAC1C"
+  m_Text: "\uBCBD\uB3CC\uC744 \uC81C\uC791\uD560\uC218\uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC
+    : \uC11D\uC7AC 3\uAC1C \uBAA9\uC7AC 1\uAC1C\n\uC18C\uC694\uC2DC\uAC04 : 30\uCD08"
 --- !u!222 &917113124
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7514,8 +7514,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uAE08\uAD34\uC640 \uCCA0\uAD34\uB97C \uB9CC\uB4E4 \uC218 \uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC\n\uB098\uBB47\uAC00\uC9C01\uAC1C
-    \uBCBD\uB3CC2\uAC1C\n"
+  m_Text: "\uAE08\uAD34\uC640 \uCCA0\uAD34\uB97C \uB9CC\uB4E4 \uC218 \uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC
+    : \uB098\uBB47\uAC00\uC9C01\uAC1C \uBCBD\uB3CC2\uAC1C\n\uC18C\uC694\uC2DC\uAC04
+    : 30\uCD08"
 --- !u!222 &991650959
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13120,8 +13121,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uCE74\uB4DC\uC81C\uD55C\uC744 3\uB298\uB824\uC900\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC\n\uBCBD\uB3CC
-    3\uAC1C \uD310\uC790 3\uAC1C"
+  m_Text: "\uCE74\uB4DC\uC81C\uD55C\uC744 3\uB298\uB824\uC900\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC
+    : \uBCBD\uB3CC 3\uAC1C \uD310\uC790 3\uAC1C\n\uC18C\uC694\uC2DC\uAC04 : 1\uBD84"
 --- !u!222 &1616108671
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13529,8 +13530,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uD310\uC790\uB97C \uC81C\uC791\uD560 \uC218 \uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC\n\uBAA9\uC7AC
-    3\uAC1C \uC11D\uC7AC 1\uAC1C"
+  m_Text: "\uD310\uC790\uB97C \uC81C\uC791\uD560 \uC218 \uC788\uB2E4\n\n\uD544\uC694\uC7AC\uB8CC
+    : \uBAA9\uC7AC 3\uAC1C \uC11D\uC7AC 1\uAC1C\n\uC18C\uC694\uC2DC\uAC04 : 30\uCD08"
 --- !u!222 &1695019714
 CanvasRenderer:
   m_ObjectHideFlags: 0

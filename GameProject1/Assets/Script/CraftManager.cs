@@ -172,7 +172,7 @@ public class CraftManager : MonoBehaviour
                 removeCard(1);
             }
 
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(15.0f);
 
             createCard(3);
         }
@@ -199,7 +199,7 @@ public class CraftManager : MonoBehaviour
                 removeCard(0);
             }
 
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(15.0f);
 
             createCard(2);
         }

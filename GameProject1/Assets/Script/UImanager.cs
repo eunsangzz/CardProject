@@ -98,7 +98,7 @@ public class UImanager : MonoBehaviour
     private void Start()
     {
         cardInfoUi.SetActive(false);
-        slTimer.value = 30.0f;
+        slTimer.value = 120.0f;
         tutoday = false;
         tutocraft = false;
         Time.timeScale = 0f;
