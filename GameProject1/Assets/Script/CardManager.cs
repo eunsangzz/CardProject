@@ -27,6 +27,15 @@ public class CardManager : MonoBehaviour
 
     private Dictionary<string, (int removeIndex, int gold)> _sellMap;
 
+
+    //프리팹 basename 매핑
+    private static readonly string[] _indexToName =
+    {
+        "Wood","Stone","Tree","Rock","BananaTree","Banana","StrawBerry","StrawBerryTree",
+        "Iron","Gold","Branch","IronIngot","GoldIngot","Brick","Panel","House",
+        "Forge","Timber","Mine","Kitchen","Player"
+    };
+
     private void Awake()
     {
         _sellMap = new Dictionary<string, (int, int)>
@@ -60,8 +69,13 @@ public class CardManager : MonoBehaviour
         tutobuy = false;
         tutosell = false;
 
-        DataController.instance.gameData.Card.Add(
-            Instantiate(PlayerCard, new Vector3(0, 0, 0), Quaternion.identity));
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults(); //card null방지
+
+        var go = Instantiate(PlayerCard, Vector3.zero, Quaternion.identity);
+        go.name = PlayerCard.name;
+        gd.Card.Add(go);
+
     }
 
     private void Update()
@@ -155,9 +169,13 @@ public class CardManager : MonoBehaviour
     public void Cheat()
     {
         var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
 
         Vector3 pos = GetRandomSpawnPos();
-        Instantiate(IntermediatCardSet[3], pos, Quaternion.identity);
+        var go = Instantiate(IntermediatCardSet[3], pos, Quaternion.identity);
+        go.name = IntermediatCardSet[3].name;
+        gd.Card.Add(go);
+
         gd.GoldIngotCard += 1;
     }
 
@@ -203,6 +221,8 @@ public class CardManager : MonoBehaviour
         {
             removeCard(sellInfo.removeIndex);
             gd.gold += sellInfo.gold;
+
+            RecalcSafe();
         }
     }
 
@@ -277,14 +297,8 @@ public class CardManager : MonoBehaviour
     {
         var gd = DataController.instance.gameData;
 
-        if (gd.storeUpgrade == 0 && gd.gold >= 30)
-        {
-            gd.storeUpgrade += 1;
-        }
-        if (gd.storeUpgrade == 1 && gd.gold >= 60)
-        {
-            gd.storeUpgrade += 1;
-        }
+        if (gd.storeUpgrade == 0 && gd.gold >= 30) gd.storeUpgrade += 1;
+        if (gd.storeUpgrade == 1 && gd.gold >= 60) gd.storeUpgrade += 1;
     }
 
     IEnumerator delay(int i)
@@ -294,6 +308,8 @@ public class CardManager : MonoBehaviour
         gd.Skill = false;
 
         int workerCost = (i < 10) ? 1 : 2;
+
+        gd.Woker -= workerCost;
 
         if (i == 1) // 나무 -> 목재 2개
         {
@@ -403,25 +419,43 @@ public class CardManager : MonoBehaviour
 
         gd.Woker += workerCost;
 
+
+        RecalcSafe();
         yield break;
     }
 
     private void CreateCard(bool isBasic, int index)
     {
         var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
         Vector3 pos = GetRandomSpawnPos();
 
         if (isBasic)
-            gd.Card.Add(Instantiate(BasicCardSet[index], pos, Quaternion.identity));
+        {
+            var go = Instantiate(BasicCardSet[index], pos, Quaternion.identity);
+            go.name = BasicCardSet[index].name;
+            gd.Card.Add(go);
+        }
         else
-            gd.Card.Add(Instantiate(IntermediatCardSet[index], pos, Quaternion.identity));
+        {
+            var go = Instantiate(IntermediatCardSet[index], pos, Quaternion.identity);
+            go.name = IntermediatCardSet[index].name;
+            gd.Card.Add(go);
+        }
+
+        RecalcSafe();
     }
 
     private void SpawnPlayer()
     {
         var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
         Vector3 pos = GetRandomSpawnPos();
-        gd.Card.Add(Instantiate(playerPre, pos, Quaternion.identity));
+        var go = Instantiate(playerPre, pos, Quaternion.identity);
+        go.name = playerPre.name;
+        gd.Card.Add(go);
     }
 
     private Vector3 GetRandomSpawnPos()
@@ -439,40 +473,16 @@ public class CardManager : MonoBehaviour
 
     public void removeCard(int i)
     {
-        string prefabName = i switch
-        {
-            0 => "Wood",
-            1 => "Stone",
-            2 => "Tree",
-            3 => "Rock",
-            4 => "BananaTree",
-            5 => "Banana",
-            6 => "StrawBerry",
-            7 => "StrawBerryTree",
-            8 => "Iron",
-            9 => "Gold",
-            10 => "Branch",
-            11 => "IronIngot",
-            12 => "GoldIngot",
-            13 => "Brick",
-            14 => "Panel",
-            15 => "House",
-            16 => "Forge",
-            17 => "Timber",
-            18 => "Mine",
-            19 => "Kitchen",
-            20 => "Player",
-            _ => null
-        };
+        if (i < 0 || i >= _indexToName.Length) return;
+        RemoveFirstCardByPrefabName(_indexToName[i], i);
 
-        if (string.IsNullOrEmpty(prefabName)) return;
-
-        RemoveFirstCardByPrefabName(prefabName, i);
+        RecalcSafe();
     }
 
     private void RemoveFirstCardByPrefabName(string prefabName, int stdCardCountIndex)
     {
         var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
 
         for (int idx = 0; idx < gd.Card.Count; idx++)
         {
@@ -487,5 +497,11 @@ public class CardManager : MonoBehaviour
             return;
         }
 
+    }
+
+    private void RecalcSafe()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.RecalculateTotals();
     }
 }

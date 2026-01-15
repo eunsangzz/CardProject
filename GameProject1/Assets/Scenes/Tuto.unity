@@ -3373,6 +3373,8 @@ GameObject:
   - component: {fileID: 519420034}
   - component: {fileID: 519420035}
   - component: {fileID: 519420036}
+  - component: {fileID: 519420038}
+  - component: {fileID: 519420037}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3477,51 +3479,24 @@ MonoBehaviour:
   WoodSkillBtn: {fileID: 1306796859}
   HouseSkillBtn: {fileID: 996474784}
   bananaTreeBtn: {fileID: 1920593514}
-  StoreUpBtn: {fileID: 1941142291}
   StrawBerryTreeBtn: {fileID: 1659380690}
+  StoreUpBtn: {fileID: 1941142291}
   tutoInfoUi: {fileID: 1939291273}
   tutoDayUi: {fileID: 214562662}
   tutoBtnUi: {fileID: 114774256}
   tutoBuy: {fileID: 2025055683}
-  tutoBuyText: {fileID: 2025055685}
   tutoSell: {fileID: 501698024}
-  tutoSellText: {fileID: 501698026}
   tutoCraft: {fileID: 1293862981}
-  tutoCraftText: {fileID: 1293862983}
   tutoDay: {fileID: 1317647967}
-  tutoDayText: {fileID: 1317647969}
   tutoStoreUp: {fileID: 1225949407}
-  tutoStoreUpText: {fileID: 1225949409}
   tutoStart: {fileID: 463746775}
-  WoodCountText: {fileID: 92508497}
-  StoneCountText: {fileID: 130923622}
-  IronCountText: {fileID: 1760462324}
-  GoldCountText: {fileID: 1259978630}
-  PanelCountText: {fileID: 1996116868}
-  BrickCountText: {fileID: 1510878996}
-  IronIngotCountText: {fileID: 691601947}
-  GoldIngotCountText: {fileID: 736062137}
-  BranchCountText: {fileID: 737236681}
-  GoldText: {fileID: 538314024}
-  FoodCount: {fileID: 2093124640}
-  WokerCount: {fileID: 1452855171}
   CardInfoText: {fileID: 268741102}
   CardNameText: {fileID: 2094526747}
-  CardCountText: {fileID: 1233650864}
-  DayText: {fileID: 1593303764}
-  StoreUpText: {fileID: 0}
   ErrorMessage: {fileID: 783878529}
   ErrorMessageText: {fileID: 112689739}
   GameOverMessage: {fileID: 469569989}
-  StoreOver: {fileID: 0}
-  gameOver: {fileID: 894126722}
   tutoEndUI: {fileID: 0}
-  tutoEndText: {fileID: 0}
-  GoalText: {fileID: 795708260}
-  StartText: {fileID: 1237598970}
-  QuestText: {fileID: 2075412639}
-  QuestNumText: {fileID: 597774272}
-  slTimer: {fileID: 646224813}
+  dayNight: {fileID: 0}
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3534,6 +3509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4df1d311b0f24e65a96c768d8697242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resetOnStart: 1
 --- !u!114 &519420035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3571,6 +3547,7 @@ MonoBehaviour:
   tutoBuy: {fileID: 2025055683}
   tutoUi: {fileID: 1939291273}
   tutoBtnUi: {fileID: 114774256}
+  workerError: {fileID: 0}
   wokerError: {fileID: 994502251}
 --- !u!114 &519420036
 MonoBehaviour:
@@ -3596,6 +3573,60 @@ MonoBehaviour:
   ForgeCraftUi: {fileID: 1099904875}
   TimberCraftUi: {fileID: 1375848670}
   MineCraftUi: {fileID: 2092886649}
+  _cardManager: {fileID: 0}
+--- !u!114 &519420037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df00ab9590aa95449b4449e52df3bce5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slTimer: {fileID: 646224813}
+  dayNight: {fileID: 0}
+  WoodCountText: {fileID: 92508497}
+  StoneCountText: {fileID: 130923622}
+  IronCountText: {fileID: 1760462324}
+  GoldCountText: {fileID: 1259978630}
+  PanelCountText: {fileID: 1996116868}
+  BrickCountText: {fileID: 1510878996}
+  IronIngotCountText: {fileID: 691601947}
+  GoldIngotCountText: {fileID: 736062137}
+  BranchCountText: {fileID: 737236681}
+  GoldText: {fileID: 538314024}
+  FoodCountText: {fileID: 2093124640}
+  WokerCountText: {fileID: 1452855171}
+  CardCountText: {fileID: 1233650864}
+  DayText: {fileID: 1593303764}
+  GoalText: {fileID: 795708260}
+  QuestText: {fileID: 2075412639}
+  QuestNumText: {fileID: 597774272}
+  tutoBuyText: {fileID: 2025055685}
+  tutoSellText: {fileID: 501698026}
+  tutoCraftText: {fileID: 1293862983}
+  tutoDayText: {fileID: 1317647969}
+  tutoStoreUpText: {fileID: 1225949409}
+  gameOverText: {fileID: 0}
+  startText: {fileID: 0}
+--- !u!114 &519420038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2feda17b7cf4c1141bff554005d469ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dayDuration: 120
+  cardManager: {fileID: 0}
+  sellUi: {fileID: 0}
 --- !u!1 &528215771
 GameObject:
   m_ObjectHideFlags: 0

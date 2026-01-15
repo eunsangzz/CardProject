@@ -41,7 +41,7 @@ public class CraftManager : MonoBehaviour
             QuestAdvanceIf = questAdvanceIf;
         }
 
-        public bool CanCraft(dynamic gd)
+        public bool CanCraft()
         {
             for (int i = 0; i < _reqs.Count; i++)
                 if (_reqs[i].CurrentCount() < _reqs[i].Need)
@@ -82,8 +82,10 @@ public class CraftManager : MonoBehaviour
 
     private void Awake()
     {
+        if (_cardManager == null)
+            _cardManager = FindObjectOfType<CardManager>();
 
-        _categoryPanels = new Dictionary<string, GameObject>
+        _categoryPanels = new Dictionary<string, GameObject> //추후 카드 추가시 여기에 추가
         {
             {"House", HouseCraftUI },
             { "Forge", ForgeCraftUi },
@@ -91,7 +93,7 @@ public class CraftManager : MonoBehaviour
             { "Mine",  MineCraftUi },
         };
 
-        _recipes = new Dictionary<string, CraftRecipe>
+        _recipes = new Dictionary<string, CraftRecipe> // 제작 카드 레시피
         {
             {"HouseCraft", new CraftRecipe(
                 workerCost: 1,
@@ -168,10 +170,16 @@ public class CraftManager : MonoBehaviour
             return;
         }
 
+        if (_cardManager == null)
+        {
+            ErrorUi.SetActive(true);
+            return;
+        }
+
         if (!_recipes.TryGetValue(btnt, out var recipe))
             return;
 
-        if (!recipe.CanCraft(gd))
+        if (!recipe.CanCraft())
         {
             ErrorUi.SetActive(true);
             return;
@@ -201,9 +209,9 @@ public class CraftManager : MonoBehaviour
         recipe.OnSuccess?.Invoke();
 
         gd.Woker += recipe.WorkerCost;
+
+        RecalcSafe();
         yield break;
-
-
     }
 
     public void CraftUi()
@@ -237,13 +245,17 @@ public class CraftManager : MonoBehaviour
     }
     private void SpawnCraftOutput(int prefabIndex)
     {
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
+        if (prefabIndex < 0 || prefabIndex >= CraftCardSet.Length) return;
+
         Vector3 pos = GetRandomSpawnPos();
-
         var go = Instantiate(CraftCardSet[prefabIndex], pos, Quaternion.identity);
-
         go.name = CraftCardSet[prefabIndex].name;
 
-        DataController.instance.gameData.Card.Add(go);
+        gd.Card.Add(go);
+        RecalcSafe();
     }
 
     private Vector3 GetRandomSpawnPos()
@@ -267,10 +279,17 @@ public class CraftManager : MonoBehaviour
             }
 
             gd.KitchenCard += 1;
+            RecalcSafe();
         }
         else
         {
             ErrorUi.SetActive(true);
         }
+    }
+
+    private void RecalcSafe()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.RecalculateTotals();
     }
 }

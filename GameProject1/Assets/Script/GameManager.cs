@@ -5,71 +5,131 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    { 
-        DataController.instance.gameData.Card = new List<GameObject>();
-        //게임실행시 그 전 데이터 초기화 출시시 삭제
-        DataController.instance.gameData.storeUpgrade = 0; //나중에 삭제
-        DataController.instance.gameData.WoodCard = 0;
-        DataController.instance.gameData.StoneCard = 0;
-        DataController.instance.gameData.HouseCard = 0;
-        DataController.instance.gameData.BananaCard = 0;
-        DataController.instance.gameData.BananaTreeCard = 0;
-        DataController.instance.gameData.StrawBerryCard = 0;
-        DataController.instance.gameData.StrawBerryTreeCard = 0;
-        DataController.instance.gameData.TreeCard = 0;
-        DataController.instance.gameData.RockCard = 0;
-        DataController.instance.gameData.BranchCard = 0;
-        DataController.instance.gameData.BrickCard = 0;
-        DataController.instance.gameData.IronCard = 0;
-        DataController.instance.gameData.IronIngotCard = 0;
-        DataController.instance.gameData.GoldCard = 0;
-        DataController.instance.gameData.GoldIngotCard = 0;
-        DataController.instance.gameData.TimberCard = 0;
-        DataController.instance.gameData.MineCard = 0;
-        DataController.instance.gameData.RockCard = 0;
-        DataController.instance.gameData.TreeCard = 0;
-        DataController.instance.gameData.PanelCard = 0;
-        DataController.instance.gameData.ForgeCard = 0;
-        DataController.instance.gameData.KitchenCard = 0;
+    public static GameManager Instance { get; private set; }
 
-        DataController.instance.gameData.gold = 500;
-        DataController.instance.gameData.CardLimit =15;
-        DataController.instance.gameData.CardCount = 0;
-        DataController.instance.gameData.PlayerCount = 1;
-        DataController.instance.gameData.Day = 0;
-        DataController.instance.gameData.FoodCount = 0;
-        DataController.instance.gameData.Stage =1;
-        DataController.instance.gameData.BossStage = false;
-        DataController.instance.gameData.storeUpgrade = 0;
-        DataController.instance.gameData.Woker = 0;
-        DataController.instance.gameData.QusetNum = 0;
+    [Header("Dev")]
+    [SerializeField] private bool resetOnStart = true; //세이브 적용시 fasle
 
-        DataController.instance.gameData.Sell = false;
-        DataController.instance.gameData.Skill = false;
-        DataController.instance.gameData.endDay = false;
-        DataController.instance.gameData.Fight = false;
-        DataController.instance.gameData.Boss1Hp = 45;
-        DataController.instance.gameData.Boss2Hp = 70;
-        DataController.instance.gameData.Woker = 1;
-    }
+    private GameData _gd;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        DataController.instance.gameData.CardCount = (DataController.instance.gameData.WoodCard + DataController.instance.gameData.StoneCard +
-        DataController.instance.gameData.TreeCard + DataController.instance.gameData.RockCard + DataController.instance.gameData. BananaTreeCard +
-        DataController.instance.gameData.IronCard + DataController.instance.gameData.GoldCard + DataController.instance.gameData.HouseCard +
-        DataController.instance.gameData.GoldIngotCard + DataController.instance.gameData.IronIngotCard + DataController.instance.gameData.BrickCard +
-        DataController.instance.gameData.PanelCard + DataController.instance.gameData.TimberCard+ DataController.instance.gameData.MineCard +
-        DataController.instance.gameData.ForgeCard + DataController.instance.gameData.BananaCard + DataController.instance.gameData.BranchCard);
+        if (Instance != null && Instance != this) //싱글톤
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        DataController.instance.gameData.FoodCount = DataController.instance.gameData.BananaCard + DataController.instance.gameData.StrawBerryCard;
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        _gd = DataController.instance.gameData;
+        _gd.EnsureRuntimeDefaults();
+    }
+    // Start is called before the first frame update
+    private void Start()
+    {
+        if (resetOnStart)
+            resetForNewGame();
+
+        RecalculateTotals();
     }
 
-    void MainSecne()
+    private void LoadMainSecne()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    public void resetForNewGame()
+    {
+        _gd.storeUpgrade = 0;
+
+        _gd.WoodCard = 0;
+        _gd.StoneCard = 0;
+        _gd.TreeCard = 0;
+        _gd.RockCard = 0;
+
+        _gd.BananaTreeCard = 0;
+        _gd.BananaCard = 0;
+
+        _gd.StrawBerryTreeCard = 0;
+        _gd.StrawBerryCard = 0;
+
+        _gd.BranchCard = 0;
+        _gd.BrickCard = 0;
+        _gd.PanelCard = 0;
+
+        _gd.IronCard = 0;
+        _gd.IronIngotCard = 0;
+
+        _gd.GoldCard = 0;
+        _gd.GoldIngotCard = 0;
+
+        _gd.ForgeCard = 0;
+        _gd.TimberCard = 0;
+        _gd.MineCard = 0;
+        _gd.KitchenCard = 0;
+
+        _gd.HouseCard = 0;
+
+        // 게임 진행/경제
+        _gd.gold = 500;
+        _gd.CardLimit = 15;
+        _gd.CardCount = 0;
+
+        _gd.PlayerCount = 1;
+        _gd.Day = 0;
+        _gd.Stage = 1;
+
+        _gd.BossStage = false;
+        _gd.Boss1Hp = 45;
+        _gd.Boss2Hp = 70;
+
+        _gd.Woker = 1;
+        _gd.QusetNum = 0;
+
+        // 상태 플래그
+        _gd.Sell = false;
+        _gd.Skill = false;
+        _gd.endDay = false;
+        _gd.Fight = false;
+
+        // 런타임 카드 리스트는 “비우기”만 하고 새 리스트로 덮어쓰지 않음
+        _gd.EnsureRuntimeDefaults();
+        _gd.Card.Clear();
+
+        RecalculateTotals();
+    }
+
+    private static int ComputeFoodCount(GameData gd)
+    {
+        return gd.BananaCard + gd.StrawBerryCard;
+    }
+
+    public void RecalculateTotals()
+    {
+        _gd.FoodCount = _gd.BananaCard + _gd.StrawBerryCard;
+
+        _gd.CardCount =
+            _gd.WoodCard +
+            _gd.StoneCard +
+            _gd.TreeCard +
+            _gd.RockCard +
+            _gd.BananaTreeCard +
+            _gd.BananaCard +
+            _gd.StrawBerryTreeCard +
+            _gd.StrawBerryCard +
+            _gd.IronCard +
+            _gd.GoldCard +
+            _gd.BranchCard +
+            _gd.IronIngotCard +
+            _gd.GoldIngotCard +
+            _gd.BrickCard +
+            _gd.PanelCard +
+            _gd.HouseCard +
+            _gd.ForgeCard +
+            _gd.TimberCard +
+            _gd.MineCard +
+            _gd.KitchenCard;
     }
 }
