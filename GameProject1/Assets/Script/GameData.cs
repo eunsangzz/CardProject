@@ -1,9 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
 
 [Serializable]
 
@@ -58,59 +55,114 @@ public class GameData
     public bool tuto;
 
     public int Woker;
-
     public int QusetNum;
 
-    public List<GameObject> Card;
+    [NonSerialized] public List<GameObject> Card;
+
     public int storeUpgrade; // 상점 단계에 따라 나오는 재료카드 많아짐
 
-    public void addCardCount(int i)
+    public void EnsureRuntimeDefaults()
     {
-        if (i == 0) DataController.instance.gameData.WoodCard += 1;
-        if (i == 1) DataController.instance.gameData.StoneCard += 1;
-        if (i == 2) DataController.instance.gameData.TreeCard += 1;
-        if (i == 3) DataController.instance.gameData.RockCard += 1;
-        if (i == 4) DataController.instance.gameData.BananaTreeCard += 1;
-        if (i == 5) DataController.instance.gameData.BananaCard += 1;
-        if (i == 6) DataController.instance.gameData.StrawBerryCard += 1;
-        if (i == 7) DataController.instance.gameData.StrawBerryTreeCard += 1;
-        if (i == 8) DataController.instance.gameData.IronCard += 1;
-        if (i == 9) DataController.instance.gameData.GoldCard += 1;
-        if (i == 10) DataController.instance.gameData.BranchCard += 1;
-        if (i == 11) DataController.instance.gameData.IronIngotCard += 1;
-        if (i == 12) DataController.instance.gameData.GoldIngotCard += 1;
-        if (i == 13) DataController.instance.gameData.BrickCard += 1;
-        if (i == 14) DataController.instance.gameData.PanelCard += 1;
-        if (i == 15) DataController.instance.gameData.HouseCard += 1;
-        if (i == 16) DataController.instance.gameData.ForgeCard += 1;
-        if (i == 17) DataController.instance.gameData.TimberCard += 1;
-        if (i == 18) DataController.instance.gameData.MineCard += 1;
-        if (i == 19) DataController.instance.gameData.KitchenCard += 1;
-        if (i == 20) DataController.instance.gameData.PlayerCount += 1;
+        if (Card == null) Card = new List<GameObject>();
     }
 
-    public void stdCardCount(int i)
+    public void addCardCount(int i) => AddByIndex(i, 1);
+    public void stdCardCount(int i) => AddByIndex(i, -1);
+
+    private void AddByIndex(int i, int delta)
     {
-        if (i == 0) DataController.instance.gameData.WoodCard -= 1;
-        if (i == 1) DataController.instance.gameData.StoneCard -= 1;
-        if (i == 2) DataController.instance.gameData.TreeCard -= 1;
-        if (i == 3) DataController.instance.gameData.RockCard -= 1;
-        if (i == 4) DataController.instance.gameData.BananaTreeCard -= 1;
-        if (i == 5) DataController.instance.gameData.BananaCard -= 1;
-        if (i == 6) DataController.instance.gameData.StrawBerryCard -= 1;
-        if (i == 7) DataController.instance.gameData.StrawBerryTreeCard -= 1;
-        if (i == 8) DataController.instance.gameData.IronCard -= 1;
-        if (i == 9) DataController.instance.gameData.GoldCard -= 1;
-        if (i == 10) DataController.instance.gameData.BranchCard -= 1;
-        if (i == 11) DataController.instance.gameData.IronIngotCard -= 1;
-        if (i == 12) DataController.instance.gameData.GoldIngotCard -= 1;
-        if (i == 13) DataController.instance.gameData.BrickCard -= 1;
-        if (i == 14) DataController.instance.gameData.PanelCard -= 1;
-        if (i == 15) DataController.instance.gameData.HouseCard -= 1;
-        if (i == 16) DataController.instance.gameData.ForgeCard -= 1;
-        if (i == 17) DataController.instance.gameData.TimberCard -= 1;
-        if (i == 18) DataController.instance.gameData.MineCard -= 1;
-        if (i == 19) DataController.instance.gameData.KitchenCard -= 1;
-        if (i == 20) DataController.instance.gameData.PlayerCount -= 1;
+        switch (i)
+        {
+            case 0: WoodCard += delta; break;
+            case 1: StoneCard += delta; break;
+            case 2: TreeCard += delta; break;
+            case 3: RockCard += delta; break;
+            case 4: BananaTreeCard += delta; break;
+            case 5: BananaCard += delta; break;
+            case 6: StrawBerryCard += delta; break;
+            case 7: StrawBerryTreeCard += delta; break;
+            case 8: IronCard += delta; break;
+            case 9: GoldCard += delta; break;
+            case 10: BranchCard += delta; break;
+            case 11: IronIngotCard += delta; break;
+            case 12: GoldIngotCard += delta; break;
+            case 13: BrickCard += delta; break;
+            case 14: PanelCard += delta; break;
+            case 15: HouseCard += delta; break;
+            case 16: ForgeCard += delta; break;
+            case 17: TimberCard += delta; break;
+            case 18: MineCard += delta; break;
+            case 19: KitchenCard += delta; break;
+            case 20: PlayerCount += delta; break;
+            default: break;
+        }
+
+        ClampNonNegative();
+
+    }
+
+    private void ClampNonNegative()
+    {
+        WoodCard = Mathf.Max(0, WoodCard);
+        StoneCard = Mathf.Max(0, StoneCard);
+        IronCard = Mathf.Max(0, IronCard);
+        GoldCard = Mathf.Max(0, GoldCard);
+        TreeCard = Mathf.Max(0, TreeCard);
+        BananaTreeCard = Mathf.Max(0, BananaTreeCard);
+        BananaCard = Mathf.Max(0, BananaCard);
+        StrawBerryCard = Mathf.Max(0, StrawBerryCard);
+        StrawBerryTreeCard = Mathf.Max(0, StrawBerryTreeCard);
+        HouseCard = Mathf.Max(0, HouseCard);
+        ForgeCard = Mathf.Max(0, ForgeCard);
+        TimberCard = Mathf.Max(0, TimberCard);
+        MineCard = Mathf.Max(0, MineCard);
+        RockCard = Mathf.Max(0, RockCard);
+        PanelCard = Mathf.Max(0, PanelCard);
+        BrickCard = Mathf.Max(0, BrickCard);
+        IronIngotCard = Mathf.Max(0, IronIngotCard);
+        GoldIngotCard = Mathf.Max(0, GoldIngotCard);
+        BranchCard = Mathf.Max(0, BranchCard);
+        KitchenCard = Mathf.Max(0, KitchenCard);
+
+        PlayerCount = Mathf.Max(0, PlayerCount);
+    }
+
+    public enum CardType
+    {
+        Wood, Stone, Tree, Rock, BananaTree, Banana, StrawBerry, StrawBerryTree,
+        Iron, Gold, Branch, IronIngot, GoldIngot, Brick, Panel,
+        House, Forge, Timber, Mine, Kitchen
+    }
+
+    public void Add(CardType type, int amount = 1)
+    {
+        if (amount == 0) return;
+
+        switch (type)
+        {
+            case CardType.Wood: WoodCard += amount; break;
+            case CardType.Stone: StoneCard += amount; break;
+            case CardType.Tree: TreeCard += amount; break;
+            case CardType.Rock: RockCard += amount; break;
+            case CardType.BananaTree: BananaTreeCard += amount; break;
+            case CardType.Banana: BananaCard += amount; break;
+            case CardType.StrawBerry: StrawBerryCard += amount; break;
+            case CardType.StrawBerryTree: StrawBerryTreeCard += amount; break;
+            case CardType.Iron: IronCard += amount; break;
+            case CardType.Gold: GoldCard += amount; break;
+            case CardType.Branch: BranchCard += amount; break;
+            case CardType.IronIngot: IronIngotCard += amount; break;
+            case CardType.GoldIngot: GoldIngotCard += amount; break;
+            case CardType.Brick: BrickCard += amount; break;
+            case CardType.Panel: PanelCard += amount; break;
+            case CardType.House: HouseCard += amount; break;
+            case CardType.Forge: ForgeCard += amount; break;
+            case CardType.Timber: TimberCard += amount; break;
+            case CardType.Mine: MineCard += amount; break;
+            case CardType.Kitchen: KitchenCard += amount; break;
+            default: break;
+        }
+
+        ClampNonNegative();
     }
 }

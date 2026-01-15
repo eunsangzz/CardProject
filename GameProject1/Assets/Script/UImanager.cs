@@ -362,6 +362,13 @@ public class UImanager : MonoBehaviour
         ErrorMessage.SetActive(false);
     }
 
+
+    public class CardData : MonoBehaviour
+    {
+        public string cardName;
+        [TextArea]
+        public string description;
+    }
     private void CardInfo()
     {
         if (Input.GetMouseButton(0))

@@ -1,59 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System;
+using UnityEngine;
 
-[Serializable]
 public class DataController : MonoBehaviour
 {
-    static GameObject _container;
-
-    static GameObject Container
-    {
-        get
-        {
-            return _container;
-        }
-    }
-    static DataController _instance;
+    private static GameObject _container;
+    private static DataController _instance;
 
     public static DataController instance
     {
         get
         {
-            if(!_instance)
+            if(_instance == null)
             {
-                _container = new GameObject();
-                _container.name = "DataController";
-                _instance = _container.AddComponent(typeof(DataController)) as DataController;
+                _instance = FindObjectOfType<DataController>();
+                if (_instance != null)
+                {
+                    _container = _instance.gameObject;
+                    DontDestroyOnLoad(_container);
+                }
+                else
+                {
+                    _container = new GameObject("DataController");
+                    DontDestroyOnLoad(_container);
+                    _instance = _container.AddComponent<DataController>();
+                }
+                _instance.EnsureLoaded();
             }
+
             return _instance;
+
         }
     }
+
+    [Header("Save")]
     public string GameDataFileName = "CardWorldSave.json";
-    public GameData _gameData;
+
+    [SerializeField] private GameData _gameData;
 
     public GameData gameData
     {
         get
         {
-            if(_gameData == null)
-            {
-                LoadData();
-                SaveData();
-            }
+            EnsureLoaded();
             return _gameData;
         }
     }
+
+    private string GetFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, GameDataFileName);
+    }
+
+    private void EnsureLoaded()
+    {
+        if (_gameData != null)
+        {
+            _gameData.EnsureRuntimeDefaults();
+            return;
+        }
+
+        LoadData();
+
+        _gameData.EnsureRuntimeDefaults();
+
+        SaveData();
+    }
+
     public void LoadData()
     {
-        string filePath = Application.persistentDataPath + GameDataFileName;
+        string filePath = GetFilePath();
+
         if (File.Exists(filePath))
         {
             Debug.Log("Load Complete");
-            string FromJsonData = File.ReadAllText(filePath);
-            _gameData = JsonUtility.FromJson<GameData>(FromJsonData);
+            string fromJson = File.ReadAllText(filePath);
+            _gameData = JsonUtility.FromJson<GameData>(fromJson);
+            if (_gameData == null) _gameData = new GameData();
         }
         else
         {
@@ -63,15 +86,33 @@ public class DataController : MonoBehaviour
     }
     public void SaveData()
     {
-        string ToJsonData = JsonUtility.ToJson(gameData);
-        string filePath = Application.persistentDataPath + GameDataFileName;
-        File.WriteAllText(filePath, ToJsonData);
+        EnsureLoaded();
+
+        string toJson = JsonUtility.ToJson(gameData);
+        string filePath = GetFilePath();
+
+        File.WriteAllText(filePath, toJson);
         Debug.Log("Save Complete");
     }
 
     private void OnApplicationQuit()
     {
         SaveData();
+    }
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this;
+        _container = gameObject;
+        DontDestroyOnLoad(gameObject);
+
+        EnsureLoaded();
     }
 }
 
