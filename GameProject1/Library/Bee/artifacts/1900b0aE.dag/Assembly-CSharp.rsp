@@ -392,6 +392,7 @@
 "Assets/Script/EnemyController.cs"
 "Assets/Script/FightManager.cs"
 "Assets/Script/GameData.cs"
+"Assets/Script/GameEvents.cs"
 "Assets/Script/GameManager.cs"
 "Assets/Script/HUDManager.cs"
 "Assets/Script/MouseDrag.cs"

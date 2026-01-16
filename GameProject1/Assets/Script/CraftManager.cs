@@ -188,7 +188,7 @@ public class CraftManager : MonoBehaviour
         recipe.ConsumeMaterials(_cardManager);
 
         if (recipe.QuestAdvanceIf != null && recipe.QuestAdvanceIf())
-            gd.QusetNum += 1;
+            gd.AddQuest(1);
 
         StartCoroutine(CraftRoutine(recipe));
     }
@@ -197,7 +197,7 @@ public class CraftManager : MonoBehaviour
     {
         var gd = DataController.instance.gameData;
 
-        gd.Woker -= recipe.WorkerCost;
+        gd.AddWorker(-recipe.WorkerCost);
 
         CraftUI.SetActive(false);
         HideAllCategoryPanels();
@@ -208,7 +208,7 @@ public class CraftManager : MonoBehaviour
 
         recipe.OnSuccess?.Invoke();
 
-        gd.Woker += recipe.WorkerCost;
+        gd.AddWorker(recipe.WorkerCost);
 
         RecalcSafe();
         yield break;
@@ -278,7 +278,7 @@ public class CraftManager : MonoBehaviour
                 _cardManager.removeCard(11);
             }
 
-            gd.KitchenCard += 1;
+            gd.Add(GameData.CardType.Kitchen, 1);
             RecalcSafe();
         }
         else

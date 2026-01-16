@@ -105,15 +105,15 @@ public class CardManager : MonoBehaviour
                 if (rand1 > 7) // 랜덤값이 7초과면 플레이어 카드 생성
                 {
                     SpawnPlayer();
-                    gd.PlayerCount += 1;
-                    gd.Woker += 1;
+                    gd.AddPlayer(1);
+                    gd.AddWorker(1);
                 }
                 else // 랜덤값이 7이하일때 
                 {
                     int rand = Random.Range(0, 5);
                     CreateCard(isBasic: true, index: rand);
                     gd.addCardCount(rand);
-                    gd.gold -= 3;
+                    gd.AddGold(-3);
                 }
             }
 
@@ -125,31 +125,29 @@ public class CardManager : MonoBehaviour
                     int rand2 = 4;
                     CreateCard(isBasic: true, index: rand2);
                     gd.addCardCount(rand2);
-                    gd.gold -= 3;
-
+                    gd.AddGold(-3);
                 }
                 else
                 {
                     int rand3 = Random.Range(0, 4);
                     CreateCard(isBasic: true, index: rand3);
                     gd.addCardCount(rand3);
-                    gd.gold -= 3;
-
+                    gd.AddGold(-3);
                 };
             }
 
             if (gd.QusetNum == 2)
             {
-                gd.BananaTreeCard += 1;
-                gd.gold -= 3;
+                gd.Add(GameData.CardType.BananaTree, 1);
+                gd.AddGold(-3);
                 CreateCard(isBasic: true, index: 4);
             }
 
             if (gd.QusetNum == 0)
             {
-                gd.QusetNum += 1;
-                gd.gold -= 3;
-                gd.WoodCard += 1;
+                gd.AddQuest(1);
+                gd.AddGold(-3);
+                gd.Add(GameData.CardType.Wood, 1);
                 CreateCard(isBasic: true, index: 0);
             }
         }
@@ -161,7 +159,7 @@ public class CardManager : MonoBehaviour
 
             CreateCard(isBasic: true, index: rand);
             gd.addCardCount(rand);
-            gd.gold -= 3;
+            gd.AddGold(-3);
         }
 
     }
@@ -175,8 +173,7 @@ public class CardManager : MonoBehaviour
         var go = Instantiate(IntermediatCardSet[3], pos, Quaternion.identity);
         go.name = IntermediatCardSet[3].name;
         gd.Card.Add(go);
-
-        gd.GoldIngotCard += 1;
+        gd.Add(GameData.CardType.GoldIngot, 1);
     }
 
     public void SellActive()
@@ -220,7 +217,7 @@ public class CardManager : MonoBehaviour
         if (_sellMap.TryGetValue(key, out var sellInfo))
         {
             removeCard(sellInfo.removeIndex);
-            gd.gold += sellInfo.gold;
+            gd.AddGold(sellInfo.gold);
 
             RecalcSafe();
         }
@@ -248,7 +245,7 @@ public class CardManager : MonoBehaviour
             if (Btn == "BananaTree" && gd.Woker != 0)
             {
                 StartCoroutine(delay(3));
-                if (gd.QusetNum == 2) gd.QusetNum += 1;
+                if (gd.QusetNum == 2) gd.AddQuest(1);
             }
 
             if (Btn == "StrawBerryTree") StartCoroutine(delay(9));
@@ -258,7 +255,7 @@ public class CardManager : MonoBehaviour
             {
                 if (gd.gold >= 1)
                 {
-                    if (gd.QusetNum == 4) gd.QusetNum += 1;
+                    if (gd.QusetNum == 4) gd.AddQuest(1);
                     StartCoroutine(delay(6));
                 }
             }
@@ -267,7 +264,7 @@ public class CardManager : MonoBehaviour
             {
                 if (gd.gold >= 1)
                 {
-                    if (gd.QusetNum == 4) gd.QusetNum += 1;
+                    if (gd.QusetNum == 4) gd.AddQuest(1);
                     StartCoroutine(delay(7));
                 }
             }
@@ -283,7 +280,7 @@ public class CardManager : MonoBehaviour
             if (Btn == "House" && gd.PlayerCount >= 2 && gd.gold > 15 && gd.Woker >= 2)
             { 
                 StartCoroutine(delay(10));
-                gd.gold -= 15;
+                gd.AddGold(-15);
             }
         }
     }
@@ -309,7 +306,7 @@ public class CardManager : MonoBehaviour
 
         int workerCost = (i < 10) ? 1 : 2;
 
-        gd.Woker -= workerCost;
+        gd.AddWorker(-workerCost);
 
         if (i == 1) // 나무 -> 목재 2개
         {
@@ -365,7 +362,7 @@ public class CardManager : MonoBehaviour
             removeCard(0); removeCard(0);
             removeCard(10);
 
-            if (gd.QusetNum == 6) gd.QusetNum += 1;
+            if (gd.QusetNum == 6) gd.AddQuest(1);
 
             yield return new WaitForSeconds(5f);
 
@@ -393,7 +390,7 @@ public class CardManager : MonoBehaviour
 
             CreateCard(false, 4); gd.addCardCount(10);
 
-            if (gd.QusetNum == 1) gd.QusetNum += 1;
+            if (gd.QusetNum == 1) gd.AddQuest(1);
         }
         else if (i == 9) // 딸기 3개
         {
@@ -413,11 +410,10 @@ public class CardManager : MonoBehaviour
             yield return new WaitForSeconds(60f);
 
             SpawnPlayer();
-            gd.PlayerCount += 1;
-            gd.Woker += 1;
+            gd.AddPlayer(1);
+            gd.AddWorker(1);
         }
-
-        gd.Woker += workerCost;
+        gd.AddWorker(workerCost);
 
 
         RecalcSafe();

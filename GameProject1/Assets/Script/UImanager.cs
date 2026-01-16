@@ -133,7 +133,7 @@ public class UImanager : MonoBehaviour
             {
                 delayQuest += Time.deltaTime;
                 if (delayQuest >= 2f)
-                    gd.QusetNum += 1;
+                    gd.AddQuest(1);
             }
         }
 
@@ -429,7 +429,7 @@ public class UImanager : MonoBehaviour
             if (gd.QusetNum == 5) gd.QusetNum += 1;
 
             gd.storeUpgrade += 1;
-            gd.gold -= 100;
+            gd.AddGold(-100);
             StoreUpBtn.SetActive(false);
         }
         else if (gd.gold < 100 && Time.timeScale != 0f)
@@ -447,7 +447,7 @@ public class UImanager : MonoBehaviour
 
     public void MainSecne()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("Tuto");
     }
 
     public void StartBtn()

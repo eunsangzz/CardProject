@@ -43,6 +43,9 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private TextMeshProUGUI startText;
 
+    private int _cachedPlayer;
+    private int _cachedFood;
+
     private void Start()
     {
         if (dayNight == null)
@@ -54,67 +57,128 @@ public class HUDManager : MonoBehaviour
             slTimer.value = dayNight.TimeLeft;
         }
 
-        // 한 번 초기 갱신
-        RefreshAll();
+        SetStaticTexts();
+
+        var gd = DataController.instance.gameData;
+        gd?.RaiseAllEvnets();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
-        // HUD는 표시 전용이라 LateUpdate에서 모아서 갱신(기존 UImanager LateUpdate 역할)
-        RefreshAll();
+        // 타이머는 이벤트로 매 프레임 쏘기엔 과해서 Update로 유지 (예외 OK)
+        if (dayNight != null && slTimer != null)
+            slTimer.value = dayNight.TimeLeft;
     }
 
-    public void RefreshAll()
+    private void OnEnable()
+    {
+        GameEvents.OnGoldChanged += UpdateGold;
+        GameEvents.OnFoodChanged += UpdateFood;
+        GameEvents.OnPlayerChanged += UpdatePlayer;
+        GameEvents.OnCardCountChanged += UpdateCardCount;
+        GameEvents.OnDayChanged += UpdateDay;
+        GameEvents.OnWorkerChanged += UpdateWorker;
+        GameEvents.OnInventoryChanged += UpdateInventory;
+        GameEvents.OnQuestChanged += UpdateQuest;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnGoldChanged -= UpdateGold;
+        GameEvents.OnFoodChanged -= UpdateFood;
+        GameEvents.OnPlayerChanged -= UpdatePlayer;
+        GameEvents.OnCardCountChanged -= UpdateCardCount;
+        GameEvents.OnDayChanged -= UpdateDay;
+        GameEvents.OnWorkerChanged -= UpdateWorker;
+        GameEvents.OnInventoryChanged -= UpdateInventory;
+        GameEvents.OnQuestChanged -= UpdateQuest;
+    }
+
+    private void UpdateGold(int value)
+    {
+        if (GoldText) GoldText.text = "골드 : " + value;
+    }
+
+    private void UpdateFood(int value)
+    {
+        _cachedFood = value;
+        if (FoodCountText) FoodCountText.text = $"음식 : {_cachedFood}/{_cachedPlayer}";
+    }
+
+    private void UpdatePlayer(int value)
+    {
+        _cachedPlayer = value;
+        if (FoodCountText) FoodCountText.text = $"음식 : {_cachedFood}/{_cachedPlayer}";
+
+        // 일꾼 표기도 플레이어 수가 필요
+        var gd = DataController.instance.gameData;
+        if (gd != null && WokerCountText) WokerCountText.text = $"일꾼 : {gd.Woker} / {gd.PlayerCount}";
+    }
+
+    private void UpdateWorker(int value)
+    {
+        var gd = DataController.instance.gameData;
+        if (gd != null && WokerCountText) WokerCountText.text = $"일꾼 : {gd.Woker} / {gd.PlayerCount}";
+    }
+
+    private void UpdateCardCount(int limit, int count)
+    {
+        if (CardCountText) CardCountText.text = $"카드제한 : {limit}/{count}";
+    }
+
+    private void UpdateDay(int value)
+    {
+        if (DayText) DayText.text = "생존일 : " + value;
+    }
+
+    private void UpdateInventory()
     {
         var gd = DataController.instance.gameData;
         if (gd == null) return;
 
-        // 타이머 표시만
-        if (dayNight != null && slTimer != null)
-            slTimer.value = dayNight.TimeLeft;
-
-        // 리소스
         if (WoodCountText) WoodCountText.text = "목재 : " + gd.WoodCard;
-        if (StoneCountText) StoneCountText.text = "석제 : " + gd.StoneCard;
+        if (StoneCountText) StoneCountText.text = "석재 : " + gd.StoneCard;
         if (IronCountText) IronCountText.text = "철광석 : " + gd.IronCard;
         if (GoldCountText) GoldCountText.text = "금광석 : " + gd.GoldCard;
+
         if (GoldIngotCountText) GoldIngotCountText.text = "금괴 : " + gd.GoldIngotCard;
         if (IronIngotCountText) IronIngotCountText.text = "철괴 : " + gd.IronIngotCard;
         if (BrickCountText) BrickCountText.text = "벽돌 : " + gd.BrickCard;
         if (PanelCountText) PanelCountText.text = "판자 : " + gd.PanelCard;
         if (BranchCountText) BranchCountText.text = "나뭇가지 : " + gd.BranchCard;
 
-        // 상단 HUD
-        if (GoldText) GoldText.text = "골드 : " + gd.gold;
-        if (CardCountText) CardCountText.text = "카드제한 : " + gd.CardLimit + "/" + gd.CardCount;
-        if (DayText) DayText.text = "생존일 : " + gd.Day;
-        if (FoodCountText) FoodCountText.text = "음식 : " + gd.FoodCount + "/" + gd.PlayerCount;
+        // Goal도 인벤토리 변화에 따라 같이 갱신(금괴)
         if (GoalText) GoalText.text = "목표 : 금괴 10 / " + gd.GoldIngotCard;
-        if (WokerCountText) WokerCountText.text = "일꾼 : " + gd.Woker + " / " + gd.PlayerCount;
+    }
 
-        // 튜토/고정 문구
+    private void UpdateQuest(int questNum)
+    {
+        if (QuestText) QuestText.text = GetQuestText(questNum);
+        if (QuestNumText) QuestNumText.text = questNum.ToString();
+    }
+
+    private void SetStaticTexts()
+    {
         if (tutoBuyText) tutoBuyText.text = "3골드로 카드를 구매 가능합니다.";
         if (tutoCraftText) tutoCraftText.text = "재료를 모아 제작이 가능합니다..";
         if (tutoDayText)
         {
             tutoDayText.text =
-                "밤이 되면 제한된 카드에 맞추어 카드를 팔아야합니다.\n" +
-                "또한 주민은 음식을 필요로 하고\n" +
-                "음식이 부족한 만큼 주민이 죽게됩니다.";
+                "밤이 되면 제한된 카드에 맞춰 카드 판매가 필요합니다.\n" +
+                "또한 주민은 음식이 필요하며\n" +
+                "음식이 부족한 만큼 주민이 죽습니다.";
         }
         if (tutoSellText)
         {
             tutoSellText.text =
-                "상단 판매가\n활성화 되어있으면\n카드를 클릭해\n팔 수 있습니다";
+                "상단 판매가 활성화 되어있으면\n" +
+                "카드를 클릭해\n" +
+                "팔 수 있습니다";
         }
         if (tutoStoreUpText) tutoStoreUpText.text = "100골드로 상점을 업그레이드 할수있습니다. 새로운 재료가 나옵니다.";
 
         if (gameOverText) gameOverText.text = "게임오버!\n모든 주민이\n음식이 없어 굶어 죽었습니다.";
-        if (startText) startText.text = "목적을 달성했습니다.\n이제 본게임으로";
-
-        // 퀘스트
-        if (QuestText) QuestText.text = GetQuestText(gd.QusetNum);
-        if (QuestNumText) QuestNumText.text = gd.QusetNum.ToString(); // 필요 없으면 제거 가능
+        if (startText) startText.text = "목표를 달성했습니다.\n이제 본게임으로";
     }
 
     private static string GetQuestText(int questNum)

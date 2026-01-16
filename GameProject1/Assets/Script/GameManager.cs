@@ -29,8 +29,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        if (resetOnStart)
-            resetForNewGame();
+        resetForNewGame();
 
         RecalculateTotals();
     }
@@ -73,20 +72,20 @@ public class GameManager : MonoBehaviour
         _gd.HouseCard = 0;
 
         // 게임 진행/경제
-        _gd.gold = 500;
-        _gd.CardLimit = 15;
-        _gd.CardCount = 0;
+        _gd.SetGold(500);
+        _gd.SetCardLimit(15);
+        _gd.SetCardCount(0);
 
-        _gd.PlayerCount = 1;
-        _gd.Day = 0;
+        _gd.SetPlayer(1);
+        _gd.SetDay(0);
         _gd.Stage = 1;
 
         _gd.BossStage = false;
         _gd.Boss1Hp = 45;
         _gd.Boss2Hp = 70;
 
-        _gd.Woker = 1;
-        _gd.QusetNum = 0;
+        _gd.SetWorker(1);
+        _gd.SetQuest(0);
 
         // 상태 플래그
         _gd.Sell = false;
@@ -108,9 +107,9 @@ public class GameManager : MonoBehaviour
 
     public void RecalculateTotals()
     {
-        _gd.FoodCount = _gd.BananaCard + _gd.StrawBerryCard;
+        _gd.SetFood(_gd.BananaCard + _gd.StrawBerryCard);
 
-        _gd.CardCount =
+        int total =
             _gd.WoodCard +
             _gd.StoneCard +
             _gd.TreeCard +
@@ -131,5 +130,7 @@ public class GameManager : MonoBehaviour
             _gd.TimberCard +
             _gd.MineCard +
             _gd.KitchenCard;
+
+        _gd.SetCardCount(total);
     }
 }

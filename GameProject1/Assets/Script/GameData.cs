@@ -66,6 +66,128 @@ public class GameData
         if (Card == null) Card = new List<GameObject>();
     }
 
+
+
+
+
+
+    public void AddGold(int amount)
+    {
+        if (amount == 0) return;
+        gold += amount;
+        gold = Mathf.Max(0, gold);
+        GameEvents.OnGoldChanged?.Invoke(gold);
+    }
+
+    public void SetGold(int value)
+    {
+        gold = Mathf.Max(0, value);
+        GameEvents.OnGoldChanged?.Invoke(gold);
+    }
+
+    public void AddFood(int amount)
+    {
+        if (amount == 0) return;
+        FoodCount += amount;
+        FoodCount = Mathf.Max(0, FoodCount);
+        GameEvents.OnFoodChanged?.Invoke(FoodCount);
+    }
+
+    public void SetFood(int value)
+    {
+        FoodCount = Mathf.Max(0, value);
+        GameEvents.OnFoodChanged?.Invoke(FoodCount);
+    }
+
+    public void AddPlayer(int amount)
+    {
+        if (amount == 0) return;
+        PlayerCount += amount;
+        PlayerCount = Mathf.Max(0, PlayerCount);
+        GameEvents.OnPlayerChanged?.Invoke(PlayerCount);
+    }
+
+    public void SetPlayer(int value)
+    {
+        PlayerCount = Mathf.Max(0, value);
+        GameEvents.OnPlayerChanged?.Invoke(PlayerCount);
+    }
+
+    public void AddWorker(int amount)
+    {
+        if (amount == 0) return;
+        Woker += amount;
+        Woker = Mathf.Max(0, Woker);
+        GameEvents.OnWorkerChanged?.Invoke(Woker);
+    }
+
+    public void SetWorker(int value)
+    {
+        Woker = Mathf.Max(0, value);
+        GameEvents.OnWorkerChanged?.Invoke(Woker);
+    }
+
+    public void AddQuest(int amount)
+    {
+        if (amount == 0) return;
+        QusetNum += amount;
+        QusetNum = Mathf.Max(0, QusetNum);
+        GameEvents.OnQuestChanged?.Invoke(QusetNum);
+    }
+
+    public void SetQuest(int value)
+    {
+        QusetNum = Mathf.Max(0, value);
+        GameEvents.OnQuestChanged?.Invoke(QusetNum);
+    }
+
+    public void SetCardCountAndLimit(int current, int limit)
+    {
+        CardCount = Mathf.Max(0, current);
+        CardLimit = Mathf.Max(0, limit);
+        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+    }
+
+    public void SetCardCount(int current)
+    {
+        CardCount = Mathf.Max(0, current);
+        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+    }
+
+    public void SetCardLimit(int limit)
+    {
+        CardLimit = Mathf.Max(0, limit);
+        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+    }
+
+    public void NextDay()
+    {
+        Day++;
+        GameEvents.OnDayChanged?.Invoke(Day);
+    }
+
+    public void SetDay(int day)
+    {
+        Day = Mathf.Max(0, day);
+        GameEvents.OnDayChanged?.Invoke(Day);
+    }
+
+
+
+
+
+    public void RaiseAllEvnets()
+    {
+        GameEvents.OnGoldChanged?.Invoke(gold);
+        GameEvents.OnFoodChanged?.Invoke(FoodCount);
+        GameEvents.OnPlayerChanged?.Invoke(PlayerCount);
+        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+        GameEvents.OnDayChanged?.Invoke(Day);
+        GameEvents.OnWorkerChanged?.Invoke(Woker);
+        GameEvents.OnQuestChanged?.Invoke(QusetNum);
+        GameEvents.OnInventoryChanged?.Invoke();
+    }
+
     public void addCardCount(int i) => AddByIndex(i, 1);
     public void stdCardCount(int i) => AddByIndex(i, -1);
 
@@ -98,7 +220,7 @@ public class GameData
         }
 
         ClampNonNegative();
-
+        GameEvents.OnInventoryChanged?.Invoke();
     }
 
     private void ClampNonNegative()
@@ -164,5 +286,6 @@ public class GameData
         }
 
         ClampNonNegative();
+        GameEvents.OnInventoryChanged?.Invoke();
     }
 }

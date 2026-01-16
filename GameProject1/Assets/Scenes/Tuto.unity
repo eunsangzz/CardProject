@@ -525,7 +525,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -1144,7 +1144,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 918695587}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: CraftUiBtn
         m_Mode: 1
@@ -1570,7 +1570,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: WokerErrorClose
         m_Mode: 1
@@ -1779,7 +1779,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 918695587}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: CraftUiCloseBtn
         m_Mode: 1
@@ -2239,7 +2239,7 @@ RectTransform:
   - {fileID: 1939291274}
   - {fileID: 1286713253}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2410,7 +2410,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CardCraft
         m_Mode: 1
@@ -2544,7 +2544,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -3368,13 +3368,6 @@ GameObject:
   m_Component:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
-  - component: {fileID: 519420029}
-  - component: {fileID: 519420033}
-  - component: {fileID: 519420034}
-  - component: {fileID: 519420035}
-  - component: {fileID: 519420036}
-  - component: {fileID: 519420038}
-  - component: {fileID: 519420037}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3382,14 +3375,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &519420029
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -3446,187 +3431,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &519420033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d828c425f6f1b4276ad48edfe142d304, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Function: {fileID: 519420028}
-  craftUi: {fileID: 1817777810}
-  craftListUi: {fileID: 1036259591}
-  craftUiBtn: {fileID: 179364959}
-  menuUi: {fileID: 0}
-  menuUiBtn: {fileID: 0}
-  buyBtn: {fileID: 2049529167}
-  SellUi: {fileID: 413550840}
-  SellBtn: {fileID: 1950852607}
-  cardInfoUi: {fileID: 1752769333}
-  cardSkillUi: {fileID: 437835387}
-  treeSkillBtn: {fileID: 227174887}
-  rockSkillBtn: {fileID: 809356084}
-  TimberSkillBtn: {fileID: 1610683543}
-  ForgeSkillBtn: {fileID: 1771789906}
-  MineSkillBtn: {fileID: 26486320}
-  WoodSkillBtn: {fileID: 1306796859}
-  HouseSkillBtn: {fileID: 996474784}
-  bananaTreeBtn: {fileID: 1920593514}
-  StrawBerryTreeBtn: {fileID: 1659380690}
-  StoreUpBtn: {fileID: 1941142291}
-  tutoInfoUi: {fileID: 1939291273}
-  tutoDayUi: {fileID: 214562662}
-  tutoBtnUi: {fileID: 114774256}
-  tutoBuy: {fileID: 2025055683}
-  tutoSell: {fileID: 501698024}
-  tutoCraft: {fileID: 1293862981}
-  tutoDay: {fileID: 1317647967}
-  tutoStoreUp: {fileID: 1225949407}
-  tutoStart: {fileID: 463746775}
-  CardInfoText: {fileID: 268741102}
-  CardNameText: {fileID: 2094526747}
-  ErrorMessage: {fileID: 783878529}
-  ErrorMessageText: {fileID: 112689739}
-  GameOverMessage: {fileID: 469569989}
-  tutoEndUI: {fileID: 0}
-  dayNight: {fileID: 0}
---- !u!114 &519420034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4df1d311b0f24e65a96c768d8697242, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resetOnStart: 1
---- !u!114 &519420035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccf034e9e839c487ab87463936082900, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerCard: {fileID: 2683548558265663452, guid: 56efe3c0348f5484e97a59757c08a75d, type: 3}
-  BasicCardSet:
-  - {fileID: 2683548558265663452, guid: 4d319b66fe1dab247a49fb537bd1ea74, type: 3}
-  - {fileID: 2683548558265663452, guid: c9897b3da5ffcb1489d59c37cc58c638, type: 3}
-  - {fileID: 2683548558265663452, guid: ea597eebc28a4e5488438ed56cc0d945, type: 3}
-  - {fileID: 2683548558265663452, guid: 9c295f9a9c8e8dc4cb51766a7742547d, type: 3}
-  - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
-  - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
-  - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
-  - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
-  - {fileID: 2683548558265663452, guid: 003ada5f2a8ff4469951c35bd380c72e, type: 3}
-  - {fileID: 2683548558265663452, guid: 53ec162b16a74454ab15132c3b50718c, type: 3}
-  IntermediatCardSet:
-  - {fileID: 2683548558265663452, guid: ed094ab93809a4a41b38beb36fce5209, type: 3}
-  - {fileID: 2683548558265663452, guid: 79872dc433b87434ca3473ff6453d1d2, type: 3}
-  - {fileID: 2683548558265663452, guid: ebab837688de34af7887ecdc974d5f40, type: 3}
-  - {fileID: 2683548558265663452, guid: db58b165bdcc34f618e8803d8033e17b, type: 3}
-  - {fileID: 2683548558265663452, guid: 3cccb221a361a6a43b53df03eb845551, type: 3}
-  - {fileID: 2683548558265663452, guid: fff19b64d86936340ad8c927247d7e85, type: 3}
-  playerPre: {fileID: 2683548558265663452, guid: 56efe3c0348f5484e97a59757c08a75d, type: 3}
-  SellUI: {fileID: 413550840}
-  tutoSell: {fileID: 501698024}
-  tutoBuy: {fileID: 2025055683}
-  tutoUi: {fileID: 1939291273}
-  tutoBtnUi: {fileID: 114774256}
-  workerError: {fileID: 0}
-  wokerError: {fileID: 994502251}
---- !u!114 &519420036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1bb2557f1acb594ca7fdc3363f25f53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CraftCardSet:
-  - {fileID: 2683548558265663452, guid: 19ec8985e2938402f8a1e237141f2e44, type: 3}
-  - {fileID: 2683548558265663452, guid: 2cb6606169a9945a09906ace1ef0e98e, type: 3}
-  - {fileID: 2683548558265663452, guid: ea13f397e2c9a4d139e1664e649ca8f4, type: 3}
-  - {fileID: 2683548558265663452, guid: 278afb8e9a18e408a93816a732a4fcc6, type: 3}
-  ErrorUi: {fileID: 0}
-  CraftUI: {fileID: 1817777810}
-  CraftList: {fileID: 1036259591}
-  HouseCraftUI: {fileID: 1888092400}
-  ForgeCraftUi: {fileID: 1099904875}
-  TimberCraftUi: {fileID: 1375848670}
-  MineCraftUi: {fileID: 2092886649}
-  _cardManager: {fileID: 0}
---- !u!114 &519420037
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df00ab9590aa95449b4449e52df3bce5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slTimer: {fileID: 646224813}
-  dayNight: {fileID: 0}
-  WoodCountText: {fileID: 92508497}
-  StoneCountText: {fileID: 130923622}
-  IronCountText: {fileID: 1760462324}
-  GoldCountText: {fileID: 1259978630}
-  PanelCountText: {fileID: 1996116868}
-  BrickCountText: {fileID: 1510878996}
-  IronIngotCountText: {fileID: 691601947}
-  GoldIngotCountText: {fileID: 736062137}
-  BranchCountText: {fileID: 737236681}
-  GoldText: {fileID: 538314024}
-  FoodCountText: {fileID: 2093124640}
-  WokerCountText: {fileID: 1452855171}
-  CardCountText: {fileID: 1233650864}
-  DayText: {fileID: 1593303764}
-  GoalText: {fileID: 795708260}
-  QuestText: {fileID: 2075412639}
-  QuestNumText: {fileID: 597774272}
-  tutoBuyText: {fileID: 2025055685}
-  tutoSellText: {fileID: 501698026}
-  tutoCraftText: {fileID: 1293862983}
-  tutoDayText: {fileID: 1317647969}
-  tutoStoreUpText: {fileID: 1225949409}
-  gameOverText: {fileID: 0}
-  startText: {fileID: 0}
---- !u!114 &519420038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2feda17b7cf4c1141bff554005d469ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dayDuration: 120
-  cardManager: {fileID: 0}
-  sellUi: {fileID: 0}
 --- !u!1 &528215771
 GameObject:
   m_ObjectHideFlags: 0
@@ -4682,7 +4488,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CraftUi
         m_Mode: 1
@@ -4895,7 +4701,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 918695587}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: ErrorMessageClose
         m_Mode: 1
@@ -5527,7 +5333,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: StartBtn
         m_Mode: 1
@@ -5742,7 +5548,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -6437,7 +6243,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &809356084
 GameObject:
@@ -6765,7 +6571,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -7108,6 +6914,222 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917113121}
   m_CullTransparentMesh: 1
+--- !u!1 &918695581
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918695588}
+  - component: {fileID: 918695587}
+  - component: {fileID: 918695586}
+  - component: {fileID: 918695585}
+  - component: {fileID: 918695584}
+  - component: {fileID: 918695583}
+  - component: {fileID: 918695582}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &918695582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df00ab9590aa95449b4449e52df3bce5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slTimer: {fileID: 646224813}
+  dayNight: {fileID: 0}
+  WoodCountText: {fileID: 92508497}
+  StoneCountText: {fileID: 130923622}
+  IronCountText: {fileID: 1760462324}
+  GoldCountText: {fileID: 1259978630}
+  PanelCountText: {fileID: 1996116868}
+  BrickCountText: {fileID: 1510878996}
+  IronIngotCountText: {fileID: 691601947}
+  GoldIngotCountText: {fileID: 736062137}
+  BranchCountText: {fileID: 737236681}
+  GoldText: {fileID: 538314024}
+  FoodCountText: {fileID: 2093124640}
+  WokerCountText: {fileID: 1452855171}
+  CardCountText: {fileID: 1233650864}
+  DayText: {fileID: 1593303764}
+  GoalText: {fileID: 795708260}
+  QuestText: {fileID: 2075412639}
+  QuestNumText: {fileID: 597774272}
+  tutoBuyText: {fileID: 2025055685}
+  tutoSellText: {fileID: 501698026}
+  tutoCraftText: {fileID: 1293862983}
+  tutoDayText: {fileID: 1317647969}
+  tutoStoreUpText: {fileID: 1225949409}
+  gameOverText: {fileID: 0}
+  startText: {fileID: 0}
+--- !u!114 &918695583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2feda17b7cf4c1141bff554005d469ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dayDuration: 120
+  cardManager: {fileID: 0}
+  sellUi: {fileID: 0}
+--- !u!114 &918695584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1bb2557f1acb594ca7fdc3363f25f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CraftCardSet:
+  - {fileID: 2683548558265663452, guid: 19ec8985e2938402f8a1e237141f2e44, type: 3}
+  - {fileID: 2683548558265663452, guid: 2cb6606169a9945a09906ace1ef0e98e, type: 3}
+  - {fileID: 2683548558265663452, guid: ea13f397e2c9a4d139e1664e649ca8f4, type: 3}
+  - {fileID: 2683548558265663452, guid: 278afb8e9a18e408a93816a732a4fcc6, type: 3}
+  ErrorUi: {fileID: 0}
+  CraftUI: {fileID: 1817777810}
+  CraftList: {fileID: 1036259591}
+  HouseCraftUI: {fileID: 1888092400}
+  ForgeCraftUi: {fileID: 1099904875}
+  TimberCraftUi: {fileID: 1375848670}
+  MineCraftUi: {fileID: 2092886649}
+  _cardManager: {fileID: 0}
+--- !u!114 &918695585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccf034e9e839c487ab87463936082900, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerCard: {fileID: 2683548558265663452, guid: 56efe3c0348f5484e97a59757c08a75d, type: 3}
+  BasicCardSet:
+  - {fileID: 2683548558265663452, guid: 4d319b66fe1dab247a49fb537bd1ea74, type: 3}
+  - {fileID: 2683548558265663452, guid: c9897b3da5ffcb1489d59c37cc58c638, type: 3}
+  - {fileID: 2683548558265663452, guid: ea597eebc28a4e5488438ed56cc0d945, type: 3}
+  - {fileID: 2683548558265663452, guid: 9c295f9a9c8e8dc4cb51766a7742547d, type: 3}
+  - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
+  - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
+  - {fileID: 2683548558265663452, guid: bcc1ddfe1177875469aab586280ba79c, type: 3}
+  - {fileID: 2683548558265663452, guid: ad65cc421b721954bbe142e39bf50e07, type: 3}
+  - {fileID: 2683548558265663452, guid: 003ada5f2a8ff4469951c35bd380c72e, type: 3}
+  - {fileID: 2683548558265663452, guid: 53ec162b16a74454ab15132c3b50718c, type: 3}
+  IntermediatCardSet:
+  - {fileID: 2683548558265663452, guid: ed094ab93809a4a41b38beb36fce5209, type: 3}
+  - {fileID: 2683548558265663452, guid: 79872dc433b87434ca3473ff6453d1d2, type: 3}
+  - {fileID: 2683548558265663452, guid: ebab837688de34af7887ecdc974d5f40, type: 3}
+  - {fileID: 2683548558265663452, guid: db58b165bdcc34f618e8803d8033e17b, type: 3}
+  - {fileID: 2683548558265663452, guid: 3cccb221a361a6a43b53df03eb845551, type: 3}
+  - {fileID: 2683548558265663452, guid: fff19b64d86936340ad8c927247d7e85, type: 3}
+  playerPre: {fileID: 2683548558265663452, guid: 56efe3c0348f5484e97a59757c08a75d, type: 3}
+  SellUI: {fileID: 413550840}
+  tutoSell: {fileID: 501698024}
+  tutoBuy: {fileID: 2025055683}
+  tutoUi: {fileID: 1939291273}
+  tutoBtnUi: {fileID: 114774256}
+  workerError: {fileID: 0}
+  wokerError: {fileID: 994502251}
+--- !u!114 &918695586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4df1d311b0f24e65a96c768d8697242, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetOnStart: 1
+--- !u!114 &918695587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d828c425f6f1b4276ad48edfe142d304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Function: {fileID: 519420028}
+  craftUi: {fileID: 1817777810}
+  craftListUi: {fileID: 1036259591}
+  craftUiBtn: {fileID: 179364959}
+  menuUi: {fileID: 0}
+  menuUiBtn: {fileID: 0}
+  buyBtn: {fileID: 2049529167}
+  SellUi: {fileID: 413550840}
+  SellBtn: {fileID: 1950852607}
+  cardInfoUi: {fileID: 1752769333}
+  cardSkillUi: {fileID: 437835387}
+  treeSkillBtn: {fileID: 227174887}
+  rockSkillBtn: {fileID: 809356084}
+  TimberSkillBtn: {fileID: 1610683543}
+  ForgeSkillBtn: {fileID: 1771789906}
+  MineSkillBtn: {fileID: 26486320}
+  WoodSkillBtn: {fileID: 1306796859}
+  HouseSkillBtn: {fileID: 996474784}
+  bananaTreeBtn: {fileID: 1920593514}
+  StrawBerryTreeBtn: {fileID: 1659380690}
+  StoreUpBtn: {fileID: 1941142291}
+  tutoInfoUi: {fileID: 1939291273}
+  tutoDayUi: {fileID: 214562662}
+  tutoBtnUi: {fileID: 114774256}
+  tutoBuy: {fileID: 2025055683}
+  tutoSell: {fileID: 501698024}
+  tutoCraft: {fileID: 1293862981}
+  tutoDay: {fileID: 1317647967}
+  tutoStoreUp: {fileID: 1225949407}
+  tutoStart: {fileID: 463746775}
+  CardInfoText: {fileID: 268741102}
+  CardNameText: {fileID: 2094526747}
+  ErrorMessage: {fileID: 783878529}
+  ErrorMessageText: {fileID: 112689739}
+  GameOverMessage: {fileID: 469569989}
+  tutoEndUI: {fileID: 0}
+  dayNight: {fileID: 0}
+--- !u!4 &918695588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918695581}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 943.8663, y: 558.41846, z: -16.27547}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &944657608
 GameObject:
   m_ObjectHideFlags: 0
@@ -7424,7 +7446,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: GameOver
         m_Mode: 1
@@ -8043,7 +8065,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1036259592
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8361,7 +8383,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CraftUi
         m_Mode: 1
@@ -8750,7 +8772,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: backspaceBtn
         m_Mode: 1
@@ -8965,7 +8987,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CraftUi
         m_Mode: 1
@@ -9099,7 +9121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CardCraft
         m_Mode: 1
@@ -10386,7 +10408,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CardCraft
         m_Mode: 1
@@ -11536,7 +11558,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: tutoEndBtn
         m_Mode: 1
@@ -11842,7 +11864,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CraftUi
         m_Mode: 1
@@ -12170,7 +12192,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1555441750
 GameObject:
@@ -12738,7 +12760,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -13813,7 +13835,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -14819,7 +14841,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CardCraft
         m_Mode: 1
@@ -15192,7 +15214,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -15483,7 +15505,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 918695587}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: StoreUpgrade
         m_Mode: 1
@@ -15697,7 +15719,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: SellActive
         m_Mode: 1
@@ -16044,7 +16066,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420036}
+      - m_Target: {fileID: 918695584}
         m_TargetAssemblyTypeName: CraftManager, Assembly-CSharp
         m_MethodName: CraftUi
         m_Mode: 1
@@ -16313,7 +16335,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -16447,7 +16469,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardBuy
         m_Mode: 1
@@ -16948,7 +16970,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420035}
+      - m_Target: {fileID: 918695585}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: CardSkill
         m_Mode: 1
@@ -17631,7 +17653,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 519420033}
+      - m_Target: {fileID: 918695587}
         m_TargetAssemblyTypeName: UImanager, Assembly-CSharp
         m_MethodName: CardSkillCloseBtn
         m_Mode: 1

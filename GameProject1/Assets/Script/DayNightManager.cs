@@ -113,7 +113,7 @@ public class DayNightManager : MonoBehaviour
         }
 
         gd.endDay = false;
-        gd.Day += 1;
+        gd.NextDay();
 
         RestDayTimer();
 
@@ -155,7 +155,7 @@ public class DayNightManager : MonoBehaviour
             yield return null;
         }
 
-        gd.Woker = Mathf.Min(gd.Woker, gd.PlayerCount);
+        gd.SetWorker(Mathf.Min(gd.Woker, gd.PlayerCount));
 
         if (GameManager.Instance != null)
             GameManager.Instance.RecalculateTotals();
