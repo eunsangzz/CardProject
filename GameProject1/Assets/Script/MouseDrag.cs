@@ -15,6 +15,9 @@ public class MouseDrag : MonoBehaviour
     [SerializeField] private bool shadowFollowWhileDragging = true;
     [SerializeField] private bool shadowHideOnRelease = true;
 
+    [SerializeField] private CommandManager commandManager;
+    private Vector3 dragStartPos;
+
     private Camera _cam;
     private bool _dragging;
 
@@ -153,5 +156,20 @@ public class MouseDrag : MonoBehaviour
 
         if (_shadowInstance != null)
             _shadowInstance.SetActive(false);
+    }
+
+    void OnDragStart()
+    {
+        dragStartPos = transform.position;
+    }
+
+    void OnDragEnd()
+    {
+        var dragEndPos = transform.position;
+
+        if((dragEndPos - dragStartPos).sqrMagnitude > 0.0001f)
+        {
+            commandManager.Do(new MoveCardCommand(transform, dragStartPos, dragEndPos));
+        }
     }
 }
