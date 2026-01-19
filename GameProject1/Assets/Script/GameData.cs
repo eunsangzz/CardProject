@@ -176,12 +176,12 @@ public class GameData
 
 
 
-    public void RaiseAllEvnets()
+    public void RaiseAllEvents()
     {
         GameEvents.OnGoldChanged?.Invoke(gold);
         GameEvents.OnFoodChanged?.Invoke(FoodCount);
         GameEvents.OnPlayerChanged?.Invoke(PlayerCount);
-        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+        GameEvents.OnCardCountChanged?.Invoke(CardLimit, CardCount);
         GameEvents.OnDayChanged?.Invoke(Day);
         GameEvents.OnWorkerChanged?.Invoke(Woker);
         GameEvents.OnQuestChanged?.Invoke(QusetNum);

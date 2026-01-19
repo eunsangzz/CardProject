@@ -426,7 +426,7 @@ public class UImanager : MonoBehaviour
 
         if (gd.gold >= 100 && gd.storeUpgrade == 0 && Time.timeScale != 0f)
         {
-            if (gd.QusetNum == 5) gd.QusetNum += 1;
+            if (gd.QusetNum == 5) gd.AddQuest(1);
 
             gd.storeUpgrade += 1;
             gd.AddGold(-100);

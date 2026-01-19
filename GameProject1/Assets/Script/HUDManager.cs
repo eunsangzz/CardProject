@@ -60,7 +60,7 @@ public class HUDManager : MonoBehaviour
         SetStaticTexts();
 
         var gd = DataController.instance.gameData;
-        gd?.RaiseAllEvnets();
+        gd?.RaiseAllEvents();
     }
 
     private void Update()

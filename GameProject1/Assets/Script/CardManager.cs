@@ -22,10 +22,12 @@ public class CardManager : MonoBehaviour
     private bool tutosell;
 
     public GameObject wokerError;
+
     //카드 구매버튼 눌렀을때 저장해둔 프리팹중에 랜덤으로 하나 생성 
     //구매 버튼 업그레이드 적용해서 1단계 나무 돌 2단계 철 금 등등 으로 세팅
 
     private Dictionary<string, (int removeIndex, int gold)> _sellMap;
+    private Dictionary<string, ICardCommand> _commands;
 
 
     //프리팹 basename 매핑
@@ -76,6 +78,7 @@ public class CardManager : MonoBehaviour
         go.name = PlayerCard.name;
         gd.Card.Add(go);
 
+        _commands = CardCommandRegistry.Bulid();
     }
 
     private void Update()
@@ -229,60 +232,34 @@ public class CardManager : MonoBehaviour
 
         string Btn = EventSystem.current.currentSelectedGameObject.name;
 
-        if (gd.Woker == 0)
+        if (_commands == null || !_commands.TryGetValue(Btn, out var cmd)) return;
+
+        StartCoroutine(RunCommand(cmd));
+    }
+
+    private IEnumerator RunCommand(ICardCommand cmd)
+    {
+        var gd = DataController.instance.gameData;
+
+        if(gd.Woker < cmd.WorkerCost)
         {
-            wokerError.SetActive(true);
-            return;
+            workerError.SetActive(true);
+            yield break;
         }
-        else
+
+        if(!cmd.CanExecute(gd))
         {
-            if (Btn == "Tree") StartCoroutine(delay(1));
-
-            if (Btn == "Wood") StartCoroutine(delay(8));
-
-            if (Btn == "Rock") StartCoroutine(delay(2));
-
-            if (Btn == "BananaTree" && gd.Woker != 0)
-            {
-                StartCoroutine(delay(3));
-                if (gd.QusetNum == 2) gd.AddQuest(1);
-            }
-
-            if (Btn == "StrawBerryTree") StartCoroutine(delay(9));
-
-            if (Btn == "Timber" && gd.WoodCard >= 2 && gd.BranchCard >= 1
-                && gd.Woker != 0) //판자
-            {
-                if (gd.gold >= 1)
-                {
-                    if (gd.QusetNum == 4) gd.AddQuest(1);
-                    StartCoroutine(delay(6));
-                }
-            }
-
-            if (Btn == "Mine" && gd.StoneCard >= 2 && gd.Woker != 0)
-            {
-                if (gd.gold >= 1)
-                {
-                    if (gd.QusetNum == 4) gd.AddQuest(1);
-                    StartCoroutine(delay(7));
-                }
-            }
-
-            if (Btn == "ForgeIron" && gd.WoodCard >= 2 && gd.IronCard >= 1 && gd.BranchCard >= 2)
-                StartCoroutine(delay(4));
-
-
-            if (Btn == "ForgeGold" && gd.WoodCard >= 2 && gd.GoldCard >= 1 && gd.BranchCard >= 1)
-                StartCoroutine(delay(5));
-
-
-            if (Btn == "House" && gd.PlayerCount >= 2 && gd.gold > 15 && gd.Woker >= 2)
-            { 
-                StartCoroutine(delay(10));
-                gd.AddGold(-15);
-            }
+            wokerError?.SetActive(true);
+            yield break;
         }
+
+        gd.Skill = false;
+
+        gd.AddWorker(-cmd.WorkerCost);
+        yield return StartCoroutine(cmd.Execute(this, gd));
+        gd.AddWorker(cmd.WorkerCost);
+
+        RecalcSafe();
     }
 
     public void WokerErrorClose()
@@ -298,127 +275,6 @@ public class CardManager : MonoBehaviour
         if (gd.storeUpgrade == 1 && gd.gold >= 60) gd.storeUpgrade += 1;
     }
 
-    IEnumerator delay(int i)
-    {
-        var gd = DataController.instance.gameData;
-
-        gd.Skill = false;
-
-        int workerCost = (i < 10) ? 1 : 2;
-
-        gd.AddWorker(-workerCost);
-
-        if (i == 1) // 나무 -> 목재 2개
-        {
-            removeCard(2);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 0); gd.addCardCount(0);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 0); gd.addCardCount(0);
-        }
-        else if (i == 2) // 암석 -> 석재 2개
-        {
-            removeCard(3);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 1); gd.addCardCount(1);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 1); gd.addCardCount(1);
-        }
-        else if (i == 3) // 바나나나무 -> 바나나 3개
-        {
-            removeCard(4);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 5); gd.addCardCount(5);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 5); gd.addCardCount(5);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 5); gd.addCardCount(5);
-        }
-        else if (i == 4) // 철괴(은이라고 주석인데 실제론 IronIngot)
-        {
-            removeCard(0); removeCard(0); removeCard(10); removeCard(8);
-            yield return new WaitForSeconds(5f);
-
-            CreateCard(false, 2);
-            gd.addCardCount(11);
-        }
-        else if (i == 5) // 금괴
-        {
-            removeCard(0); removeCard(0); removeCard(10); removeCard(9);
-            yield return new WaitForSeconds(5f);
-
-            CreateCard(false, 3);
-            gd.addCardCount(12);
-        }
-        else if (i == 6) // 판자
-        {
-            removeCard(0); removeCard(0);
-            removeCard(10);
-
-            if (gd.QusetNum == 6) gd.AddQuest(1);
-
-            yield return new WaitForSeconds(5f);
-
-            CreateCard(false, 0);
-            gd.addCardCount(14);
-        }
-        else if (i == 7) // 벽돌
-        {
-            removeCard(1); removeCard(1);
-            yield return new WaitForSeconds(5f);
-
-            CreateCard(false, 1);
-            gd.addCardCount(13);
-        }
-        else if (i == 8) // 나뭇가지 3개
-        {
-            removeCard(0);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(false, 4); gd.addCardCount(10);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(false, 4); gd.addCardCount(10);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(false, 4); gd.addCardCount(10);
-
-            if (gd.QusetNum == 1) gd.AddQuest(1);
-        }
-        else if (i == 9) // 딸기 3개
-        {
-            removeCard(7);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 6); gd.addCardCount(6);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 6); gd.addCardCount(6);
-            yield return new WaitForSeconds(2f);
-
-            CreateCard(true, 6); gd.addCardCount(6);
-        }
-        else if (i == 10) // 주민(60초 후 생성)
-        {
-            yield return new WaitForSeconds(60f);
-
-            SpawnPlayer();
-            gd.AddPlayer(1);
-            gd.AddWorker(1);
-        }
-        gd.AddWorker(workerCost);
-
-
-        RecalcSafe();
-        yield break;
-    }
 
     private void CreateCard(bool isBasic, int index)
     {
@@ -500,4 +356,15 @@ public class CardManager : MonoBehaviour
         if (GameManager.Instance != null)
             GameManager.Instance.RecalculateTotals();
     }
+
+    public void CreateBasicCard(int index) => CreateCard(true, index);
+    public void CreateIntermediateCard(int index) => CreateCard(false, index);
+
+    public void RemoveCardByIndex(int i)
+    {
+        if (i < 0 || i >= _indexToName.Length) return;
+        RemoveFirstCardByPrefabName(_indexToName[i], i);
+    }
+
+    public void SpawnPlayerCard() => SpawnPlayer();
 }

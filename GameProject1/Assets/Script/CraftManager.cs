@@ -82,6 +82,8 @@ public class CraftManager : MonoBehaviour
 
     private void Awake()
     {
+        var gd = DataController.instance.gameData;
+
         if (_cardManager == null)
             _cardManager = FindObjectOfType<CardManager>();
 
@@ -99,7 +101,7 @@ public class CraftManager : MonoBehaviour
                 workerCost: 1,
                 duration: 60f,
                 outputSpawnIndex: 0,
-                onSuccess: () => DataController.instance.gameData.HouseCard += 1,
+                onSuccess: () => gd.Add(GameData.CardType.House, 1),
                 requirements: new List<Req>
                 {
                     new Req(() => DataController.instance.gameData.PanelCard, 3, removeIndex: 14),
@@ -111,7 +113,7 @@ public class CraftManager : MonoBehaviour
                   workerCost: 1,
                   duration: 15f,
                   outputSpawnIndex: 3,
-                  onSuccess: () => DataController.instance.gameData.MineCard += 1,
+                  onSuccess: () => gd.Add(GameData.CardType.Mine, 1),
                   requirements: new List<Req>
                   {
                     new Req(() => DataController.instance.gameData.WoodCard, 1, removeIndex: 0),
@@ -126,7 +128,7 @@ public class CraftManager : MonoBehaviour
               workerCost: 1,
               duration: 30f,
               outputSpawnIndex: 1,
-              onSuccess: () => DataController.instance.gameData.ForgeCard += 1,
+              onSuccess: () => gd.Add(GameData.CardType.Forge, 1),
               requirements: new List<Req>
               {
                     new Req(() => DataController.instance.gameData.BranchCard, 1, removeIndex: 10),
@@ -141,7 +143,7 @@ public class CraftManager : MonoBehaviour
               workerCost: 1,
               duration: 15f,
               outputSpawnIndex: 2,
-              onSuccess: () => DataController.instance.gameData.TimberCard += 1,
+              onSuccess: () => gd.Add(GameData.CardType.Timber, 1),
               requirements: new List<Req>
               {
                     new Req(() => DataController.instance.gameData.WoodCard, 3, removeIndex: 0),
