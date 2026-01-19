@@ -41,6 +41,11 @@ public class DayNightManager : MonoBehaviour
 
     private void Start()
     {
+        RestDayTimer();
+    }
+
+    private void Update()
+    {
         if (_nightRoutineRunning) return;
 
         var gd = DataController.instance.gameData;
@@ -49,7 +54,7 @@ public class DayNightManager : MonoBehaviour
         if (gd.endDay) return;
 
         TimeLeft -= Time.deltaTime;
-        if(TimeLeft <= 0f)
+        if (TimeLeft <= 0f)
         {
             TimeLeft = 0f;
             StartNight();

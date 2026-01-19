@@ -145,19 +145,19 @@ public class GameData
     {
         CardCount = Mathf.Max(0, current);
         CardLimit = Mathf.Max(0, limit);
-        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+        GameEvents.OnCardCountChanged?.Invoke(CardLimit, CardCount);
     }
 
     public void SetCardCount(int current)
     {
         CardCount = Mathf.Max(0, current);
-        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+        GameEvents.OnCardCountChanged?.Invoke(CardLimit, CardCount);
     }
 
     public void SetCardLimit(int limit)
     {
         CardLimit = Mathf.Max(0, limit);
-        GameEvents.OnCardCountChanged?.Invoke(CardCount, CardLimit);
+        GameEvents.OnCardCountChanged?.Invoke(CardLimit, CardCount);
     }
 
     public void NextDay()
