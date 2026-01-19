@@ -146,4 +146,12 @@ public class MouseDrag : MonoBehaviour
         screenPos.z = distance;
         return _cam.ScreenToWorldPoint(screenPos);
     }
+
+    private void OnDisable()
+    {
+        _dragging = false;
+
+        if (_shadowInstance != null)
+            _shadowInstance.SetActive(false);
+    }
 }

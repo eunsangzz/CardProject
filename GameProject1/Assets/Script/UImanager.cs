@@ -68,11 +68,11 @@ public class UImanager : MonoBehaviour
     [SerializeField] private DayNightManager dayNight;
 
     // [CHANGED] CardInfo/Skill 딕셔너리
-    private readonly Dictionary<string, (string displayName, string desc)> _cardInfoMap
-        = new Dictionary<string, (string, string)>();
+    private readonly Dictionary<CardId, (string displayName, string desc)> _cardInfoMap
+        = new Dictionary<CardId, (string, string)>();
 
-    private readonly Dictionary<string, GameObject> _skillButtonMap
-        = new Dictionary<string, GameObject>();
+    private readonly Dictionary<CardId, GameObject> _skillButtonMap
+        = new Dictionary<CardId, GameObject>();
 
     private GameObject[] _allSkillButtons;
 
@@ -256,14 +256,7 @@ public class UImanager : MonoBehaviour
         ErrorMessage.SetActive(false);
     }
 
-    // ===== 공통 유틸 =====
-    private static string NormalizeName(string objectName)
-    {
-        const string clone = "(Clone)";
-        return (!string.IsNullOrEmpty(objectName) && objectName.EndsWith(clone))
-            ? objectName.Replace(clone, "")
-            : objectName;
-    }
+    // ===== 공통 유틸 ==
 
     private bool TryRaycastCardUnderMouse(out GameObject hitObj)
     {
@@ -291,33 +284,33 @@ public class UImanager : MonoBehaviour
     {
         _cardInfoMap.Clear();
 
-        _cardInfoMap["Wood"] = ("목재", "가장 기본재료 나무를 벌목해 얻는다. 여러가지 제작품에 재료로 사용가능하다.");
-        _cardInfoMap["Stone"] = ("석재", "가장 기본재료 암석을 채광해 얻는다. 여러가지 제작품에 재료로 사용가능하다.");
-        _cardInfoMap["Tree"] = ("나무", "벌목하면 목재를 얻을 수 있다. 지금은 아무것도 아니지");
-        _cardInfoMap["Rock"] = ("암석", "채광하면 석재를 얻을 수 있다. 지금은 너무 무겁지");
-        _cardInfoMap["House"] = ("집", "카드의 한도를 늘려준다. 플레이어의 수를 늘릴수있다.");
+        _cardInfoMap[CardId.Wood] = ("목재", "가장 기본재료 나무를 벌목해 얻는다. 여러가지 제작품에 재료로 사용가능하다.");
+        _cardInfoMap[CardId.Stone] = ("석재", "가장 기본재료 암석을 채광해 얻는다. 여러가지 제작품에 재료로 사용가능하다.");
+        _cardInfoMap[CardId.Tree] = ("나무", "벌목하면 목재를 얻을 수 있다. 지금은 아무것도 아니지");
+        _cardInfoMap[CardId.Rock] = ("암석", "채광하면 석재를 얻을 수 있다. 지금은 너무 무겁지");
+        _cardInfoMap[CardId.House] = ("집", "카드의 한도를 늘려준다. 플레이어의 수를 늘릴수있다.");
 
-        _cardInfoMap["BananaTree"] = ("바나나나무", "채집을 하면 바나나를 얻을 수 있다.");
-        _cardInfoMap["Banana"] = ("바나나", "기본음식 그냥도 먹을 수 있지만 요리해서 먹으면 더욱 배부르다.");
+        _cardInfoMap[CardId.BananaTree] = ("바나나나무", "채집을 하면 바나나를 얻을 수 있다.");
+        _cardInfoMap[CardId.Banana] = ("바나나", "기본음식 그냥도 먹을 수 있지만 요리해서 먹으면 더욱 배부르다.");
 
-        _cardInfoMap["StrawBerryTree"] = ("딸기나무", "채집을 하면 딸기를 얻을 수 있다.");
-        _cardInfoMap["StrawBerry"] = ("딸기", "기본음식 그냥도 먹을 수 있지만 요리해서 먹으면 더욱 배부르다.");
+        _cardInfoMap[CardId.StrawBerryTree] = ("딸기나무", "채집을 하면 딸기를 얻을 수 있다.");
+        _cardInfoMap[CardId.StrawBerry] = ("딸기", "기본음식 그냥도 먹을 수 있지만 요리해서 먹으면 더욱 배부르다.");
 
-        _cardInfoMap["Brick"] = ("벽돌", "돌을 가공해 만든 벽돌 튼튼하다.");
-        _cardInfoMap["Panel"] = ("판자", "목재를 가공해 만드는 판때기 집만들때 사용한다");
-        _cardInfoMap["Branch"] = ("나뭇가지", "목재를 손질해 얻은 나뭇가지\n화로의 연료로 사용한다.");
+        _cardInfoMap[CardId.Brick] = ("벽돌", "돌을 가공해 만든 벽돌 튼튼하다.");
+        _cardInfoMap[CardId.Panel] = ("판자", "목재를 가공해 만드는 판때기 집만들때 사용한다");
+        _cardInfoMap[CardId.Branch] = ("나뭇가지", "목재를 손질해 얻은 나뭇가지\n화로의 연료로 사용한다.");
 
-        _cardInfoMap["Forge"] = ("용광로", "철과 금을 제련할 수 있다.");
-        _cardInfoMap["Mine"] = ("벽돌공장", "돌을 가공해 벽돌을 만드는 공장");
-        _cardInfoMap["Timber"] = ("제재소", "목재를 가공해 판자를 만드는 공장");
+        _cardInfoMap[CardId.Forge] = ("용광로", "철과 금을 제련할 수 있다.");
+        _cardInfoMap[CardId.Mine] = ("벽돌공장", "돌을 가공해 벽돌을 만드는 공장");
+        _cardInfoMap[CardId.Timber] = ("제재소", "목재를 가공해 판자를 만드는 공장");
 
-        _cardInfoMap["Gold"] = ("금광석", "제련을 통해 빛나는 금괴로 만들 수 있다.");
-        _cardInfoMap["GoldIngot"] = ("금괴", "비싸게 팔리는 금괴 다른 역할은?");
+        _cardInfoMap[CardId.Gold] = ("금광석", "제련을 통해 빛나는 금괴로 만들 수 있다.");
+        _cardInfoMap[CardId.GoldIngot] = ("금괴", "비싸게 팔리는 금괴 다른 역할은?");
 
-        _cardInfoMap["Iron"] = ("철광석", "제련을 통해 단단한 철괴를 만들 수 있다.");
-        _cardInfoMap["IronIngot"] = ("철괴", "많은 것을 만들 수 있는 기본이면서 최강의 제료");
+        _cardInfoMap[CardId.Iron] = ("철광석", "제련을 통해 단단한 철괴를 만들 수 있다.");
+        _cardInfoMap[CardId.IronIngot] = ("철괴", "많은 것을 만들 수 있는 기본이면서 최강의 제료");
 
-        _cardInfoMap["Player"] = ("주민", "주민이 없으면 게임은 끝나버린다. 배가 고프지");
+        _cardInfoMap[CardId.Player] = ("주민", "주민이 없으면 게임은 끝나버린다. 배가 고프지");
     }
 
     private void CardInfo()
@@ -331,9 +324,13 @@ public class UImanager : MonoBehaviour
             return;
         }
 
-        string key = NormalizeName(touch.name);
+        if (!touch.TryGetComponent<CardIdentity>(out var ident)) 
+        {
+            cardInfoUi.SetActive(false);
+            return;
+        }
 
-        if (_cardInfoMap.TryGetValue(key, out var info))
+        if (_cardInfoMap.TryGetValue(ident.cardId, out var info))
         {
             cardInfoUi.SetActive(true);
             CardNameText.text = info.displayName;
@@ -350,16 +347,16 @@ public class UImanager : MonoBehaviour
     {
         _skillButtonMap.Clear();
 
-        _skillButtonMap["Tree"] = treeSkillBtn;
-        _skillButtonMap["Rock"] = rockSkillBtn;
-        _skillButtonMap["BananaTree"] = bananaTreeBtn;
-        _skillButtonMap["StrawBerryTree"] = StrawBerryTreeBtn;
-        _skillButtonMap["Wood"] = WoodSkillBtn;
+        _skillButtonMap[CardId.Tree] = treeSkillBtn;
+        _skillButtonMap[CardId.Rock] = rockSkillBtn;
+        _skillButtonMap[CardId.BananaTree] = bananaTreeBtn;
+        _skillButtonMap[CardId.StrawBerryTree] = StrawBerryTreeBtn;
+        _skillButtonMap[CardId.Wood] = WoodSkillBtn;
 
-        _skillButtonMap["Timber"] = TimberSkillBtn;
-        _skillButtonMap["Mine"] = MineSkillBtn;
-        _skillButtonMap["House"] = HouseSkillBtn;
-        _skillButtonMap["Forge"] = ForgeSkillBtn;
+        _skillButtonMap[CardId.Timber] = TimberSkillBtn;
+        _skillButtonMap[CardId.Mine] = MineSkillBtn;
+        _skillButtonMap[CardId.House] = HouseSkillBtn;
+        _skillButtonMap[CardId.Forge] = ForgeSkillBtn;
 
         _allSkillButtons = new[]
         {
@@ -377,9 +374,9 @@ public class UImanager : MonoBehaviour
 
         if (!TryRaycastCardUnderMouse(out GameObject touch)) return;
 
-        string key = NormalizeName(touch.name);
+        if (!touch.TryGetComponent<CardIdentity>(out var ident)) return;
 
-        if (!_skillButtonMap.TryGetValue(key, out GameObject buttonToShow))
+        if (!_skillButtonMap.TryGetValue(ident.cardId, out GameObject buttonToShow))
             return;
 
         DataController.instance.gameData.Skill = true;

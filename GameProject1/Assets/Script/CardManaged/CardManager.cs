@@ -8,6 +8,15 @@ public class CardManager : MonoBehaviour
     [SerializeField] private ObjectPool pool;
     [SerializeField] private CardSpawner spawner;
 
+    private static readonly CardId[] _stdIndexToCardId =
+    {
+        CardId.Wood, CardId.Stone, CardId.Tree, CardId.Rock,
+    CardId.BananaTree, CardId.Banana, CardId.StrawBerry, CardId.StrawBerryTree,
+    CardId.Iron, CardId.Gold, CardId.Branch, CardId.IronIngot, CardId.GoldIngot,
+    CardId.Brick, CardId.Panel, CardId.House, CardId.Forge, CardId.Timber,
+    CardId.Mine, CardId.Kitchen, CardId.Player
+    };
+
     public GameObject PlayerCard;
     public GameObject[] BasicCardSet = new GameObject[8];
     public GameObject[] IntermediatCardSet = new GameObject[5];
@@ -29,7 +38,7 @@ public class CardManager : MonoBehaviour
     //카드 구매버튼 눌렀을때 저장해둔 프리팹중에 랜덤으로 하나 생성 
     //구매 버튼 업그레이드 적용해서 1단계 나무 돌 2단계 철 금 등등 으로 세팅
 
-    private Dictionary<string, (int removeIndex, int gold)> _sellMap;
+    private Dictionary<CardId, (int removeIndex, int gold)> _sellMapById;
     private Dictionary<string, ICardCommand> _commands;
 
 
@@ -43,29 +52,29 @@ public class CardManager : MonoBehaviour
 
     private void Awake()
     {
-        _sellMap = new Dictionary<string, (int, int)>
+        _sellMapById = new Dictionary<CardId, (int, int)>
         {
-            {"Wood", (0,2) },
-            { "Stone", (1, 2) },
-            { "Tree", (2, 2) },
-            { "Rock", (3, 2) },
-            { "BananaTree", (4, 2) },
-            { "Banana", (5, 1) },
-            { "StrawBerry", (6, 1) },
-            { "StrawBerryTree", (7, 2) },
-            { "Iron", (8, 8) },
-            { "Gold", (9, 6) },
-            { "Branch", (10, 3) },
-            { "IronIngot", (11, 6) },
-            { "GoldIngot", (12, 20) },
-            { "Brick", (13, 5) },
-            { "Panel", (14, 6) },
-            { "House", (15, 15) },
-            { "Forge", (16, 6) },
-            { "Timber", (17, 8) },
-            { "Mine", (18, 8) },
-            { "Kitchen", (19, 5) },
-            { "Player", (20, 5) },
+            { CardId.Wood, (0,2) },
+            { CardId.Stone, (1,2) },
+            { CardId.Tree, (2,2) },
+            { CardId.Rock, (3,2) },
+            { CardId.BananaTree, (4,2) },
+            { CardId.Banana, (5,1) },
+            { CardId.StrawBerry, (6,1) },
+            { CardId.StrawBerryTree, (7,2) },
+            { CardId.Iron, (8,8) },
+            { CardId.Gold, (9,6) },
+            { CardId.Branch, (10,3) },
+            { CardId.IronIngot, (11,6) },
+            { CardId.GoldIngot, (12,20) },
+            { CardId.Brick, (13,5) },
+            { CardId.Panel, (14,6) },
+            { CardId.House, (15,15) },
+            { CardId.Forge, (16,6) },
+            { CardId.Timber, (17,8) },
+            { CardId.Mine, (18,8) },
+            { CardId.Kitchen, (19,5) },
+            { CardId.Player, (20,5) },
         };
 
         if (spawner == null) spawner = FindObjectOfType<CardSpawner>();
@@ -264,23 +273,25 @@ public class CardManager : MonoBehaviour
     {
         var gd = DataController.instance.gameData;
         if (!gd.Sell) return;
-
         if (!Input.GetMouseButtonDown(0)) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
-        GameObject touch = hit.transform.gameObject;
+        var cardObj = hit.collider.gameObject;
 
-        string key = NormalizeName(touch.name);
+        if (!cardObj.TryGetComponent<CardIdentity>(out var ident)) return;
 
-        if (_sellMap.TryGetValue(key, out var sellInfo))
-        {
-            removeCard(sellInfo.removeIndex);
-            gd.AddGold(sellInfo.gold);
+        if (!_sellMapById.TryGetValue(ident.cardId, out var sellInfo)) return;
 
-            RecalcSafe();
-        }
+        gd.Card.Remove(cardObj);
+        spawner.Despawn(cardObj);
+
+        gd.stdCardCount(sellInfo.removeIndex);
+        gd.AddGold(sellInfo.gold);
+
+        RecalcSafe();
+        
     }
 
     public void CardSkill()
@@ -391,10 +402,12 @@ public class CardManager : MonoBehaviour
         return objectName.EndsWith(clone) ? objectName.Replace(clone, "") : objectName;
     }
 
-    public void removeCard(int i)
+    public void removeCard(int stdIndex)
     {
-        if (i < 0 || i >= _indexToName.Length) return;
-        RemoveFirstCardByPrefabName(_indexToName[i], i);
+        if (stdIndex < 0 || stdIndex >= _stdIndexToCardId.Length) return;
+
+        var id = _stdIndexToCardId[stdIndex];
+        RemoveFirstCardById(id, stdIndex);
 
         RecalcSafe();
     }
@@ -420,6 +433,36 @@ public class CardManager : MonoBehaviour
             return;
         }
 
+    }
+
+    private void RemoveFirstCardById(CardId id, int stdCardCountIndex)
+    {
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
+        for (int idx = 0; idx < gd.Card.Count; idx++)
+        {
+            var card = gd.Card[idx];
+            if (card == null) continue;
+
+            if (card.TryGetComponent<CardIdentity>(out var ident) && ident.cardId == id)
+            {
+                gd.Card.RemoveAt(idx);
+
+                FindObjectOfType<CardSpawner>()?.Despawn(card);
+
+                gd.stdCardCount(stdCardCountIndex);
+                return;
+            }
+
+            if(NormalizeName(card.name) == _indexToName[stdCardCountIndex])
+            {
+                gd.Card.RemoveAt(idx);
+                FindObjectOfType<CardSpawner>()?.Despawn(card);
+                gd.stdCardCount(stdCardCountIndex);
+                return;
+            }
+        }
     }
 
     private void RecalcSafe()

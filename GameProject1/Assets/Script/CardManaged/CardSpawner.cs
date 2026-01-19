@@ -14,6 +14,10 @@ public class CardSpawner : MonoBehaviour
         if (prefab == null) return null;
 
         var cardObj = pool.Get(prefab, cardParent);
+        var identity = cardObj.GetComponent<CardIdentity>();
+
+        if (identity == null) identity = cardObj.AddComponent<CardIdentity>();
+        identity.cardId = (CardId)cardId;
 
         if (cardObj.TryGetComponent<CardView>(out var view))
             view.Init(cardId);
