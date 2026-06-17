@@ -25,12 +25,14 @@ public class GameManager : MonoBehaviour
 
         _gd = DataController.instance.gameData;
         _gd.EnsureRuntimeDefaults();
+
+        if (resetOnStart)
+            resetForNewGame();
     }
+
     // Start is called before the first frame update
     private void Start()
     {
-        resetForNewGame();
-
         RecalculateTotals();
     }
 
@@ -68,15 +70,17 @@ public class GameManager : MonoBehaviour
         _gd.TimberCard = 0;
         _gd.MineCard = 0;
         _gd.KitchenCard = 0;
+        _gd.ArmoryCard = 0;
 
         _gd.HouseCard = 0;
 
         // 게임 진행/경제
-        _gd.SetGold(500);
+        _gd.SetGold(10);
         _gd.SetCardLimit(15);
         _gd.SetCardCount(0);
 
         _gd.SetPlayer(1);
+        _gd.EnemyCount = 0;
         _gd.SetDay(0);
         _gd.Stage = 1;
 
@@ -92,6 +96,7 @@ public class GameManager : MonoBehaviour
         _gd.Skill = false;
         _gd.endDay = false;
         _gd.Fight = false;
+        _gd.FirstNightEnemySpawned = false;
 
         // 런타임 카드 리스트는 “비우기”만 하고 새 리스트로 덮어쓰지 않음
         _gd.EnsureRuntimeDefaults();
@@ -129,7 +134,8 @@ public class GameManager : MonoBehaviour
             _gd.ForgeCard +
             _gd.TimberCard +
             _gd.MineCard +
-            _gd.KitchenCard;
+            _gd.KitchenCard +
+            _gd.ArmoryCard;
 
         _gd.SetCardCount(total);
     }

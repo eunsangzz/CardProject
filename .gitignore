@@ -10,6 +10,15 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+# Unity project nested under this repository.
+/GameProject1/[Ll]ibrary/
+/GameProject1/[Tt]emp/
+/GameProject1/[Oo]bj/
+/GameProject1/[Bb]uild/
+/GameProject1/[Bb]uilds/
+/GameProject1/[Ll]ogs/
+/GameProject1/[Uu]ser[Ss]ettings/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

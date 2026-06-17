@@ -1,25 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class BananaTreeToBananaCommand : ICardCommand
 {
     public int WorkerCost => 1;
-    public bool CanExecute(GameData gd) => gd.Woker >= WorkerCost;
+    public float Duration => 6f;
+    public IReadOnlyList<CardRequirement> Requirements =>
+        System.Array.Empty<CardRequirement>();
+    public bool ConsumeTarget => true;
+    public bool CanExecute(GameData gameData) => gameData.Woker >= WorkerCost;
 
-    public IEnumerator Execute(CardManager cm, GameData gd)
+    public IEnumerator Execute(CardManager cardManager, GameData gameData)
     {
-        cm.RemoveCardByIndex(4); // BananaTree 제거
-        yield return new UnityEngine.WaitForSeconds(2f);
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new UnityEngine.WaitForSeconds(2f);
+            cardManager.CreateBasicCard(5);
+            gameData.addCardCount(5);
+        }
 
-        cm.CreateBasicCard(5); gd.addCardCount(5);
-        yield return new UnityEngine.WaitForSeconds(2f);
-
-        cm.CreateBasicCard(5); gd.addCardCount(5);
-        yield return new UnityEngine.WaitForSeconds(2f);
-
-        cm.CreateBasicCard(5); gd.addCardCount(5);
-
-        if (gd.QusetNum == 2) gd.AddQuest(1); // 기존 직접 증가 제거
+        if (gameData.QusetNum == 2)
+            gameData.AddQuest(1);
     }
 }

@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public interface ICardCommand
 {
-    int WorkerCost { get; }//일꾼 수
-    bool CanExecute(GameData gd);// 자원 확인
-    IEnumerator Execute(CardManager cm, GameData gd); // 행동
+    int WorkerCost { get; }
+    float Duration { get; }
+    IReadOnlyList<CardRequirement> Requirements { get; }
+    bool ConsumeTarget { get; }
+    bool CanExecute(GameData gameData);
+    IEnumerator Execute(CardManager cardManager, GameData gameData);
 }

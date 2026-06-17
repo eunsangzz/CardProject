@@ -14,6 +14,10 @@ public class DayNightManager : MonoBehaviour
     [SerializeField] private CardManager cardManager;
     [SerializeField] private GameObject sellUi;
 
+    [Header("Enemy")]
+    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private Transform enemyParent;
+
     public float TimeLeft { get; private set; }
     public float DayDuration => dayDuration;
     public bool IsNightRoutineRunning => _nightRoutineRunning;
@@ -120,6 +124,8 @@ public class DayNightManager : MonoBehaviour
         gd.endDay = false;
         gd.NextDay();
 
+        SpawnFirstNightEnemyIfNeeded(gd);
+
         RestDayTimer();
 
         if (GameManager.Instance != null)
@@ -171,6 +177,78 @@ public class DayNightManager : MonoBehaviour
     {
         _nightRoutineRunning = false;
         OnNightFinished?.Invoke();
+    }
+    private void SpawnFirstNightEnemyIfNeeded(GameData gd)
+    {
+        if (gd == null || gd.FirstNightEnemySpawned || gd.Day < 1)
+            return;
+
+        SpawnEnemy();
+        gd.FirstNightEnemySpawned = true;
+        gd.EnemyCount += 1;
+    }
+
+    private void SpawnEnemy()
+    {
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
+        Vector3 spawnPosition =
+            CardSpawnPositionFinder.FindAvailablePosition(gd.Card) +
+            new Vector3(0f, 1.25f, 0f);
+
+        GameObject enemy = enemyPrefab != null
+            ? Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, enemyParent)
+            : CreateDefaultEnemy(spawnPosition);
+
+        enemy.name = "Enemy";
+
+        if (enemy.GetComponent<EnemyCombatStats>() == null)
+            enemy.AddComponent<EnemyCombatStats>();
+
+        if (enemy.GetComponent<EnemyAI>() == null)
+            enemy.AddComponent<EnemyAI>();
+    }
+
+    private GameObject CreateDefaultEnemy(Vector3 position)
+    {
+        var enemy = new GameObject("Enemy");
+        enemy.transform.SetParent(enemyParent, false);
+        enemy.transform.position = position;
+
+        var renderer = enemy.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSolidSprite(new Color(0.75f, 0.12f, 0.12f, 1f));
+        renderer.sortingOrder = 50;
+
+        enemy.AddComponent<BoxCollider>();
+        enemy.transform.localScale = new Vector3(0.9f, 1.2f, 1f);
+
+        var labelObject = new GameObject("EnemyLabel");
+        labelObject.transform.SetParent(enemy.transform, false);
+        labelObject.transform.localPosition = new Vector3(0f, -0.75f, -0.05f);
+
+        var label = labelObject.AddComponent<TMPro.TextMeshPro>();
+        label.text = "Enemy";
+        label.fontSize = 2.6f;
+        label.alignment = TMPro.TextAlignmentOptions.Center;
+        label.color = Color.white;
+        label.rectTransform.sizeDelta = new Vector2(3f, 0.7f);
+        label.GetComponent<Renderer>().sortingOrder = 60;
+
+        return enemy;
+    }
+
+    private static Sprite CreateSolidSprite(Color color)
+    {
+        var texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+
+        return Sprite.Create(
+            texture,
+            new Rect(0f, 0f, 1f, 1f),
+            new Vector2(0.5f, 0.5f),
+            1f);
     }
 
 }

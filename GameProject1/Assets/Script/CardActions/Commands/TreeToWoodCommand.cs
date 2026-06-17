@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class TreeToWoodCommand : ICardCommand
 {
     public int WorkerCost => 1;
+    public float Duration => 4f;
+    public IReadOnlyList<CardRequirement> Requirements =>
+        System.Array.Empty<CardRequirement>();
+    public bool ConsumeTarget => true;
+    public bool CanExecute(GameData gameData) => gameData.Woker >= WorkerCost;
 
-    public bool CanExecute(GameData gd) => gd.Woker >= WorkerCost;
-
-    public IEnumerator Execute(CardManager cm, GameData gd)
+    public IEnumerator Execute(CardManager cardManager, GameData gameData)
     {
-        cm.RemoveCardByIndex(2);
         yield return new UnityEngine.WaitForSeconds(2f);
+        cardManager.CreateBasicCard(0);
+        gameData.addCardCount(0);
 
-        cm.CreateBasicCard(0); gd.addCardCount(0);
         yield return new UnityEngine.WaitForSeconds(2f);
-
-        cm.CreateBasicCard(0); gd.addCardCount(0);
+        cardManager.CreateBasicCard(0);
+        gameData.addCardCount(0);
     }
 }
-

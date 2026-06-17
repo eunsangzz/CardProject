@@ -1,30 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class TimberToPanelCommand : ICardCommand
 {
     public int WorkerCost => 1;
+    public float Duration => 5f;
+    public IReadOnlyList<CardRequirement> Requirements { get; } =
+        new[]
+        {
+            new CardRequirement(0, 2),
+            new CardRequirement(10, 1),
+        };
+    public bool ConsumeTarget => false;
 
-    public bool CanExecute(GameData gd)
-        => gd.Woker >= WorkerCost
-        && gd.WoodCard >= 2
-        && gd.BranchCard >= 1
-        && gd.gold >= 1;
+    public bool CanExecute(GameData gameData) =>
+        gameData.Woker >= WorkerCost &&
+        gameData.WoodCard >= 2 &&
+        gameData.BranchCard >= 1 &&
+        gameData.gold >= 1;
 
-    public IEnumerator Execute(CardManager cm, GameData gd)
+    public IEnumerator Execute(CardManager cardManager, GameData gameData)
     {
-        if (gd.QusetNum == 4) gd.AddQuest(1);
+        if (gameData.QusetNum == 4)
+            gameData.AddQuest(1);
+        if (gameData.QusetNum == 6)
+            gameData.AddQuest(1);
 
-        cm.RemoveCardByIndex(0);
-        cm.RemoveCardByIndex(0);
-        cm.RemoveCardByIndex(10);
-
-        if (gd.QusetNum == 6) gd.AddQuest(1);
-
-        yield return new UnityEngine.WaitForSeconds(5f);
-
-        cm.CreateIntermediateCard(0);
-        gd.addCardCount(14);
+        yield return new UnityEngine.WaitForSeconds(Duration);
+        cardManager.CreateIntermediateCard(0);
+        gameData.addCardCount(14);
     }
 }

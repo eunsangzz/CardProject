@@ -26,12 +26,14 @@ public class GameData
     public int GoldIngotCard;
     public int BranchCard;
     public int KitchenCard;
+    public int ArmoryCard;
 
 
     public int gold;
     public int CardCount;
     public int CardLimit;
     public int PlayerCount;
+    public int EnemyCount;
     public int WoodSwordCount;
     public int StoneSwordCount;
     public int IronSwordCount;
@@ -53,6 +55,7 @@ public class GameData
     public bool EnemyAttack;
     public bool Attack;
     public bool tuto;
+    public bool FirstNightEnemySpawned;
 
     public int Woker;
     public int QusetNum;
@@ -216,6 +219,7 @@ public class GameData
             case 18: MineCard += delta; break;
             case 19: KitchenCard += delta; break;
             case 20: PlayerCount += delta; break;
+            case 21: ArmoryCard += delta; break;
             default: break;
         }
 
@@ -245,6 +249,7 @@ public class GameData
         GoldIngotCard = Mathf.Max(0, GoldIngotCard);
         BranchCard = Mathf.Max(0, BranchCard);
         KitchenCard = Mathf.Max(0, KitchenCard);
+        ArmoryCard = Mathf.Max(0, ArmoryCard);
 
         PlayerCount = Mathf.Max(0, PlayerCount);
     }
@@ -253,7 +258,7 @@ public class GameData
     {
         Wood, Stone, Tree, Rock, BananaTree, Banana, StrawBerry, StrawBerryTree,
         Iron, Gold, Branch, IronIngot, GoldIngot, Brick, Panel,
-        House, Forge, Timber, Mine, Kitchen
+        House, Forge, Timber, Mine, Kitchen, Armory
     }
 
     public void Add(CardType type, int amount = 1)
@@ -282,6 +287,7 @@ public class GameData
             case CardType.Timber: TimberCard += amount; break;
             case CardType.Mine: MineCard += amount; break;
             case CardType.Kitchen: KitchenCard += amount; break;
+            case CardType.Armory: ArmoryCard += amount; break;
             default: break;
         }
 

@@ -22,5 +22,6 @@ public enum CardId
     GoldIngot = 17,
     Branch = 18,
     Kitchen = 19,
+    Armory = 20,
     Player = 100
 }

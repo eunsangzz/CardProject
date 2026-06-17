@@ -14,7 +14,7 @@ public class CardManager : MonoBehaviour
     CardId.BananaTree, CardId.Banana, CardId.StrawBerry, CardId.StrawBerryTree,
     CardId.Iron, CardId.Gold, CardId.Branch, CardId.IronIngot, CardId.GoldIngot,
     CardId.Brick, CardId.Panel, CardId.House, CardId.Forge, CardId.Timber,
-    CardId.Mine, CardId.Kitchen, CardId.Player
+    CardId.Mine, CardId.Kitchen, CardId.Player, CardId.Armory
     };
 
     public GameObject PlayerCard;
@@ -40,6 +40,7 @@ public class CardManager : MonoBehaviour
 
     private Dictionary<CardId, (int removeIndex, int gold)> _sellMapById;
     private Dictionary<string, ICardCommand> _commands;
+    private GameObject _selectedCard;
 
 
     //프리팹 basename 매핑
@@ -47,7 +48,7 @@ public class CardManager : MonoBehaviour
     {
         "Wood","Stone","Tree","Rock","BananaTree","Banana","StrawBerry","StrawBerryTree",
         "Iron","Gold","Branch","IronIngot","GoldIngot","Brick","Panel","House",
-        "Forge","Timber","Mine","Kitchen","Player"
+        "Forge","Timber","Mine","Kitchen","Player","Armory"
     };
 
     private void Awake()
@@ -75,6 +76,7 @@ public class CardManager : MonoBehaviour
             { CardId.Mine, (18,8) },
             { CardId.Kitchen, (19,5) },
             { CardId.Player, (20,5) },
+            { CardId.Armory, (21,20) },
         };
 
         if (spawner == null) spawner = FindObjectOfType<CardSpawner>();
@@ -138,6 +140,7 @@ public class CardManager : MonoBehaviour
             case "Timber": id = CardId.Timber; return true;
             case "Mine": id = CardId.Mine; return true;
             case "Kitchen": id = CardId.Kitchen; return true;
+            case "Armory": id = CardId.Armory; return true;
 
             case "Player": id = CardId.Player; return true;
             default:
@@ -279,6 +282,7 @@ public class CardManager : MonoBehaviour
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
         var cardObj = hit.collider.gameObject;
+        if (CardWorkService.IsLocked(cardObj)) return;
 
         if (!cardObj.TryGetComponent<CardIdentity>(out var ident)) return;
 
@@ -305,9 +309,105 @@ public class CardManager : MonoBehaviour
         StartCoroutine(RunCommand(cmd));
     }
 
+    public bool TryStartCommandFromStack(IList<GameObject> stackCards)
+    {
+        if (stackCards == null || stackCards.Count == 0)
+            return false;
+
+        if (_commands == null)
+            _commands = CardCommandRegistry.Bulid();
+
+        var gd = DataController.instance.gameData;
+        Dictionary<CardId, int> counts = CountCardsById(stackCards);
+        List<GameObject> residents = FindCardsById(stackCards, CardId.Player);
+
+        for (int i = 0; i < stackCards.Count; i++)
+        {
+            GameObject target = stackCards[i];
+            if (target == null ||
+                !target.activeInHierarchy ||
+                CardWorkService.IsLocked(target) ||
+                !target.TryGetComponent(out CardIdentity targetIdentity) ||
+                targetIdentity.cardId == CardId.Player)
+            {
+                continue;
+            }
+
+            string[] commandKeys = GetCommandKeysForTarget(targetIdentity.cardId);
+            for (int k = 0; k < commandKeys.Length; k++)
+            {
+                if (!_commands.TryGetValue(commandKeys[k], out ICardCommand command))
+                    continue;
+
+                if (residents.Count != command.WorkerCost ||
+                    gd.Woker < command.WorkerCost ||
+                    !command.CanExecute(gd) ||
+                    !DoesStackExactlyMatchCommand(counts, targetIdentity.cardId, command))
+                {
+                    continue;
+                }
+
+                if (!TryTakeCommandMaterialsFromStack(
+                    stackCards,
+                    target,
+                    command,
+                    out List<GameObject> materialCards,
+                    out List<int> materialIndexes))
+                {
+                    continue;
+                }
+
+                var workCards = new List<GameObject> { target };
+                workCards.AddRange(materialCards);
+
+                bool canCancel = !IsUncancelableBasicCommand(targetIdentity.cardId, command);
+                Coroutine routine = null;
+                CardWorkService.WorkHandle handle;
+                System.Action onCancel = () =>
+                {
+                    if (routine != null)
+                        StopCoroutine(routine);
+
+                    gd.AddWorker(command.WorkerCost);
+                    RecalcSafe();
+                };
+
+                if (!CardWorkService.TryBeginStackWork(
+                    residents,
+                    workCards,
+                    command.Duration,
+                    canCancel,
+                    canCancel ? onCancel : null,
+                    out handle))
+                {
+                    continue;
+                }
+
+                gd.Skill = false;
+                gd.AddWorker(-command.WorkerCost);
+                routine = StartCoroutine(RunStackCommand(
+                    command,
+                    target,
+                    materialCards,
+                    materialIndexes,
+                    handle));
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void SetSelectedCard(GameObject card)
+    {
+        _selectedCard = card;
+    }
+
     private IEnumerator RunCommand(ICardCommand cmd)
     {
         var gd = DataController.instance.gameData;
+        GameObject target = _selectedCard;
 
         if(gd.Woker < cmd.WorkerCost)
         {
@@ -321,13 +421,158 @@ public class CardManager : MonoBehaviour
             yield break;
         }
 
+        if (target == null ||
+            !target.activeInHierarchy ||
+            CardWorkService.IsLocked(target))
+        {
+            wokerError?.SetActive(true);
+            yield break;
+        }
+
+        if (!TryReserveCommandMaterials(
+            cmd,
+            target,
+            out List<GameObject> materialCards,
+            out List<int> materialIndexes))
+        {
+            wokerError?.SetActive(true);
+            yield break;
+        }
+
+        var workCards = new List<GameObject> { target };
+        workCards.AddRange(materialCards);
+
+        if (!CardWorkService.TryBeginWork(
+            workCards,
+            cmd.WorkerCost,
+            cmd.Duration,
+            out CardWorkService.WorkHandle workHandle))
+        {
+            workerError.SetActive(true);
+            yield break;
+        }
+
         gd.Skill = false;
 
         gd.AddWorker(-cmd.WorkerCost);
         yield return StartCoroutine(cmd.Execute(this, gd));
+
+        for (int i = 0; i < materialCards.Count; i++)
+            RemoveSpecificCard(materialCards[i], materialIndexes[i]);
+
+        if (cmd.ConsumeTarget &&
+            TryGetCardIndex(target, out int targetIndex))
+        {
+            RemoveSpecificCard(target, targetIndex);
+        }
+
         gd.AddWorker(cmd.WorkerCost);
+        CardWorkService.EndResidentWork(workHandle);
 
         RecalcSafe();
+    }
+
+    private IEnumerator RunStackCommand(
+        ICardCommand command,
+        GameObject target,
+        List<GameObject> materialCards,
+        List<int> materialIndexes,
+        CardWorkService.WorkHandle workHandle)
+    {
+        var gd = DataController.instance.gameData;
+
+        yield return StartCoroutine(command.Execute(this, gd));
+
+        if (workHandle != null && workHandle.IsCanceled)
+            yield break;
+
+        for (int i = 0; i < materialCards.Count; i++)
+            RemoveSpecificCard(materialCards[i], materialIndexes[i]);
+
+        if (command.ConsumeTarget &&
+            TryGetCardIndex(target, out int targetIndex))
+        {
+            RemoveSpecificCard(target, targetIndex);
+        }
+
+        gd.AddWorker(command.WorkerCost);
+        CardWorkService.EndResidentWork(workHandle);
+
+        RecalcSafe();
+    }
+
+    private bool TryReserveCommandMaterials(
+        ICardCommand command,
+        GameObject target,
+        out List<GameObject> cards,
+        out List<int> indexes)
+    {
+        cards = new List<GameObject>();
+        indexes = new List<int>();
+
+        for (int i = 0; i < command.Requirements.Count; i++)
+        {
+            CardRequirement requirement = command.Requirements[i];
+            List<GameObject> found = FindAvailableCardsByIndex(
+                requirement.CardIndex,
+                requirement.Count);
+
+            for (int u = found.Count - 1; u >= 0; u--)
+            {
+                if (found[u] == target || cards.Contains(found[u]))
+                    found.RemoveAt(u);
+            }
+
+            if (found.Count < requirement.Count)
+                return false;
+
+            for (int u = 0; u < requirement.Count; u++)
+            {
+                cards.Add(found[u]);
+                indexes.Add(requirement.CardIndex);
+            }
+        }
+
+        return true;
+    }
+
+    private bool TryTakeCommandMaterialsFromStack(
+        IList<GameObject> stackCards,
+        GameObject target,
+        ICardCommand command,
+        out List<GameObject> cards,
+        out List<int> indexes)
+    {
+        cards = new List<GameObject>();
+        indexes = new List<int>();
+
+        for (int i = 0; i < command.Requirements.Count; i++)
+        {
+            CardRequirement requirement = command.Requirements[i];
+            CardId id = _stdIndexToCardId[requirement.CardIndex];
+            int taken = 0;
+
+            for (int u = 0; u < stackCards.Count && taken < requirement.Count; u++)
+            {
+                GameObject card = stackCards[u];
+                if (card == null ||
+                    card == target ||
+                    cards.Contains(card) ||
+                    !DoesCardMatch(card, id, requirement.CardIndex))
+                {
+                    continue;
+                }
+
+                cards.Add(card);
+                indexes.Add(requirement.CardIndex);
+                taken++;
+            }
+
+            if (taken < requirement.Count)
+                return false;
+        }
+
+        return true;
     }
 
     public void WokerErrorClose()
@@ -391,9 +636,9 @@ public class CardManager : MonoBehaviour
 
     private Vector3 GetRandomSpawnPos()
     {
-        float x = Random.Range(-5f, 5f);
-        float y = Random.Range(-4f, 2f);
-        return new Vector3(x, y, 0f);
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+        return CardSpawnPositionFinder.FindAvailablePosition(gd.Card);
     }
 
     private static string NormalizeName(string objectName)
@@ -406,8 +651,7 @@ public class CardManager : MonoBehaviour
     {
         if (stdIndex < 0 || stdIndex >= _stdIndexToCardId.Length) return;
 
-        var id = _stdIndexToCardId[stdIndex];
-        RemoveFirstCardById(id, stdIndex);
+        RemoveFirstCardById(_stdIndexToCardId[stdIndex], stdIndex);
 
         RecalcSafe();
     }
@@ -426,7 +670,8 @@ public class CardManager : MonoBehaviour
 
             gd.Card.RemoveAt(idx);
 
-            if (pool != null) pool.Release(card);
+            if (spawner != null) spawner.Despawn(card);
+            else if (pool != null) pool.Release(card);
             else card.SetActive(false);
 
             gd.stdCardCount(stdCardCountIndex);
@@ -463,6 +708,224 @@ public class CardManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public List<GameObject> FindAvailableCardsByIndex(int stdIndex, int count)
+    {
+        var result = new List<GameObject>();
+        if (stdIndex < 0 || stdIndex >= _stdIndexToCardId.Length || count <= 0)
+            return result;
+
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+        CardId id = _stdIndexToCardId[stdIndex];
+
+        for (int i = 0; i < gd.Card.Count && result.Count < count; i++)
+        {
+            GameObject card = gd.Card[i];
+            if (card == null ||
+                !card.activeInHierarchy ||
+                CardWorkService.IsLocked(card) ||
+                !DoesCardMatch(card, id, stdIndex))
+            {
+                continue;
+            }
+
+            result.Add(card);
+        }
+
+        return result;
+    }
+
+    public bool RemoveSpecificCard(GameObject card, int stdIndex)
+    {
+        if (card == null ||
+            stdIndex < 0 ||
+            stdIndex >= _stdIndexToCardId.Length)
+        {
+            return false;
+        }
+
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
+        if (!DoesCardMatch(card, _stdIndexToCardId[stdIndex], stdIndex))
+            return false;
+
+        if (!gd.Card.Remove(card))
+            return false;
+
+        if (spawner != null) spawner.Despawn(card);
+        else if (pool != null) pool.Release(card);
+        else card.SetActive(false);
+
+        gd.stdCardCount(stdIndex);
+        return true;
+    }
+
+    private static bool DoesCardMatch(GameObject card, CardId id, int stdIndex)
+    {
+        if (card == null) return false;
+
+        if (card.TryGetComponent<CardIdentity>(out var identity))
+            return identity.cardId == id;
+
+        return stdIndex >= 0 &&
+            stdIndex < _indexToName.Length &&
+            NormalizeName(card.name) == _indexToName[stdIndex];
+    }
+
+    private static bool TryGetCardIndex(GameObject card, out int index)
+    {
+        index = -1;
+        if (card == null ||
+            !card.TryGetComponent(out CardIdentity identity))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < _stdIndexToCardId.Length; i++)
+        {
+            if (_stdIndexToCardId[i] != identity.cardId)
+                continue;
+
+            index = i;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryGetCardIndexForCard(GameObject card, out int index)
+    {
+        return TryGetCardIndex(card, out index);
+    }
+
+    private static Dictionary<CardId, int> CountCardsById(IList<GameObject> cards)
+    {
+        var counts = new Dictionary<CardId, int>();
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            GameObject card = cards[i];
+            if (card == null ||
+                !card.activeInHierarchy ||
+                !card.TryGetComponent(out CardIdentity identity))
+            {
+                continue;
+            }
+
+            if (!counts.ContainsKey(identity.cardId))
+                counts[identity.cardId] = 0;
+
+            counts[identity.cardId]++;
+        }
+
+        return counts;
+    }
+
+    private static List<GameObject> FindCardsById(
+        IList<GameObject> cards,
+        CardId id)
+    {
+        var result = new List<GameObject>();
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            GameObject card = cards[i];
+            if (card != null &&
+                card.activeInHierarchy &&
+                card.TryGetComponent(out CardIdentity identity) &&
+                identity.cardId == id)
+            {
+                result.Add(card);
+            }
+        }
+
+        return result;
+    }
+
+    private static bool DoesStackExactlyMatchCommand(
+        Dictionary<CardId, int> actual,
+        CardId targetId,
+        ICardCommand command)
+    {
+        var expected = new Dictionary<CardId, int>
+        {
+            { CardId.Player, command.WorkerCost },
+            { targetId, 1 }
+        };
+
+        for (int i = 0; i < command.Requirements.Count; i++)
+        {
+            CardRequirement requirement = command.Requirements[i];
+            CardId id = _stdIndexToCardId[requirement.CardIndex];
+            if (!expected.ContainsKey(id))
+                expected[id] = 0;
+
+            expected[id] += requirement.Count;
+        }
+
+        return CountsEqual(actual, expected);
+    }
+
+    private static bool CountsEqual(
+        Dictionary<CardId, int> actual,
+        Dictionary<CardId, int> expected)
+    {
+        if (actual.Count != expected.Count)
+            return false;
+
+        foreach (KeyValuePair<CardId, int> pair in expected)
+        {
+            if (!actual.TryGetValue(pair.Key, out int count) ||
+                count != pair.Value)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string[] GetCommandKeysForTarget(CardId targetId)
+    {
+        switch (targetId)
+        {
+            case CardId.Tree:
+                return new[] { "Tree" };
+            case CardId.Rock:
+                return new[] { "Rock" };
+            case CardId.BananaTree:
+                return new[] { "BananaTree" };
+            case CardId.StrawBerryTree:
+                return new[] { "StrawBerryTree" };
+            case CardId.Wood:
+                return new[] { "Wood" };
+            case CardId.Forge:
+                return new[] { "ForgeIron", "ForgeGold" };
+            case CardId.Timber:
+                return new[] { "Timber" };
+            case CardId.Mine:
+                return new[] { "Mine" };
+            case CardId.House:
+                return new[] { "House" };
+            default:
+                return System.Array.Empty<string>();
+        }
+    }
+
+    private static bool IsUncancelableBasicCommand(
+        CardId targetId,
+        ICardCommand command)
+    {
+        return command.ConsumeTarget &&
+            command.Requirements.Count == 0 &&
+            (targetId == CardId.Wood ||
+             targetId == CardId.Tree ||
+             targetId == CardId.Rock ||
+             targetId == CardId.BananaTree ||
+             targetId == CardId.StrawBerryTree);
     }
 
     private void RecalcSafe()

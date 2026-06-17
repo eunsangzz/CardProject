@@ -1,25 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class WoodToBranchCommand : ICardCommand
 {
     public int WorkerCost => 1;
-    public bool CanExecute(GameData gd) => gd.Woker >= WorkerCost;
+    public float Duration => 6f;
+    public IReadOnlyList<CardRequirement> Requirements =>
+        System.Array.Empty<CardRequirement>();
+    public bool ConsumeTarget => true;
+    public bool CanExecute(GameData gameData) => gameData.Woker >= WorkerCost;
 
-    public IEnumerator Execute(CardManager cm, GameData gd)
+    public IEnumerator Execute(CardManager cardManager, GameData gameData)
     {
-        cm.RemoveCardByIndex(0); // Wood Á¦°Å
-        yield return new UnityEngine.WaitForSeconds(2f);
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new UnityEngine.WaitForSeconds(2f);
+            cardManager.CreateIntermediateCard(4);
+            gameData.addCardCount(10);
+        }
 
-        cm.CreateIntermediateCard(4); gd.addCardCount(10); // Branch
-        yield return new UnityEngine.WaitForSeconds(2f);
-
-        cm.CreateIntermediateCard(4); gd.addCardCount(10);
-        yield return new UnityEngine.WaitForSeconds(2f);
-
-        cm.CreateIntermediateCard(4); gd.addCardCount(10);
-
-        if (gd.QusetNum == 1) gd.AddQuest(1);
+        if (gameData.QusetNum == 1)
+            gameData.AddQuest(1);
     }
 }

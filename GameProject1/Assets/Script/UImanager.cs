@@ -66,6 +66,7 @@ public class UImanager : MonoBehaviour
 
     // [CHANGED] DayNightManager 참조(밤 시작 이벤트만 UI에서 사용)
     [SerializeField] private DayNightManager dayNight;
+    [SerializeField] private CardManager cardManager;
 
     // [CHANGED] CardInfo/Skill 딕셔너리
     private readonly Dictionary<CardId, (string displayName, string desc)> _cardInfoMap
@@ -93,6 +94,9 @@ public class UImanager : MonoBehaviour
         // [CHANGED] 딕셔너리 초기화
         InitCardInfoMap();
         InitSkillButtonMap();
+
+        if (cardManager == null)
+            cardManager = FindObjectOfType<CardManager>();
 
         // [CHANGED] DayNight 이벤트 구독
         if (dayNight == null)
@@ -310,6 +314,7 @@ public class UImanager : MonoBehaviour
         _cardInfoMap[CardId.Iron] = ("철광석", "제련을 통해 단단한 철괴를 만들 수 있다.");
         _cardInfoMap[CardId.IronIngot] = ("철괴", "많은 것을 만들 수 있는 기본이면서 최강의 제료");
 
+        _cardInfoMap[CardId.Armory] = ("무기고", "무기와 전투 장비를 제작하고 보관하는 건물이다.");
         _cardInfoMap[CardId.Player] = ("주민", "주민이 없으면 게임은 끝나버린다. 배가 고프지");
     }
 
@@ -381,6 +386,7 @@ public class UImanager : MonoBehaviour
 
         DataController.instance.gameData.Skill = true;
         cardSkillUi.SetActive(true);
+        cardManager?.SetSelectedCard(touch);
 
         HideAllSkillButtons();
         buttonToShow.SetActive(true);

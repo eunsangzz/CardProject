@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class HouseSpawnPlayerCommand : ICardCommand
 {
     public int WorkerCost => 2;
+    public float Duration => 60f;
+    public IReadOnlyList<CardRequirement> Requirements =>
+        System.Array.Empty<CardRequirement>();
+    public bool ConsumeTarget => false;
 
-    public bool CanExecute(GameData gd)
-        => gd.Woker >= WorkerCost
-        && gd.PlayerCount >= 2
-        && gd.gold > 15;
+    public bool CanExecute(GameData gameData) =>
+        gameData.Woker >= WorkerCost &&
+        gameData.PlayerCount >= 2 &&
+        gameData.gold > 15;
 
-    public IEnumerator Execute(CardManager cm, GameData gd)
+    public IEnumerator Execute(CardManager cardManager, GameData gameData)
     {
-        gd.AddGold(-15);
-
-        yield return new UnityEngine.WaitForSeconds(60f);
-
-        cm.SpawnPlayerCard();
-        gd.AddPlayer(1);
-        gd.AddWorker(1);
+        gameData.AddGold(-15);
+        yield return new UnityEngine.WaitForSeconds(Duration);
+        cardManager.SpawnPlayerCard();
+        gameData.AddPlayer(1);
+        gameData.AddWorker(1);
     }
 }
