@@ -211,7 +211,14 @@ public class CraftManager : MonoBehaviour
     {
         var gd = DataController.instance.gameData;
 
-        string btnt = EventSystem.current.currentSelectedGameObject.name;
+        GameObject selected = EventSystem.current != null
+            ? EventSystem.current.currentSelectedGameObject
+            : null;
+
+        if (selected == null)
+            return;
+
+        string btnt = selected.name;
 
         if (btnt == "Kitchen")
         {
@@ -220,13 +227,13 @@ public class CraftManager : MonoBehaviour
         }
         if (gd.Woker == 0)
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
             return;
         }
 
         if (_cardManager == null)
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
             return;
         }
 
@@ -235,14 +242,14 @@ public class CraftManager : MonoBehaviour
 
         if (!recipe.CanCraft())
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
             return;
         }
 
         List<ReservedMaterial> reserved = recipe.ReserveMaterials(_cardManager);
         if (reserved == null || reserved.Count == 0)
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
             return;
         }
 
@@ -256,7 +263,7 @@ public class CraftManager : MonoBehaviour
             recipe.Duration,
             out CardWorkService.WorkHandle workHandle))
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
             return;
         }
 
@@ -351,7 +358,7 @@ public class CraftManager : MonoBehaviour
         if (!workerAlreadyReserved)
             gd.AddWorker(-recipe.WorkerCost);
 
-        CraftUI.SetActive(false);
+        SetActiveIfExists(CraftUI, false);
         HideAllCategoryPanels();
 
         yield return new WaitForSeconds(recipe.Duration);
@@ -376,9 +383,14 @@ public class CraftManager : MonoBehaviour
 
     public void CraftUi()
     {
-        GameObject clickObject = EventSystem.current.currentSelectedGameObject;
+        GameObject clickObject = EventSystem.current != null
+            ? EventSystem.current.currentSelectedGameObject
+            : null;
 
-        CraftList.SetActive(false);
+        if (clickObject == null)
+            return;
+
+        SetActiveIfExists(CraftList, false);
         HideAllCategoryPanels();
 
         if (_categoryPanels.TryGetValue(clickObject.name, out var panel) && panel != null)
@@ -387,22 +399,22 @@ public class CraftManager : MonoBehaviour
 
     public void backspaceBtn()
     {
-        CraftList.SetActive(true);
+        SetActiveIfExists(CraftList, true);
         HideAllCategoryPanels();
     }
 
     public void ErrorClose()
     {
-        ErrorUi.SetActive(false);
+        SetActiveIfExists(ErrorUi, false);
     }
 
     private void HideAllCategoryPanels()
     {
-        HouseCraftUI.SetActive(false);
-        ForgeCraftUi.SetActive(false);
-        TimberCraftUi.SetActive(false);
-        MineCraftUi.SetActive(false);
-        if (ArmoryCraftUi != null) ArmoryCraftUi.SetActive(false);
+        SetActiveIfExists(HouseCraftUI, false);
+        SetActiveIfExists(ForgeCraftUi, false);
+        SetActiveIfExists(TimberCraftUi, false);
+        SetActiveIfExists(MineCraftUi, false);
+        SetActiveIfExists(ArmoryCraftUi, false);
     }
 
     private void SpawnCraftOutput(CardId id, Vector3? preferredPosition = null)
@@ -486,7 +498,7 @@ public class CraftManager : MonoBehaviour
         }
         else
         {
-            ErrorUi.SetActive(true);
+            SetActiveIfExists(ErrorUi, true);
         }
     }
 
@@ -646,5 +658,11 @@ public class CraftManager : MonoBehaviour
             case 21: return CardId.Armory;
             default: return CardId.Wood;
         }
+    }
+
+    private static void SetActiveIfExists(GameObject target, bool active)
+    {
+        if (target != null)
+            target.SetActive(active);
     }
 }

@@ -11,6 +11,11 @@ public class MouseDrag : MonoBehaviour
     [SerializeField] private bool useRaycastPlane = true;
     [SerializeField] private int dragSortingOrderBoost = 1000;
 
+    [Header("Stack Split")]
+    [SerializeField] private bool allowStackSplit = true;
+    [SerializeField] private bool shiftDragsSingleCard = true;
+    [SerializeField, Min(1)] private int shiftSplitCount = 1;
+
     [Header("Selection Feedback (Shadow)")]
     [SerializeField] private GameObject shadowPrefab;
     [SerializeField] private Vector3 shadowLocalOffset =
@@ -125,6 +130,9 @@ public class MouseDrag : MonoBehaviour
         _dragStartPositions.Clear();
 
         List<GameObject> cards = CardStackService.GetCards(gameObject);
+        if (TryGetRequestedSplitCount(cards.Count, out int splitCount))
+            cards = CardStackService.SplitForDrag(gameObject, splitCount);
+
         for (int i = 0; i < cards.Count; i++)
         {
             GameObject card = cards[i];
@@ -135,6 +143,52 @@ public class MouseDrag : MonoBehaviour
         }
 
         _primaryDragStartPosition = transform.position;
+    }
+
+    private bool TryGetRequestedSplitCount(int stackCount, out int splitCount)
+    {
+        splitCount = stackCount;
+        if (!allowStackSplit || stackCount <= 1)
+            return false;
+
+        if (TryReadNumberKey(out int numberCount))
+        {
+            splitCount = Mathf.Clamp(numberCount, 1, stackCount);
+            return splitCount < stackCount;
+        }
+
+        if (shiftDragsSingleCard &&
+            (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        {
+            splitCount = Mathf.Clamp(shiftSplitCount, 1, stackCount);
+            return splitCount < stackCount;
+        }
+
+        return false;
+    }
+
+    private static bool TryReadNumberKey(out int count)
+    {
+        count = 0;
+
+        if (Input.GetKey(KeyCode.Alpha0) || Input.GetKey(KeyCode.Keypad0))
+        {
+            count = 10;
+            return true;
+        }
+
+        for (int i = 1; i <= 9; i++)
+        {
+            KeyCode alpha = (KeyCode)((int)KeyCode.Alpha0 + i);
+            KeyCode keypad = (KeyCode)((int)KeyCode.Keypad0 + i);
+            if (Input.GetKey(alpha) || Input.GetKey(keypad))
+            {
+                count = i;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void MoveStack(Vector3 delta)

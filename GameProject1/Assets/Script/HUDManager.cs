@@ -2,12 +2,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class HUDManager : MonoBehaviour
 {
+    private const string CookieRunFontResourcesPath = "Fonts/Regular SDF";
+    private const string CookieRunFontAssetPath = "Assets/CookieRunFont_TTF/Regular SDF.asset";
+    private const float HudLayoutScale = 1f;
+
     [Header("Timer")]
     [SerializeField] private Slider slTimer;
     [SerializeField] private DayNightManager dayNight;
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TMP_FontAsset cookieRunFont;
 
     [Header("Resource Texts")]
     [SerializeField] private TextMeshProUGUI WoodCountText;
@@ -30,7 +39,7 @@ public class HUDManager : MonoBehaviour
 
     [Header("Quest Texts")]
     [SerializeField] private TextMeshProUGUI QuestText;
-    [SerializeField] private TextMeshProUGUI QuestNumText; // « ø‰«œ∏È ªÁøÎ
+    [SerializeField] private TextMeshProUGUI QuestNumText;
 
     [Header("Tutorial Texts")]
     [SerializeField] private TextMeshProUGUI tutoBuyText;
@@ -43,6 +52,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private TextMeshProUGUI startText;
 
+    private bool _timerLayoutAdjusted;
     private int _cachedPlayer;
     private int _cachedFood;
 
@@ -57,17 +67,23 @@ public class HUDManager : MonoBehaviour
             slTimer.value = dayNight.TimeLeft;
         }
 
+        ApplyCookieRunFontToTexts();
+        ConfigureTimerText();
         SetStaticTexts();
 
-        var gd = DataController.instance.gameData;
+        GameData gd = DataController.instance != null
+            ? DataController.instance.gameData
+            : null;
         gd?.RaiseAllEvents();
     }
 
     private void Update()
     {
-        // ≈∏¿Ã∏”¥¬ ¿Ã∫•∆Æ∑Œ ∏≈ «¡∑π¿” ΩÓ±‚ø£ ∞˙«ÿº≠ Update∑Œ ¿Ø¡ˆ (øπø‹ OK)
         if (dayNight != null && slTimer != null)
+        {
             slTimer.value = dayNight.TimeLeft;
+            UpdateTimerText();
+        }
     }
 
     private void OnEnable()
@@ -96,59 +112,63 @@ public class HUDManager : MonoBehaviour
 
     private void UpdateGold(int value)
     {
-        if (GoldText) GoldText.text = "∞ÒµÂ : " + value;
+        if (GoldText) GoldText.text = "Í≥®Îìú : " + value;
     }
 
     private void UpdateFood(int value)
     {
         _cachedFood = value;
-        if (FoodCountText) FoodCountText.text = $"¿ΩΩƒ : {_cachedFood}/{_cachedPlayer}";
+        if (FoodCountText) FoodCountText.text = $"ÏùåÏãù : {_cachedFood}/{_cachedPlayer}";
     }
 
     private void UpdatePlayer(int value)
     {
         _cachedPlayer = value;
-        if (FoodCountText) FoodCountText.text = $"¿ΩΩƒ : {_cachedFood}/{_cachedPlayer}";
+        if (FoodCountText) FoodCountText.text = $"ÏùåÏãù : {_cachedFood}/{_cachedPlayer}";
 
-        // ¿œ≤€ «•±‚µµ «√∑π¿ÃæÓ ºˆ∞° « ø‰
-        var gd = DataController.instance.gameData;
-        if (gd != null && WokerCountText) WokerCountText.text = $"¿œ≤€ : {gd.Woker} / {gd.PlayerCount}";
+        GameData gd = DataController.instance != null
+            ? DataController.instance.gameData
+            : null;
+        if (gd != null && WokerCountText) WokerCountText.text = $"ÏùºÍæº : {gd.Woker} / {gd.PlayerCount}";
     }
 
     private void UpdateWorker(int value)
     {
-        var gd = DataController.instance.gameData;
-        if (gd != null && WokerCountText) WokerCountText.text = $"¿œ≤€ : {gd.Woker} / {gd.PlayerCount}";
+        GameData gd = DataController.instance != null
+            ? DataController.instance.gameData
+            : null;
+        if (gd != null && WokerCountText) WokerCountText.text = $"ÏùºÍæº : {gd.Woker} / {gd.PlayerCount}";
     }
 
     private void UpdateCardCount(int limit, int count)
     {
-        if (CardCountText) CardCountText.text = $"ƒ´µÂ¡¶«— : {limit}/{count}";
+        if (CardCountText) CardCountText.text = $"Ïπ¥Îìú : {count}/{limit}";
     }
 
     private void UpdateDay(int value)
     {
-        if (DayText) DayText.text = "ª˝¡∏¿œ : " + value;
+        if (DayText) DayText.text = "ÏÉùÏ°¥Ïùº : " + value;
     }
 
     private void UpdateInventory()
     {
-        var gd = DataController.instance.gameData;
+        GameData gd = DataController.instance != null
+            ? DataController.instance.gameData
+            : null;
         if (gd == null) return;
 
-        if (WoodCountText) WoodCountText.text = "∏Ò¿Á : " + gd.WoodCard;
-        if (StoneCountText) StoneCountText.text = "ºÆ¿Á : " + gd.StoneCard;
-        if (IronCountText) IronCountText.text = "√∂±§ºÆ : " + gd.IronCard;
-        if (GoldCountText) GoldCountText.text = "±›±§ºÆ : " + gd.GoldCard;
+        if (WoodCountText) WoodCountText.text = "Î™©Ïû¨ : " + gd.WoodCard;
+        if (StoneCountText) StoneCountText.text = "ÏÑùÏû¨ : " + gd.StoneCard;
+        if (IronCountText) IronCountText.text = "Ï≤†Í¥ëÏÑù : " + gd.IronCard;
+        if (GoldCountText) GoldCountText.text = "Í∏àÍ¥ëÏÑù : " + gd.GoldCard;
 
-        if (GoldIngotCountText) GoldIngotCountText.text = "±›±´ : " + gd.GoldIngotCard;
-        if (IronIngotCountText) IronIngotCountText.text = "√∂±´ : " + gd.IronIngotCard;
-        if (BrickCountText) BrickCountText.text = "∫Æµπ : " + gd.BrickCard;
-        if (PanelCountText) PanelCountText.text = "∆«¿⁄ : " + gd.PanelCard;
-        if (BranchCountText) BranchCountText.text = "≥™πµ∞°¡ˆ : " + gd.BranchCard;
+        if (GoldIngotCountText) GoldIngotCountText.text = "Í∏àÍ¥¥ : " + gd.GoldIngotCard;
+        if (IronIngotCountText) IronIngotCountText.text = "Ï≤†Í¥¥ : " + gd.IronIngotCard;
+        if (BrickCountText) BrickCountText.text = "Î≤ΩÎèå : " + gd.BrickCard;
+        if (PanelCountText) PanelCountText.text = "ÌåêÏûê : " + gd.PanelCard;
+        if (BranchCountText) BranchCountText.text = "ÎÇòÎ≠áÍ∞ÄÏßÄ : " + gd.BranchCard;
 
-        // Goalµµ ¿Œ∫•≈‰∏Æ ∫Ø»≠ø° µ˚∂Û ∞∞¿Ã ∞ªΩ≈(±›±´)
-        if (GoalText) GoalText.text = "∏Ò«• : ±›±´ 10 / " + gd.GoldIngotCard;
+        if (GoalText) GoalText.text = "Î™©Ìëú : Í∏àÍ¥¥ 10 / " + gd.GoldIngotCard;
     }
 
     private void UpdateQuest(int questNum)
@@ -159,41 +179,144 @@ public class HUDManager : MonoBehaviour
 
     private void SetStaticTexts()
     {
-        if (tutoBuyText) tutoBuyText.text = "3∞ÒµÂ∑Œ ƒ´µÂ∏¶ ±∏∏≈ ∞°¥…«’¥œ¥Ÿ.";
-        if (tutoCraftText) tutoCraftText.text = "¿Á∑·∏¶ ∏æ∆ ¡¶¿€¿Ã ∞°¥…«’¥œ¥Ÿ..";
+        if (tutoBuyText) tutoBuyText.text = "3Í≥®ÎìúÎ°ú Ïπ¥ÎìúÎ•º Íµ¨Îß§Ìï©ÎãàÎã§.";
+        if (tutoCraftText) tutoCraftText.text = "Ïû¨Î£åÎ•º Î™®ÏïÑ Ï†úÏûëÏùÑ ÏãúÏûëÌï©ÎãàÎã§.";
         if (tutoDayText)
         {
             tutoDayText.text =
-                "π„¿Ã µ«∏È ¡¶«—µ» ƒ´µÂø° ∏¬√Á ƒ´µÂ ∆«∏≈∞° « ø‰«’¥œ¥Ÿ.\n" +
-                "∂««— ¡÷πŒ¿∫ ¿ΩΩƒ¿Ã « ø‰«œ∏Á\n" +
-                "¿ΩΩƒ¿Ã ∫Œ¡∑«— ∏∏≈≠ ¡÷πŒ¿Ã ¡◊Ω¿¥œ¥Ÿ.";
+                "Î∞§Ïù¥ ÎêòÎ©¥ Ï†úÌïúÎêú Ïπ¥Îìú ÏàòÏóê ÎßûÏ∂∞ Ïπ¥Îìú ÌåêÎß§Í∞Ä ÌïÑÏöîÌï©ÎãàÎã§.\n" +
+                "Î∞§ÎßàÎã§ Ï£ºÎØºÏóêÍ≤å ÏùåÏãùÏù¥ ÌïÑÏöîÌïòÎ©∞\n" +
+                "ÏùåÏãùÏù¥ Î∂ÄÏ°±Ìïú ÎßåÌÅº Ï£ºÎØºÏù¥ Ï£ΩÏäµÎãàÎã§.";
         }
         if (tutoSellText)
         {
             tutoSellText.text =
-                "ªÛ¥‹ ∆«∏≈∞° »∞º∫»≠ µ«æÓ¿÷¿∏∏È\n" +
-                "ƒ´µÂ∏¶ ≈¨∏Ø«ÿ\n" +
-                "∆» ºˆ ¿÷Ω¿¥œ¥Ÿ";
+                "Ïπ¥Îìú ÌåêÎß§Í∞Ä ÌôúÏÑ±ÌôîÎêòÏóàÏùÑ Îïå\n" +
+                "Ïπ¥ÎìúÎ•º ÌÅ¥Î¶≠Ìï¥\n" +
+                "Ìåî Ïàò ÏûàÏäµÎãàÎã§.";
         }
-        if (tutoStoreUpText) tutoStoreUpText.text = "100∞ÒµÂ∑Œ ªÛ¡°¿ª æ˜±◊∑π¿ÃµÂ «“ºˆ¿÷Ω¿¥œ¥Ÿ. ªı∑ŒøÓ ¿Á∑·∞° ≥™ø…¥œ¥Ÿ.";
+        if (tutoStoreUpText) tutoStoreUpText.text = "100Í≥®ÎìúÎ°ú ÏÉÅÏ†êÏùÑ ÏóÖÍ∑∏Î†àÏù¥ÎìúÌï† Ïàò ÏûàÏäµÎãàÎã§. ÏÉàÎ°úÏö¥ Ïû¨Î£åÍ∞Ä ÎÇòÏòµÎãàÎã§.";
 
-        if (gameOverText) gameOverText.text = "∞‘¿”ø¿πˆ!\n∏µÁ ¡÷πŒ¿Ã\n¿ΩΩƒ¿Ã æ¯æÓ ±ææÓ ¡◊æ˙Ω¿¥œ¥Ÿ.";
-        if (startText) startText.text = "∏Ò«•∏¶ ¥ﬁº∫«ﬂΩ¿¥œ¥Ÿ.\n¿Ã¡¶ ∫ª∞‘¿”¿∏∑Œ";
+        if (gameOverText) gameOverText.text = "Í≤åÏûÑÏò§Î≤Ñ!\nÎ™®Îì† Ï£ºÎØºÏù¥\nÏùåÏãù Î∂ÄÏ°±ÏúºÎ°ú Ï£ΩÏóàÏäµÎãàÎã§.";
+        if (startText) startText.text = "Î™©ÌëúÎ•º Îã¨ÏÑ±ÌñàÏäµÎãàÎã§.\nÍ≤åÏûÑ ÌÅ¥Î¶¨Ïñ¥!";
     }
 
     private static string GetQuestText(int questNum)
     {
         return questNum switch
         {
-            0 => "±∏∏≈ πˆ∆∞¿ª ¥≠∑Ø ƒ´µÂ∏¶ ±∏∏≈«œººø‰",
-            1 => "∏Ò¿Áƒ´µÂ º±≈√ »ƒ ≥™πµ∞°¡ˆ∏¶ ∏∏µÂººø‰",
-            2 => "≥™πµ∞°¡ˆ∏¶ ∆«∏≈«œ∞Ì πŸ≥™≥™∏¶ √§¡˝«œººø‰",
-            3 => "¡¶¿€ø°º≠ ¡¶¡¶º“ ∂«¥¬ ∫Æµπ∞¯¿Â¿ª ∏∏µÂººø‰",
-            4 => "∫Æµπ ∂«¥¬ ∆«¿⁄∏¶ ∏∏µÂººø‰",
-            5 => "100∞ÒµÂ∏¶ ∏æ∆ ªÛ¡°¿ª æ˜±◊∑π¿ÃµÂ «œººø‰",
-            6 => "»≠∑Œ∏¶ ∏∏µÈæÓ ±›±´∏¶ ∏∏µÂººø‰",
-            7 => "ƒ˘Ω∫∆Æ øœ∑·! ∏Ò¿˚¿ª ¥ﬁº∫«œººø‰",
+            0 => "Íµ¨Îß§ Î≤ÑÌäºÏùÑ ÎàåÎü¨ Ïπ¥ÎìúÎ•º Íµ¨Îß§ÌïòÏÑ∏Ïöî.",
+            1 => "ÎÇòÎ¨¥ Ïπ¥Îìú ÏúÑÏóê Ï£ºÎØºÏùÑ Ïò¨Î†§ Î™©Ïû¨Î•º ÏñªÏúºÏÑ∏Ïöî.",
+            2 => "Î™©Ïû¨Î•º ÌåêÎß§ÌïòÍ≥† Î∞îÎÇòÎÇòÎ•º Ï±ÑÏßëÌïòÏÑ∏Ïöî.",
+            3 => "Ï†úÏûëÏúºÎ°ú Í¥ëÏÇ∞ ÎòêÎäî Ï†úÏû¨ÏÜåÎ•º ÎßåÎìúÏÑ∏Ïöî.",
+            4 => "Í¥ëÏÇ∞ ÎòêÎäî Ï†úÏû¨ÏÜåÎ•º ÎßåÎìúÏÑ∏Ïöî.",
+            5 => "100Í≥®ÎìúÎ•º Î™®ÏïÑ ÏÉÅÏ†êÏùÑ ÏóÖÍ∑∏Î†àÏù¥ÎìúÌïòÏÑ∏Ïöî.",
+            6 => "ÌôîÎ°úÎ•º ÎßåÎì§Ïñ¥ Í∏àÍ¥¥Î•º ÎßåÎìúÏÑ∏Ïöî.",
+            7 => "ÌÄòÏä§Ìä∏ ÏôÑÎ£å! Î™©ÌëúÎ•º Îã¨ÏÑ±ÌïòÏÑ∏Ïöî.",
             _ => ""
         };
+    }
+
+    private void ConfigureTimerText()
+    {
+        if (slTimer == null)
+            return;
+
+        RectTransform sliderRect = slTimer.GetComponent<RectTransform>();
+        if (sliderRect != null && !_timerLayoutAdjusted)
+        {
+            sliderRect.localScale = Vector3.one;
+            sliderRect.sizeDelta = Scaled(new Vector2(440f, 42f));
+            _timerLayoutAdjusted = true;
+        }
+
+        if (timerText == null)
+        {
+            Transform old = slTimer.transform.Find("RuntimeTimerText");
+            if (old != null)
+                timerText = old.GetComponent<TextMeshProUGUI>();
+        }
+
+        if (timerText == null)
+        {
+            GameObject textObject = new GameObject("RuntimeTimerText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            textObject.transform.SetParent(slTimer.transform, false);
+            timerText = textObject.GetComponent<TextMeshProUGUI>();
+        }
+
+        RectTransform textRect = timerText.rectTransform;
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        timerText.alignment = TextAlignmentOptions.Center;
+        timerText.fontSize = Scaled(18f);
+        timerText.fontStyle = FontStyles.Bold;
+        timerText.color = Color.white;
+        timerText.raycastTarget = false;
+        ApplyCookieRunFont(timerText);
+        timerText.transform.SetAsLastSibling();
+        UpdateTimerText();
+    }
+
+    private void UpdateTimerText()
+    {
+        if (timerText == null || dayNight == null)
+            return;
+
+        int seconds = Mathf.CeilToInt(dayNight.TimeLeft);
+        timerText.text = $"ÎÇ®ÏùÄ ÏãúÍ∞Ñ {seconds}s";
+    }
+
+    private void ApplyCookieRunFontToTexts()
+    {
+        TextMeshProUGUI[] texts =
+        {
+            WoodCountText, StoneCountText, IronCountText, GoldCountText,
+            PanelCountText, BrickCountText, IronIngotCountText, GoldIngotCountText,
+            BranchCountText, GoldText, FoodCountText, WokerCountText, CardCountText,
+            DayText, GoalText, QuestText, QuestNumText, tutoBuyText, tutoSellText,
+            tutoCraftText, tutoDayText, tutoStoreUpText, gameOverText, startText,
+            timerText
+        };
+
+        for (int i = 0; i < texts.Length; i++)
+            ApplyCookieRunFont(texts[i]);
+    }
+
+    private void ApplyCookieRunFont(TextMeshProUGUI text)
+    {
+        if (text == null)
+            return;
+
+        TMP_FontAsset fontAsset = LoadCookieRunFont();
+        if (fontAsset != null)
+            text.font = fontAsset;
+    }
+
+    private TMP_FontAsset LoadCookieRunFont()
+    {
+        if (cookieRunFont != null)
+            return cookieRunFont;
+
+        cookieRunFont = Resources.Load<TMP_FontAsset>(CookieRunFontResourcesPath);
+
+#if UNITY_EDITOR
+        if (cookieRunFont == null)
+            cookieRunFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(CookieRunFontAssetPath);
+#endif
+
+        return cookieRunFont;
+    }
+
+    private static Vector2 Scaled(Vector2 value)
+    {
+        return value * HudLayoutScale;
+    }
+
+    private static float Scaled(float value)
+    {
+        return value * HudLayoutScale;
     }
 }

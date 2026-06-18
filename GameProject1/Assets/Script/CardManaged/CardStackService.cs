@@ -96,6 +96,64 @@ public static class CardStackService
         Arrange(group);
     }
 
+    public static List<GameObject> SplitForDrag(GameObject card, int count)
+    {
+        Cleanup();
+
+        if (card == null)
+            return new List<GameObject>();
+
+        if (!_groups.TryGetValue(card, out StackGroup group))
+            return new List<GameObject> { card };
+
+        if (CardWorkService.IsAnyLocked(group.Cards))
+            return new List<GameObject>();
+
+        int startIndex = group.Cards.IndexOf(card);
+        if (startIndex < 0)
+            startIndex = 0;
+
+        int availableCount = group.Cards.Count - startIndex;
+        int splitCount = Mathf.Clamp(count, 1, availableCount);
+        if (splitCount >= group.Cards.Count)
+            return new List<GameObject>(group.Cards);
+
+        List<GameObject> splitCards = group.Cards.GetRange(startIndex, splitCount);
+        for (int i = 0; i < splitCards.Count; i++)
+        {
+            GameObject splitCard = splitCards[i];
+            group.Cards.Remove(splitCard);
+            _groups.Remove(splitCard);
+        }
+
+        if (group.Cards.Count <= 1)
+        {
+            if (group.Cards.Count == 1)
+                _groups.Remove(group.Cards[0]);
+        }
+        else
+        {
+            for (int i = 0; i < group.Cards.Count; i++)
+                _groups[group.Cards[i]] = group;
+
+            Arrange(group);
+        }
+
+        if (splitCards.Count > 1)
+        {
+            var splitGroup = new StackGroup();
+            AddUniqueActiveCards(splitGroup.Cards, splitCards);
+
+            for (int i = 0; i < splitGroup.Cards.Count; i++)
+                _groups[splitGroup.Cards[i]] = splitGroup;
+
+            Arrange(splitGroup);
+            return new List<GameObject>(splitGroup.Cards);
+        }
+
+        return splitCards;
+    }
+
     public static void Remove(GameObject card)
     {
         Detach(card);

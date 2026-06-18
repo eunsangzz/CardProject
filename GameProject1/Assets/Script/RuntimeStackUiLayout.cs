@@ -1,21 +1,23 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public sealed class RuntimeStackUiLayout : MonoBehaviour
 {
     private static RuntimeStackUiLayout _instance;
+    private static TMP_FontAsset _cookieRunFont;
+
+    private const string CookieRunFontResourcesPath = "Fonts/Regular SDF";
+    private const string CookieRunFontAssetPath = "Assets/CookieRunFont_TTF/Regular SDF.asset";
+    private const float LayoutScale = 1f;
 
     private Canvas _canvas;
-    private RectTransform _root;
-    private TextMeshProUGUI _cardText;
-    private TextMeshProUGUI _foodText;
-    private TextMeshProUGUI _goldText;
-    private TextMeshProUGUI _timeText;
-    private GameObject _recipeOverlay;
-    private DayNightManager _dayNight;
+    private bool _layoutApplied;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -28,7 +30,7 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
         if (_instance != null)
             return;
 
-        var host = new GameObject("RuntimeStackUiLayout");
+        GameObject host = new GameObject("RuntimeStackUiLayout");
         DontDestroyOnLoad(host);
         _instance = host.AddComponent<RuntimeStackUiLayout>();
     }
@@ -64,8 +66,6 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
             RefreshSceneUi();
 
         HideCardSkillUi();
-        EnsureRecipeOverlayState();
-        UpdateTopHud();
     }
 
     private void LateUpdate()
@@ -75,150 +75,249 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        _layoutApplied = false;
         RefreshSceneUi();
     }
 
     private void RefreshSceneUi()
     {
         _canvas = FindObjectOfType<Canvas>();
-        _dayNight = DayNightManager.Instance != null
-            ? DayNightManager.Instance
-            : FindObjectOfType<DayNightManager>();
-
         if (_canvas == null)
             return;
 
-        BuildTopHud();
+        RemoveRuntimeUi();
         RenameCraftTab();
-        HideLegacyTopHud();
+        ApplyExistingUiLayout();
         HideCardSkillUi();
-        EnsureRecipeOverlayState();
+        ApplyCookieRunFontToScene();
     }
 
-    private void BuildTopHud()
+    private void ApplyExistingUiLayout()
     {
-        Transform oldRoot = _canvas.transform.Find("RuntimeStackTopHud");
-        if (oldRoot != null)
-            Destroy(oldRoot.gameObject);
+        if (_layoutApplied)
+            return;
 
-        GameObject rootObject = new GameObject("RuntimeStackTopHud", typeof(RectTransform));
-        rootObject.transform.SetParent(_canvas.transform, false);
-        rootObject.transform.SetAsLastSibling();
+        RectTransform canvasRect = _canvas.GetComponent<RectTransform>();
+        if (canvasRect == null)
+            return;
 
-        _root = rootObject.GetComponent<RectTransform>();
-        _root.anchorMin = Vector2.zero;
-        _root.anchorMax = Vector2.one;
-        _root.offsetMin = Vector2.zero;
-        _root.offsetMax = Vector2.zero;
+        ResizeCanvasScaler();
+        LayoutTopHud();
+        LayoutBottomButtons();
 
-        GameObject stats = CreatePanel(
-            "CardFoodGold",
-            _root,
-            new Vector2(520f, 46f),
-            new Vector2(-214f, -12f));
-
-        _cardText = CreateText("CardText", stats.transform, TextAlignmentOptions.Left);
-        _foodText = CreateText("FoodText", stats.transform, TextAlignmentOptions.Center);
-        _goldText = CreateText("GoldText", stats.transform, TextAlignmentOptions.Right);
-
-        ArrangeTextColumn(_cardText.rectTransform, 0f, 0.34f);
-        ArrangeTextColumn(_foodText.rectTransform, 0.33f, 0.67f);
-        ArrangeTextColumn(_goldText.rectTransform, 0.66f, 1f);
-
-        GameObject time = CreatePanel(
-            "Time",
-            _root,
-            new Vector2(190f, 46f),
-            new Vector2(-12f, -12f));
-
-        _timeText = CreateText("TimeText", time.transform, TextAlignmentOptions.Center);
-        Stretch(_timeText.rectTransform, 8f, 4f);
-
-        UpdateTopHud();
+        _layoutApplied = true;
     }
 
-    private static GameObject CreatePanel(
-        string name,
-        Transform parent,
+    private void ResizeCanvasScaler()
+    {
+        CanvasScaler scaler = _canvas.GetComponent<CanvasScaler>();
+        if (scaler == null)
+            return;
+
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+    }
+
+    private void LayoutTopHud()
+    {
+        SetRect("Gold", Scaled(new Vector2(-760f, -15f)), Scaled(new Vector2(96f, 34f)), TextAlignmentOptions.MidlineLeft, Scaled(20f));
+        SetRect("FoodCount", Scaled(new Vector2(-630f, -15f)), Scaled(new Vector2(122f, 34f)), TextAlignmentOptions.MidlineLeft, Scaled(20f));
+        SetRect("CardCount", Scaled(new Vector2(-500f, -15f)), Scaled(new Vector2(124f, 34f)), TextAlignmentOptions.MidlineLeft, Scaled(20f));
+        SetSceneObjectActive("DayCount", false);
+
+        Slider timer = FindObjectOfType<Slider>();
+        if (timer != null)
+        {
+            RectTransform rect = timer.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.one;
+                rect.anchorMax = Vector2.one;
+                rect.pivot = Vector2.one;
+                rect.localScale = Vector3.one;
+                rect.sizeDelta = Scaled(new Vector2(440f, 42f));
+                rect.anchoredPosition = Scaled(new Vector2(-20f, -12f));
+                NormalizeSliderVisuals(rect);
+            }
+
+            TextMeshProUGUI timerText = timer.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (timerText != null)
+            {
+                timerText.fontSize = Scaled(18f);
+                timerText.alignment = TextAlignmentOptions.Center;
+                timerText.color = Color.white;
+                ApplyCookieRunFont(timerText);
+            }
+        }
+    }
+
+    private void LayoutBottomButtons()
+    {
+        SetTopLeftButtonRect("Craftbtn", Scaled(new Vector2(56f, -35f)), Scaled(new Vector2(96f, 52f)), TextAlignmentOptions.Center, Scaled(18f));
+        SetTopLeftButtonRect("Buy", Scaled(new Vector2(160f, -35f)), Scaled(new Vector2(96f, 52f)), TextAlignmentOptions.Center, Scaled(18f));
+        SetTopLeftButtonRect("CardBuy", Scaled(new Vector2(160f, -35f)), Scaled(new Vector2(96f, 52f)), TextAlignmentOptions.Center, Scaled(18f));
+        SetTopLeftButtonRect("SellBtn", Scaled(new Vector2(264f, -35f)), Scaled(new Vector2(96f, 52f)), TextAlignmentOptions.Center, Scaled(18f));
+        SetTopLeftButtonRect("StoreUp", Scaled(new Vector2(368f, -35f)), Scaled(new Vector2(96f, 52f)), TextAlignmentOptions.Center, Scaled(18f));
+    }
+
+    private void SetTopLeftButtonRect(
+        string objectName,
+        Vector2 anchoredPosition,
         Vector2 size,
-        Vector2 anchoredPosition)
+        TextAlignmentOptions alignment,
+        float fontSize)
     {
-        GameObject panel = new GameObject(name, typeof(RectTransform), typeof(Image));
-        panel.transform.SetParent(parent, false);
+        Transform transform = FindSceneTransform(objectName);
+        if (transform == null)
+            return;
 
-        RectTransform rect = panel.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.one;
-        rect.anchorMax = Vector2.one;
-        rect.pivot = Vector2.one;
+        RectTransform rect = transform.GetComponent<RectTransform>();
+        if (rect == null)
+            return;
+
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.localScale = Vector3.one;
         rect.sizeDelta = size;
         rect.anchoredPosition = anchoredPosition;
 
-        Image image = panel.GetComponent<Image>();
-        image.color = new Color(0.96f, 0.92f, 0.78f, 0.96f);
-
-        return panel;
+        TextMeshProUGUI[] texts = transform.GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < texts.Length; i++)
+        {
+            texts[i].fontSize = fontSize;
+            texts[i].alignment = alignment;
+            ApplyCookieRunFont(texts[i]);
+        }
     }
 
-    private static TextMeshProUGUI CreateText(
-        string name,
-        Transform parent,
-        TextAlignmentOptions alignment)
+    private void SetButtonRect(
+        string objectName,
+        Vector2 anchoredPosition,
+        Vector2 size,
+        TextAlignmentOptions alignment,
+        float fontSize)
     {
-        GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(parent, false);
-
-        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-        text.fontSize = 24f;
-        text.fontStyle = FontStyles.Bold;
-        text.color = Color.black;
-        text.alignment = alignment;
-        text.enableWordWrapping = false;
-
-        return text;
-    }
-
-    private static void ArrangeTextColumn(RectTransform rect, float minX, float maxX)
-    {
-        rect.anchorMin = new Vector2(minX, 0f);
-        rect.anchorMax = new Vector2(maxX, 1f);
-        rect.offsetMin = new Vector2(10f, 4f);
-        rect.offsetMax = new Vector2(-10f, -4f);
-    }
-
-    private static void Stretch(RectTransform rect, float horizontalPadding, float verticalPadding)
-    {
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = new Vector2(horizontalPadding, verticalPadding);
-        rect.offsetMax = new Vector2(-horizontalPadding, -verticalPadding);
-    }
-
-    private void UpdateTopHud()
-    {
-        GameData gd = DataController.instance != null
-            ? DataController.instance.gameData
-            : null;
-
-        if (gd == null)
+        Transform transform = FindSceneTransform(objectName);
+        if (transform == null)
             return;
 
-        if (_cardText != null)
-            _cardText.text = $"카드 {gd.CardCount}/{gd.CardLimit}";
+        RectTransform rect = transform.GetComponent<RectTransform>();
+        if (rect == null)
+            return;
 
-        if (_foodText != null)
-            _foodText.text = $"음식 {gd.FoodCount}/{gd.PlayerCount}";
+        rect.anchorMin = new Vector2(1f, 0f);
+        rect.anchorMax = new Vector2(1f, 0f);
+        rect.pivot = new Vector2(1f, 0f);
+        rect.localScale = Vector3.one;
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPosition;
 
-        if (_goldText != null)
-            _goldText.text = $"골드 {gd.gold}";
-
-        if (_timeText != null)
+        TextMeshProUGUI[] texts = transform.GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < texts.Length; i++)
         {
-            int seconds = _dayNight != null
-                ? Mathf.CeilToInt(_dayNight.TimeLeft)
-                : 0;
-
-            _timeText.text = $"{gd.Day}일차  {seconds}s";
+            texts[i].fontSize = fontSize;
+            texts[i].alignment = alignment;
+            ApplyCookieRunFont(texts[i]);
         }
+    }
+
+    private void SetRect(
+        string objectName,
+        Vector2 anchoredPosition,
+        Vector2 size,
+        TextAlignmentOptions alignment,
+        float fontSize)
+    {
+        Transform transform = FindSceneTransform(objectName);
+        if (transform == null)
+            return;
+
+        RectTransform rect = transform.GetComponent<RectTransform>();
+        if (rect == null)
+            return;
+
+        bool topRight = anchoredPosition.x < 0f;
+        rect.anchorMin = topRight ? Vector2.one : new Vector2(0f, 1f);
+        rect.anchorMax = topRight ? Vector2.one : new Vector2(0f, 1f);
+        rect.pivot = topRight ? Vector2.one : new Vector2(0f, 1f);
+        rect.localScale = Vector3.one;
+        rect.sizeDelta = size;
+        rect.anchoredPosition = anchoredPosition;
+
+        TextMeshProUGUI text = transform.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (text == null)
+            return;
+
+        text.fontSize = fontSize;
+        text.alignment = alignment;
+        text.enableWordWrapping = false;
+        ApplyCookieRunFont(text);
+    }
+
+    private static void NormalizeSliderVisuals(RectTransform sliderRect)
+    {
+        Transform background = sliderRect.Find("Background");
+        if (background != null)
+        {
+            RectTransform backgroundRect = background.GetComponent<RectTransform>();
+            StretchToParent(backgroundRect, Vector2.zero);
+        }
+
+        Transform fillArea = sliderRect.Find("Fill Area");
+        if (fillArea != null)
+        {
+            RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
+            StretchToParent(fillAreaRect, Vector2.zero);
+
+            Transform fill = fillArea.Find("Fill");
+            if (fill != null)
+            {
+                RectTransform fillRect = fill.GetComponent<RectTransform>();
+                StretchToParent(fillRect, Vector2.zero);
+            }
+        }
+
+        Transform handleSlideArea = sliderRect.Find("Handle Slide Area");
+        if (handleSlideArea != null)
+            handleSlideArea.gameObject.SetActive(false);
+    }
+
+    private static void StretchToParent(RectTransform rect, Vector2 padding)
+    {
+        if (rect == null)
+            return;
+
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.offsetMin = padding;
+        rect.offsetMax = -padding;
+        rect.localScale = Vector3.one;
+    }
+
+    private void RemoveRuntimeUi()
+    {
+        RemoveSceneObject("RuntimeStackTopHud");
+        RemoveSceneObject("RuntimeRecipeList");
+    }
+
+    private void RemoveSceneObject(string objectName)
+    {
+        foreach (Transform transform in GetSceneTransforms())
+        {
+            if (transform != null && transform.name == objectName)
+                Destroy(transform.gameObject);
+        }
+    }
+
+    private void SetSceneObjectActive(string objectName, bool active)
+    {
+        Transform transform = FindSceneTransform(objectName);
+        if (transform != null)
+            transform.gameObject.SetActive(active);
     }
 
     private void RenameCraftTab()
@@ -229,31 +328,6 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
                 continue;
 
             SetChildText(transform.gameObject, "레시피");
-        }
-    }
-
-    private void HideLegacyTopHud()
-    {
-        string[] names =
-        {
-            "Gold", "FoodCount", "CardCount", "Day", "DayCount"
-        };
-
-        foreach (Transform transform in GetSceneTransforms())
-        {
-            if (transform == null ||
-                IsInsideRuntimeUi(transform) ||
-                transform.GetComponentInParent<Canvas>() == null ||
-                transform.GetComponentInChildren<TextMeshProUGUI>(true) == null)
-            {
-                continue;
-            }
-
-            for (int i = 0; i < names.Length; i++)
-            {
-                if (transform.name == names[i])
-                    transform.gameObject.SetActive(false);
-            }
         }
     }
 
@@ -273,78 +347,78 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
         }
     }
 
-    private void EnsureRecipeOverlayState()
-    {
-        Transform craftUi = FindSceneTransform("CraftUi");
-        if (craftUi == null)
-            return;
-
-        if (_recipeOverlay == null || _recipeOverlay.transform.parent != craftUi)
-            _recipeOverlay = BuildRecipeOverlay(craftUi);
-
-        _recipeOverlay.SetActive(craftUi.gameObject.activeInHierarchy);
-    }
-
-    private GameObject BuildRecipeOverlay(Transform craftUi)
-    {
-        Transform old = craftUi.Find("RuntimeRecipeList");
-        if (old != null)
-            Destroy(old.gameObject);
-
-        GameObject overlay = new GameObject("RuntimeRecipeList", typeof(RectTransform), typeof(Image));
-        overlay.transform.SetParent(craftUi, false);
-        overlay.transform.SetAsLastSibling();
-
-        RectTransform rect = overlay.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = new Vector2(16f, 16f);
-        rect.offsetMax = new Vector2(-16f, -16f);
-
-        Image image = overlay.GetComponent<Image>();
-        image.color = new Color(0.96f, 0.92f, 0.78f, 1f);
-
-        GameObject textObject = new GameObject("RecipeText", typeof(RectTransform), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(overlay.transform, false);
-
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = new Vector2(22f, 18f);
-        textRect.offsetMax = new Vector2(-22f, -18f);
-
-        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-        text.fontSize = 18f;
-        text.color = Color.black;
-        text.alignment = TextAlignmentOptions.TopLeft;
-        text.enableWordWrapping = true;
-        text.lineSpacing = 3f;
-        text.paragraphSpacing = 5f;
-        text.text = RecipeText;
-
-        return overlay;
-    }
-
     private static void SetChildText(GameObject root, string value)
     {
         TextMeshProUGUI[] texts = root.GetComponentsInChildren<TextMeshProUGUI>(true);
         for (int i = 0; i < texts.Length; i++)
+        {
             texts[i].text = value;
+            ApplyCookieRunFont(texts[i]);
+        }
 
         Text[] legacyTexts = root.GetComponentsInChildren<Text>(true);
         for (int i = 0; i < legacyTexts.Length; i++)
             legacyTexts[i].text = value;
     }
 
-    private static Transform FindSceneTransform(string name)
+    private void ApplyCookieRunFontToScene()
+    {
+        TMP_FontAsset fontAsset = LoadCookieRunFont();
+        if (fontAsset == null)
+            return;
+
+        foreach (Transform transform in GetSceneTransforms())
+        {
+            if (transform == null)
+                continue;
+
+            TextMeshProUGUI[] texts = transform.GetComponents<TextMeshProUGUI>();
+            for (int i = 0; i < texts.Length; i++)
+                texts[i].font = fontAsset;
+        }
+    }
+
+    private static void ApplyCookieRunFont(TextMeshProUGUI text)
+    {
+        TMP_FontAsset fontAsset = LoadCookieRunFont();
+        if (fontAsset != null)
+            text.font = fontAsset;
+    }
+
+    private static TMP_FontAsset LoadCookieRunFont()
+    {
+        if (_cookieRunFont != null)
+            return _cookieRunFont;
+
+        _cookieRunFont = Resources.Load<TMP_FontAsset>(CookieRunFontResourcesPath);
+
+#if UNITY_EDITOR
+        if (_cookieRunFont == null)
+            _cookieRunFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(CookieRunFontAssetPath);
+#endif
+
+        return _cookieRunFont;
+    }
+
+    private static Transform FindSceneTransform(string objectName)
     {
         foreach (Transform transform in GetSceneTransforms())
         {
-            if (transform != null && transform.name == name)
+            if (transform != null && transform.name == objectName)
                 return transform;
         }
 
         return null;
+    }
+
+    private static Vector2 Scaled(Vector2 value)
+    {
+        return value * LayoutScale;
+    }
+
+    private static float Scaled(float value)
+    {
+        return value * LayoutScale;
     }
 
     private static Transform[] GetSceneTransforms()
@@ -365,34 +439,4 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
 
         return sceneTransforms.ToArray();
     }
-
-    private bool IsInsideRuntimeUi(Transform transform)
-    {
-        return _root != null && transform.IsChildOf(_root);
-    }
-
-    private const string RecipeText =
-        "레시피\n\n" +
-        "스택 작업 규칙\n" +
-        "필요한 카드만 한 스택에 올려야 작업이 시작됩니다.\n" +
-        "다른 카드가 섞이거나 주민 수가 다르면 시작되지 않습니다.\n" +
-        "우클릭 중단 가능 작업은 진행 중인 스택을 우클릭해 취소할 수 있습니다.\n\n" +
-        "기본 채집 - 중단 불가\n" +
-        "주민 + 나무 = 목재 2개 / 4초\n" +
-        "주민 + 바위 = 석재 2개 / 4초\n" +
-        "주민 + 목재 = 나뭇가지 3개 / 6초\n" +
-        "주민 + 바나나나무 = 바나나 3개 / 6초\n" +
-        "주민 + 딸기나무 = 딸기 3개 / 6초\n\n" +
-        "건물 제작 - 우클릭 중단 가능\n" +
-        "주민 + 목재 1 + 석재 3 = 광산 / 15초\n" +
-        "주민 + 목재 3 + 석재 1 = 제재소 / 15초\n" +
-        "주민 + 나뭇가지 1 + 벽돌 2 = 화로 / 30초\n" +
-        "주민 + 판자 3 + 벽돌 3 = 집 / 60초\n" +
-        "주민 + 벽돌 2 + 판자 2 + 철괴 1 = 무기고 / 45초\n\n" +
-        "시설 작업 - 우클릭 중단 가능\n" +
-        "주민 + 제재소 + 목재 2 + 나뭇가지 1 = 판자 / 5초 / 골드 1 이상 필요\n" +
-        "주민 + 광산 + 석재 2 = 벽돌 / 5초 / 골드 1 이상 필요\n" +
-        "주민 + 화로 + 목재 2 + 나뭇가지 2 + 철광석 1 = 철괴 / 5초\n" +
-        "주민 + 화로 + 목재 2 + 나뭇가지 1 + 금광석 1 = 금괴 / 5초\n" +
-        "주민 2 + 집 = 주민 1명 / 60초 / 골드 16 이상 필요, 15 소모";
 }
