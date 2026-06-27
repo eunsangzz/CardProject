@@ -10,3 +10,8 @@ public interface ICardCommand
     bool CanExecute(GameData gameData);
     IEnumerator Execute(CardManager cardManager, GameData gameData);
 }
+
+public interface IResidentUpgradeCommand : ICardCommand
+{
+    void ApplyToResident(ResidentCombatStats resident);
+}

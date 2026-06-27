@@ -169,7 +169,7 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
         TextAlignmentOptions alignment,
         float fontSize)
     {
-        Transform transform = FindSceneTransform(objectName);
+        Transform transform = FindSceneTransformWithComponent<Button>(objectName);
         if (transform == null)
             return;
 
@@ -200,7 +200,7 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
         TextAlignmentOptions alignment,
         float fontSize)
     {
-        Transform transform = FindSceneTransform(objectName);
+        Transform transform = FindSceneTransformWithComponent<Button>(objectName);
         if (transform == null)
             return;
 
@@ -406,6 +406,22 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
         {
             if (transform != null && transform.name == objectName)
                 return transform;
+        }
+
+        return null;
+    }
+
+    private static Transform FindSceneTransformWithComponent<T>(string objectName)
+        where T : Component
+    {
+        foreach (Transform transform in GetSceneTransforms())
+        {
+            if (transform != null &&
+                transform.name == objectName &&
+                transform.GetComponent<T>() != null)
+            {
+                return transform;
+            }
         }
 
         return null;

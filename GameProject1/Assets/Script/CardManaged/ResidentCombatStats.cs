@@ -12,6 +12,8 @@ public class ResidentCombatStats : MonoBehaviour
     public int AttackPower => CombatData.attackPower;
     public int MaxHealth => CombatData.maxHealth;
     public int CurrentHealth => CombatData.currentHealth;
+    public ArmorType ArmorType => CombatData.armorType;
+    public int ArmorDurability => CombatData.armorDurability;
     public bool IsDead => CurrentHealth <= 0;
 
     public void Initialize(CardIdentity identity)
@@ -35,6 +37,23 @@ public class ResidentCombatStats : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (damage <= 0 || IsDead) return;
+
+        if (CombatData.armorType != ArmorType.None && CombatData.armorDurability > 0)
+        {
+            int absorbed = Mathf.Min(damage, CombatData.armorDurability);
+            CombatData.armorDurability -= absorbed;
+            damage -= absorbed;
+
+            if (CombatData.armorDurability <= 0)
+            {
+                CombatData.armorType = ArmorType.None;
+                CombatData.armorDurability = 0;
+            }
+        }
+
+        if (damage <= 0)
+            return;
+
         CombatData.currentHealth = Mathf.Max(0, CurrentHealth - damage);
     }
 
@@ -42,5 +61,32 @@ public class ResidentCombatStats : MonoBehaviour
     {
         if (amount <= 0 || IsDead) return;
         CombatData.currentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+    }
+
+    public void EquipArmor(ArmorType armorType)
+    {
+        CombatData.armorType = armorType;
+        CombatData.armorDurability = GetArmorMaxDurability(armorType);
+    }
+
+    public void ResetArmorForBattle()
+    {
+        if (CombatData.armorType == ArmorType.None)
+            return;
+
+        CombatData.armorDurability = GetArmorMaxDurability(CombatData.armorType);
+    }
+
+    public static int GetArmorMaxDurability(ArmorType armorType)
+    {
+        switch (armorType)
+        {
+            case ArmorType.Wood:
+                return 5;
+            case ArmorType.Iron:
+                return 10;
+            default:
+                return 0;
+        }
     }
 }

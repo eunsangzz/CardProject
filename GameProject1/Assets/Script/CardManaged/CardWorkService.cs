@@ -40,6 +40,9 @@ public static class CardWorkService
         return false;
     }
 
+    public static int LockedCardCount => _lockedCards.Count;
+    public static int ActiveWorkCardCount => _workByCard.Count;
+
     public static void Lock(GameObject card)
     {
         if (card != null)

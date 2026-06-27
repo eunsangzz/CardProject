@@ -55,6 +55,8 @@ public class CardCombatData
     public int attackPower;
     public int maxHealth;
     public int currentHealth;
+    public ArmorType armorType;
+    public int armorDurability;
 
     public CardCombatData Clone()
     {
@@ -63,7 +65,16 @@ public class CardCombatData
             enabled = enabled,
             attackPower = attackPower,
             maxHealth = maxHealth,
-            currentHealth = currentHealth
+            currentHealth = currentHealth,
+            armorType = armorType,
+            armorDurability = armorDurability
         };
     }
+}
+
+public enum ArmorType
+{
+    None = 0,
+    Wood = 1,
+    Iron = 2
 }

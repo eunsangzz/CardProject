@@ -66,6 +66,7 @@ public class TurnBattleManager : MonoBehaviour
         }
 
         ArrangeForBattle(residents, enemies);
+        ResetResidentArmorForBattle(residents);
         SetResidentDragging(residents, false);
 
         while (residents.Count > 0 && enemies.Count > 0)
@@ -139,6 +140,15 @@ public class TurnBattleManager : MonoBehaviour
             Renderer[] renderers = card.GetComponentsInChildren<Renderer>(true);
             for (int r = 0; r < renderers.Length; r++)
                 renderers[r].sortingOrder = 30 + i;
+        }
+    }
+
+    private static void ResetResidentArmorForBattle(List<ResidentCombatStats> residents)
+    {
+        for (int i = 0; i < residents.Count; i++)
+        {
+            if (residents[i] != null && !residents[i].IsDead)
+                residents[i].ResetArmorForBattle();
         }
     }
 

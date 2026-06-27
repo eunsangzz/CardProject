@@ -1,8 +1,8 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
  
-//¹öÆ°ÀÌ¸§¿¡¼­ Ä¿¸ÇÆ® ¸ÅÇÎ
+//ë²„íŠ¼ì´ë¦„ì—ì„œ ì»¤ë§¨íŠ¸ ë§¤í•‘
 public static class CardCommandRegistry
 {
     public static Dictionary<string, ICardCommand> Bulid()
@@ -21,6 +21,8 @@ public static class CardCommandRegistry
             { "Mine", new MineToBrickCommand() },
 
             { "House", new HouseSpawnPlayerCommand() },
+            { "WoodArmor", new WoodArmorCommand() },
+            { "IronArmor", new IronArmorCommand() },
         };
     }
 }

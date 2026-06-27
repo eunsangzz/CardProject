@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CraftManager : MonoBehaviour
 {
@@ -124,6 +125,8 @@ public class CraftManager : MonoBehaviour
 
         if (_cardManager == null)
             _cardManager = FindObjectOfType<CardManager>();
+
+        EnsureCraftingUiReferences();
 
         _categoryPanels = new Dictionary<string, GameObject> //추후 카드 추가시 여기에 추가
         {
@@ -415,6 +418,133 @@ public class CraftManager : MonoBehaviour
         SetActiveIfExists(TimberCraftUi, false);
         SetActiveIfExists(MineCraftUi, false);
         SetActiveIfExists(ArmoryCraftUi, false);
+    }
+
+    private void EnsureCraftingUiReferences()
+    {
+        if (CraftUI == null) return;
+
+        CraftList = ResolveCraftingUiReference(CraftList, "CraftList", "RecipeCraftList");
+        HouseCraftUI = ResolveCraftingUiReference(HouseCraftUI, "HouseCraft");
+        ForgeCraftUi = ResolveCraftingUiReference(ForgeCraftUi, "ForgeCraft");
+        TimberCraftUi = ResolveCraftingUiReference(TimberCraftUi, "TimberCraft");
+        MineCraftUi = ResolveCraftingUiReference(MineCraftUi, "MineCraft");
+        ArmoryCraftUi = ResolveCraftingUiReference(ArmoryCraftUi, "ArmoryCraft");
+
+        bool showArmoryFallback = CraftList == null && ArmoryCraftUi == null;
+
+        if (ArmoryCraftUi == null)
+            ArmoryCraftUi = CreateArmoryCraftFallbackPanel();
+
+        WireCraftButton(ArmoryCraftUi, "ArmoryCraft");
+
+        if (showArmoryFallback && ArmoryCraftUi != null)
+            ArmoryCraftUi.SetActive(true);
+    }
+
+    private GameObject ResolveCraftingUiReference(
+        GameObject current,
+        params string[] names)
+    {
+        if (current != null)
+            return current;
+
+        for (int i = 0; i < names.Length; i++)
+        {
+            Transform found = FindDescendant(CraftUI.transform, names[i]);
+            if (found != null)
+                return found.gameObject;
+        }
+
+        return null;
+    }
+
+    private GameObject CreateArmoryCraftFallbackPanel()
+    {
+        Transform parent = ResolveCraftPanelParent();
+        if (parent == null) return null;
+
+        GameObject panel = new GameObject("ArmoryCraft", typeof(RectTransform), typeof(Image), typeof(Button));
+        panel.transform.SetParent(parent, false);
+
+        RectTransform rect = panel.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(220f, 80f);
+
+        Image image = panel.GetComponent<Image>();
+        image.color = new Color(1f, 1f, 1f, 0.85f);
+
+        GameObject label = new GameObject("Label", typeof(RectTransform), typeof(Text));
+        label.transform.SetParent(panel.transform, false);
+
+        RectTransform labelRect = label.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero;
+        labelRect.offsetMax = Vector2.zero;
+
+        Text text = label.GetComponent<Text>();
+        text.text = "Armory Craft";
+        text.alignment = TextAnchor.MiddleCenter;
+        text.color = Color.black;
+        text.fontSize = 24;
+        text.raycastTarget = false;
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+        panel.SetActive(false);
+        return panel;
+    }
+
+    private Transform ResolveCraftPanelParent()
+    {
+        if (ForgeCraftUi != null) return ForgeCraftUi.transform.parent;
+        if (HouseCraftUI != null) return HouseCraftUI.transform.parent;
+        if (TimberCraftUi != null) return TimberCraftUi.transform.parent;
+        if (MineCraftUi != null) return MineCraftUi.transform.parent;
+        return CraftUI != null ? CraftUI.transform : null;
+    }
+
+    private void WireCraftButton(GameObject panel, string buttonName)
+    {
+        if (panel == null) return;
+
+        Button button = null;
+        Button[] buttons = panel.GetComponentsInChildren<Button>(true);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (buttons[i].gameObject.name == buttonName)
+            {
+                button = buttons[i];
+                break;
+            }
+        }
+
+        if (button == null && buttons.Length > 0)
+            button = buttons[0];
+
+        if (button == null)
+            button = panel.GetComponent<Button>();
+
+        if (button == null) return;
+
+        button.gameObject.name = buttonName;
+        button.onClick.RemoveListener(CardCraft);
+        button.onClick.AddListener(CardCraft);
+    }
+
+    private static Transform FindDescendant(Transform root, string childName)
+    {
+        if (root == null) return null;
+
+        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+        {
+            if (child != root && child.name == childName)
+                return child;
+        }
+
+        return null;
     }
 
     private void SpawnCraftOutput(CardId id, Vector3? preferredPosition = null)

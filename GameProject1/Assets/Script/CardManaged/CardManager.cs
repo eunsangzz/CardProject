@@ -388,6 +388,7 @@ public class CardManager : MonoBehaviour
                 routine = StartCoroutine(RunStackCommand(
                     command,
                     target,
+                    residents,
                     materialCards,
                     materialIndexes,
                     handle));
@@ -402,6 +403,11 @@ public class CardManager : MonoBehaviour
     public void SetSelectedCard(GameObject card)
     {
         _selectedCard = card;
+    }
+
+    public GameObject GetSelectedCard()
+    {
+        return _selectedCard;
     }
 
     private IEnumerator RunCommand(ICardCommand cmd)
@@ -475,6 +481,7 @@ public class CardManager : MonoBehaviour
     private IEnumerator RunStackCommand(
         ICardCommand command,
         GameObject target,
+        List<GameObject> residents,
         List<GameObject> materialCards,
         List<int> materialIndexes,
         CardWorkService.WorkHandle workHandle)
@@ -485,6 +492,8 @@ public class CardManager : MonoBehaviour
 
         if (workHandle != null && workHandle.IsCanceled)
             yield break;
+
+        ApplyResidentUpgrade(command, residents);
 
         for (int i = 0; i < materialCards.Count; i++)
             RemoveSpecificCard(materialCards[i], materialIndexes[i]);
@@ -910,9 +919,29 @@ public class CardManager : MonoBehaviour
                 return new[] { "Mine" };
             case CardId.House:
                 return new[] { "House" };
+            case CardId.Armory:
+                return new[] { "WoodArmor", "IronArmor" };
             default:
                 return System.Array.Empty<string>();
         }
+    }
+
+    private static void ApplyResidentUpgrade(
+        ICardCommand command,
+        List<GameObject> residents)
+    {
+        if (!(command is IResidentUpgradeCommand upgrade) ||
+            residents == null ||
+            residents.Count == 0)
+        {
+            return;
+        }
+
+        ResidentCombatStats stats = residents[0] != null
+            ? residents[0].GetComponent<ResidentCombatStats>()
+            : null;
+        if (stats != null)
+            upgrade.ApplyToResident(stats);
     }
 
     private static bool IsUncancelableBasicCommand(
@@ -936,6 +965,61 @@ public class CardManager : MonoBehaviour
 
     public void CreateBasicCard(int index) => CreateCard(true, index);
     public void CreateIntermediateCard(int index) => CreateCard(false, index);
+
+    public bool ForceSpawnCard(CardId id)
+    {
+        var gd = DataController.instance.gameData;
+        gd.EnsureRuntimeDefaults();
+
+        if (spawner == null)
+            spawner = FindObjectOfType<CardSpawner>();
+
+        if (spawner == null)
+            return false;
+
+        GameObject go = spawner.Spawn((int)id);
+        if (go == null)
+            return false;
+
+        go.transform.SetPositionAndRotation(GetRandomSpawnPos(), Quaternion.identity);
+        go.name = id.ToString();
+        gd.Card.Add(go);
+        AddGameDataCountForForcedCard(gd, id);
+        RecalcSafe();
+        return true;
+    }
+
+    private static void AddGameDataCountForForcedCard(GameData gd, CardId id)
+    {
+        switch (id)
+        {
+            case CardId.Player:
+                gd.AddPlayer(1);
+                gd.AddWorker(1);
+                return;
+            case CardId.Wood: gd.Add(GameData.CardType.Wood, 1); return;
+            case CardId.Stone: gd.Add(GameData.CardType.Stone, 1); return;
+            case CardId.Iron: gd.Add(GameData.CardType.Iron, 1); return;
+            case CardId.Gold: gd.Add(GameData.CardType.Gold, 1); return;
+            case CardId.Tree: gd.Add(GameData.CardType.Tree, 1); return;
+            case CardId.BananaTree: gd.Add(GameData.CardType.BananaTree, 1); return;
+            case CardId.Banana: gd.Add(GameData.CardType.Banana, 1); return;
+            case CardId.StrawBerryTree: gd.Add(GameData.CardType.StrawBerryTree, 1); return;
+            case CardId.StrawBerry: gd.Add(GameData.CardType.StrawBerry, 1); return;
+            case CardId.House: gd.Add(GameData.CardType.House, 1); return;
+            case CardId.Forge: gd.Add(GameData.CardType.Forge, 1); return;
+            case CardId.Timber: gd.Add(GameData.CardType.Timber, 1); return;
+            case CardId.Mine: gd.Add(GameData.CardType.Mine, 1); return;
+            case CardId.Rock: gd.Add(GameData.CardType.Rock, 1); return;
+            case CardId.Panel: gd.Add(GameData.CardType.Panel, 1); return;
+            case CardId.Brick: gd.Add(GameData.CardType.Brick, 1); return;
+            case CardId.IronIngot: gd.Add(GameData.CardType.IronIngot, 1); return;
+            case CardId.GoldIngot: gd.Add(GameData.CardType.GoldIngot, 1); return;
+            case CardId.Branch: gd.Add(GameData.CardType.Branch, 1); return;
+            case CardId.Kitchen: gd.Add(GameData.CardType.Kitchen, 1); return;
+            case CardId.Armory: gd.Add(GameData.CardType.Armory, 1); return;
+        }
+    }
 
     public void RemoveCardByIndex(int i)
     {

@@ -9,6 +9,18 @@ public class CommandManager : MonoBehaviour
 
     public bool CanUndo => undoStack.Count > 0;
     public bool CanRedo => redoStack.Count > 0;
+    public int UndoCount => undoStack.Count;
+    public int RedoCount => redoStack.Count;
+
+    public string DebugStatus
+    {
+        get
+        {
+            string nextUndo = undoStack.Count > 0 ? undoStack.Peek().GetType().Name : "None";
+            string nextRedo = redoStack.Count > 0 ? redoStack.Peek().GetType().Name : "None";
+            return $"Undo: {undoStack.Count} ({nextUndo}) / Redo: {redoStack.Count} ({nextRedo})";
+        }
+    }
 
     public void Do(ICommand command)
     {

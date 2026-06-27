@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +17,12 @@ public class DayNightManager : MonoBehaviour
     [Header("Enemy")]
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Transform enemyParent;
+    [SerializeField] private int firstEnemyDay = 2;
+    [SerializeField] private int recurringEnemyDayInterval = 7;
+    [SerializeField] private int enemyGrowthDayInterval = 14;
+    [SerializeField] private int baseEnemyHealth = 5;
+    [SerializeField] private int baseEnemyAttack = 1;
+    [SerializeField] private int baseEnemySpawnCount = 1;
 
     public float TimeLeft { get; private set; }
     public float DayDuration => dayDuration;
@@ -124,7 +130,7 @@ public class DayNightManager : MonoBehaviour
         gd.endDay = false;
         gd.NextDay();
 
-        SpawnFirstNightEnemyIfNeeded(gd);
+        SpawnEnemiesForDay(gd);
 
         RestDayTimer();
 
@@ -140,7 +146,7 @@ public class DayNightManager : MonoBehaviour
         if (cardManager == null)
             cardManager = FindObjectOfType<CardManager>();
 
-        // ¾ÈÀüÀåÄ¡
+        // ì•ˆì „ìž¥ì¹˜
         if (cardManager == null)
             yield break;
 
@@ -178,24 +184,45 @@ public class DayNightManager : MonoBehaviour
         _nightRoutineRunning = false;
         OnNightFinished?.Invoke();
     }
-    private void SpawnFirstNightEnemyIfNeeded(GameData gd)
+    private void SpawnEnemiesForDay(GameData gd)
     {
-        if (gd == null || gd.FirstNightEnemySpawned || gd.Day < 1)
+        if (gd == null)
             return;
 
-        SpawnEnemy();
-        gd.FirstNightEnemySpawned = true;
-        gd.EnemyCount += 1;
+        bool isFirstEnemyDay = !gd.FirstNightEnemySpawned && gd.Day == firstEnemyDay;
+        bool isRecurringEnemyDay = recurringEnemyDayInterval > 0 &&
+            gd.Day > firstEnemyDay &&
+            gd.Day % recurringEnemyDayInterval == 0;
+
+        if (!isFirstEnemyDay && !isRecurringEnemyDay)
+            return;
+
+        int growthStep = enemyGrowthDayInterval > 0
+            ? Mathf.Max(0, gd.Day / enemyGrowthDayInterval)
+            : 0;
+
+        int health = baseEnemyHealth + growthStep;
+        int attack = baseEnemyAttack;
+        int spawnCount = baseEnemySpawnCount + growthStep;
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            SpawnEnemy(health, attack, i);
+            gd.EnemyCount += 1;
+        }
+
+        if (isFirstEnemyDay)
+            gd.FirstNightEnemySpawned = true;
     }
 
-    private void SpawnEnemy()
+    private void SpawnEnemy(int health, int attack, int spawnIndex)
     {
         var gd = DataController.instance.gameData;
         gd.EnsureRuntimeDefaults();
 
         Vector3 spawnPosition =
             CardSpawnPositionFinder.FindAvailablePosition(gd.Card) +
-            new Vector3(0f, 1.25f, 0f);
+            new Vector3(spawnIndex * 0.85f, 1.25f, 0f);
 
         GameObject enemy = enemyPrefab != null
             ? Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, enemyParent)
@@ -203,8 +230,11 @@ public class DayNightManager : MonoBehaviour
 
         enemy.name = "Enemy";
 
-        if (enemy.GetComponent<EnemyCombatStats>() == null)
-            enemy.AddComponent<EnemyCombatStats>();
+        EnemyCombatStats stats = enemy.GetComponent<EnemyCombatStats>();
+        if (stats == null)
+            stats = enemy.AddComponent<EnemyCombatStats>();
+
+        stats.Configure(health, attack);
 
         if (enemy.GetComponent<EnemyAI>() == null)
             enemy.AddComponent<EnemyAI>();
