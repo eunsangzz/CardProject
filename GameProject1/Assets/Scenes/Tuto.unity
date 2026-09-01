@@ -2959,6 +2959,14 @@ MonoBehaviour:
     prefab: {fileID: 2683548558265663452, guid: 56efe3c0348f5484e97a59757c08a75d, type: 3}
   - id: 20
     prefab: {fileID: 2683548558265663452, guid: c7f1598cafe809649b4fa86a1602d328, type: 3}
+  - id: 101
+    prefab: {fileID: 2683548558265663452, guid: c5d4e63b42a34a67bd772ca7fd12a314, type: 3}
+  - id: 102
+    prefab: {fileID: 2683548558265663452, guid: 5f7790504cf54dd597911a36acf405e5, type: 3}
+  - id: 103
+    prefab: {fileID: 2683548558265663452, guid: 4bb7695fb6ea4a49bf35968647b87e04, type: 3}
+  - id: 104
+    prefab: {fileID: 2683548558265663452, guid: de52e13b76af409c93aa0b591ccf08e1, type: 3}
 --- !u!114 &807945305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3278,8 +3286,14 @@ MonoBehaviour:
   dayDuration: 120
   cardManager: {fileID: 0}
   sellUi: {fileID: 0}
-  enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 1000000000000000000, guid: 2e2459395ab74d9d8e22799a7f7f4b20, type: 3}
   enemyParent: {fileID: 0}
+  firstEnemyDay: 2
+  recurringEnemyDayInterval: 7
+  enemyGrowthDayInterval: 14
+  baseEnemyHealth: 5
+  baseEnemyAttack: 1
+  baseEnemySpawnCount: 1
 --- !u!114 &918695584
 MonoBehaviour:
   m_ObjectHideFlags: 0

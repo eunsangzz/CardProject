@@ -201,13 +201,11 @@ public class DayNightManager : MonoBehaviour
             ? Mathf.Max(0, gd.Day / enemyGrowthDayInterval)
             : 0;
 
-        int health = baseEnemyHealth + growthStep;
-        int attack = baseEnemyAttack;
         int spawnCount = baseEnemySpawnCount + growthStep;
 
         for (int i = 0; i < spawnCount; i++)
         {
-            SpawnEnemy(health, attack, i);
+            SpawnEnemy(growthStep, i);
             gd.EnemyCount += 1;
         }
 
@@ -215,7 +213,7 @@ public class DayNightManager : MonoBehaviour
             gd.FirstNightEnemySpawned = true;
     }
 
-    private void SpawnEnemy(int health, int attack, int spawnIndex)
+    private void SpawnEnemy(int healthGrowth, int spawnIndex)
     {
         var gd = DataController.instance.gameData;
         gd.EnsureRuntimeDefaults();
@@ -234,7 +232,10 @@ public class DayNightManager : MonoBehaviour
         if (stats == null)
             stats = enemy.AddComponent<EnemyCombatStats>();
 
-        stats.Configure(health, attack);
+        if (enemyPrefab == null)
+            stats.Configure(baseEnemyHealth + healthGrowth, baseEnemyAttack);
+        else
+            stats.AddSpawnGrowth(healthGrowth);
 
         if (enemy.GetComponent<EnemyAI>() == null)
             enemy.AddComponent<EnemyAI>();

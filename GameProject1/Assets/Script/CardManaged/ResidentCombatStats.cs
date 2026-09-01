@@ -15,6 +15,7 @@ public class ResidentCombatStats : MonoBehaviour
     public ArmorType ArmorType => CombatData.armorType;
     public int ArmorDurability => CombatData.armorDurability;
     public bool IsDead => CurrentHealth <= 0;
+    public bool IsInitialized => _identity != null && _identity.Data.combat != null;
 
     public void Initialize(CardIdentity identity)
     {

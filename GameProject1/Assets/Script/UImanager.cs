@@ -165,18 +165,9 @@ public class UImanager : MonoBehaviour
         // 낮: 클릭 UI 가능 / 밤: 기본은 막음(판매는 CardManager가 처리)
         if (!gd.endDay)
         {
-            if (IsActive(craftUi) || IsActive(runtimeRecipeUi))
-            {
-                SetActiveIfExists(SellBtn, false);
-                SetActiveIfExists(buyBtn, false);
-                SetActiveIfExists(craftUiBtn, runtimeRecipeUi != null && runtimeRecipeUi.activeSelf);
-            }
-            else
-            {
-                SetActiveIfExists(SellBtn, true);
-                SetActiveIfExists(buyBtn, true);
-                SetActiveIfExists(craftUiBtn, true);
-            }
+            SetActiveIfExists(SellBtn, true);
+            SetActiveIfExists(buyBtn, true);
+            SetActiveIfExists(craftUiBtn, true);
 
             if (!gd.Skill)
                 SetActiveIfExists(cardSkillUi, false);
@@ -235,26 +226,16 @@ public class UImanager : MonoBehaviour
             tutocraft = true;
         }
 
-        if (craftUi != null && craftListUi != null)
-        {
-            craftUi.SetActive(true);
-            SetActiveIfExists(craftListUi, true);
-        }
-        else
-        {
-            if (IsActive(runtimeRecipeUi))
-            {
-                SetActiveIfExists(runtimeRecipeUi, false);
-                SetActiveIfExists(buyBtn, true);
-                SetActiveIfExists(SellBtn, true);
-                return;
-            }
+        SetActiveIfExists(craftUi, false);
+        SetActiveIfExists(craftListUi, false);
 
-            ShowRuntimeRecipeUi();
+        if (IsActive(runtimeRecipeUi))
+        {
+            SetActiveIfExists(runtimeRecipeUi, false);
+            return;
         }
 
-        SetActiveIfExists(buyBtn, false);
-        SetActiveIfExists(SellBtn, false);
+        ShowRuntimeRecipeUi();
         SetActiveIfExists(cardInfoUi, false);
     }
 
@@ -344,6 +325,10 @@ public class UImanager : MonoBehaviour
 
         _cardInfoMap[CardId.Armory] = ("무기고", "무기와 전투 장비를 제작하고 보관하는 건물이다.");
         _cardInfoMap[CardId.Player] = ("주민", "주민이 없으면 게임은 끝나버린다. 배가 고프지");
+        _cardInfoMap[CardId.WoodShield] = ("나무 방패", "나무로 만든 기본 방패다. 주민의 방어력을 올리는 장비로 사용한다.");
+        _cardInfoMap[CardId.IronShield] = ("철 방패", "철로 만든 튼튼한 방패다. 더 높은 방어력을 제공하는 장비다.");
+        _cardInfoMap[CardId.WoodSword] = ("목검", "나무로 만든 기본 무기다. 주민의 공격력을 올리는 장비로 사용한다.");
+        _cardInfoMap[CardId.IronSword] = ("철검", "철로 만든 무기다. 목검보다 강한 공격력을 제공한다.");
     }
 
     private void CardInfo()
@@ -519,12 +504,15 @@ public class UImanager : MonoBehaviour
         if (runtimeRecipeUi == null)
             runtimeRecipeUi = BuildRuntimeRecipeUi();
 
+        EnsureRuntimeRecipeUiCanvasParent();
         SetActiveIfExists(runtimeRecipeUi, true);
+        if (runtimeRecipeUi != null)
+            runtimeRecipeUi.transform.SetAsLastSibling();
     }
 
     private GameObject BuildRuntimeRecipeUi()
     {
-        Canvas canvas = FindObjectOfType<Canvas>();
+        Canvas canvas = ResolveScreenUiCanvas();
         if (canvas == null)
             return null;
 
@@ -568,24 +556,8 @@ public class UImanager : MonoBehaviour
             Color.black);
         SetStretch(tabText.rectTransform, 166f, 16f, 14f, 632f);
 
-        GameObject searchPanel = CreateRuntimePanel(
-            "RecipeSearch",
-            listPanel.transform,
-            new Vector2(300f, 38f),
-            new Vector2(0f, 260f),
-            new Color(1f, 0.98f, 0.88f, 0.95f));
-
-        TextMeshProUGUI searchText = CreateRuntimeText(
-            "SearchPlaceholder",
-            searchPanel.transform,
-            "찾기",
-            22f,
-            TextAlignmentOptions.MidlineLeft,
-            new Color(0.65f, 0.62f, 0.55f, 1f));
-        SetStretch(searchText.rectTransform, 14f, 10f, 5f, 5f);
-
-        CreateRecipeSectionHeader(listPanel.transform, "기본", -116f);
-        CreateRecipeSectionHeader(listPanel.transform, "중요", -296f);
+        CreateRecipeSectionHeader(listPanel.transform, "기본", 218f);
+        CreateRecipeSectionHeader(listPanel.transform, "중요", 22f);
 
         TextMeshProUGUI detailText = CreateRuntimeText(
             "RecipeDetailText",
@@ -606,6 +578,60 @@ public class UImanager : MonoBehaviour
         ShowRecipeDetail(detailText, RecipeEntries[0]);
 
         return root;
+    }
+
+    private void EnsureRuntimeRecipeUiCanvasParent()
+    {
+        if (runtimeRecipeUi == null)
+            return;
+
+        Canvas canvas = ResolveScreenUiCanvas();
+        if (canvas == null)
+            return;
+
+        if (runtimeRecipeUi.transform.parent != canvas.transform)
+            runtimeRecipeUi.transform.SetParent(canvas.transform, false);
+    }
+
+    private static Canvas ResolveScreenUiCanvas()
+    {
+        Canvas[] canvases = FindObjectsOfType<Canvas>(true);
+        Canvas fallback = null;
+
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas == null || IsCardAttachedCanvas(canvas))
+                continue;
+
+            if (fallback == null)
+                fallback = canvas;
+
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay ||
+                canvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                return canvas;
+            }
+        }
+
+        return fallback;
+    }
+
+    private static bool IsCardAttachedCanvas(Canvas canvas)
+    {
+        Transform current = canvas.transform;
+        while (current != null)
+        {
+            if (current.name == "WorkProgressCanvas" ||
+                current.GetComponent<CardIdentity>() != null)
+            {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
     }
 
     private GameObject CreateRuntimePanel(
@@ -756,7 +782,7 @@ public class UImanager : MonoBehaviour
             21f,
             TextAlignmentOptions.MidlineLeft,
             Color.black);
-        SetStretch(label.rectTransform, 8f, 8f, 2f, 2f);
+        SetStretch(label.rectTransform, 8f, 8f, 0f, 0f);
     }
 
     private static Vector2 GetRecipeButtonPosition(int index)
@@ -764,7 +790,7 @@ public class UImanager : MonoBehaviour
         if (index < 5)
             return new Vector2(0f, -152f - (index * 32f));
 
-        return new Vector2(0f, -332f - ((index - 5) * 32f));
+        return new Vector2(0f, -360f - ((index - 5) * 32f));
     }
 
     private static void AddEventTrigger(EventTrigger trigger, EventTriggerType type, UnityEngine.Events.UnityAction action)

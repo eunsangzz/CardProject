@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TurnBattleManager : MonoBehaviour
@@ -14,6 +15,8 @@ public class TurnBattleManager : MonoBehaviour
     [SerializeField] private float attackMoveDuration = 0.18f;
     [SerializeField] private float knockbackDistance = 0.25f;
     [SerializeField] private float turnDelay = 0.35f;
+    [SerializeField] private float damagePopupDuration = 0.75f;
+    [SerializeField] private float damagePopupRiseDistance = 0.4f;
 
     public static bool IsBattleRunning { get; private set; }
 
@@ -169,6 +172,7 @@ public class TurnBattleManager : MonoBehaviour
         if (Random.value <= hitChance)
         {
             applyDamage(damage);
+            ShowDamagePopup(defender, damage);
             yield return MoveTransform(
                 defender,
                 defenderStart,
@@ -182,6 +186,101 @@ public class TurnBattleManager : MonoBehaviour
         }
 
         yield return MoveTransform(attacker, attacker.position, attackerStart, attackMoveDuration);
+    }
+
+    private void ShowDamagePopup(Transform defender, int damage)
+    {
+        if (defender == null || damage <= 0)
+            return;
+
+        SpriteRenderer cardRenderer = GetCardSpriteRenderer(defender);
+        Bounds cardBounds = cardRenderer != null
+            ? cardRenderer.bounds
+            : new Bounds(defender.position, Vector3.one);
+
+        GameObject popupObject = new GameObject(
+            "DamagePopup",
+            typeof(RectTransform),
+            typeof(TextMeshPro));
+
+        TextMeshPro popupText = popupObject.GetComponent<TextMeshPro>();
+        popupText.text = "-" + damage;
+        popupText.fontStyle = FontStyles.Bold;
+        popupText.alignment = TextAlignmentOptions.Center;
+        popupText.color = new Color(0.95f, 0.12f, 0.08f, 1f);
+        popupText.outlineColor = new Color32(255, 255, 255, 255);
+        popupText.outlineWidth = 0.2f;
+        popupText.fontSize = Mathf.Max(0.6f, cardBounds.size.y * 0.38f);
+        popupText.enableWordWrapping = false;
+        popupText.raycastTarget = false;
+        popupText.rectTransform.sizeDelta = new Vector2(
+            Mathf.Max(1.2f, cardBounds.size.x),
+            Mathf.Max(0.7f, cardBounds.size.y * 0.35f));
+
+        float popupZ = cardRenderer != null
+            ? cardRenderer.transform.position.z - 0.35f
+            : defender.position.z - 0.35f;
+        popupObject.transform.position = new Vector3(
+            cardBounds.center.x,
+            cardBounds.center.y + cardBounds.size.y * 0.12f,
+            popupZ);
+
+        Renderer popupRenderer = popupObject.GetComponent<Renderer>();
+        if (popupRenderer != null && cardRenderer != null)
+        {
+            popupRenderer.sortingLayerID = cardRenderer.sortingLayerID;
+            popupRenderer.sortingOrder = cardRenderer.sortingOrder + 500;
+        }
+
+        StartCoroutine(AnimateDamagePopup(popupText));
+    }
+
+    private IEnumerator AnimateDamagePopup(TextMeshPro popupText)
+    {
+        if (popupText == null)
+            yield break;
+
+        Transform popupTransform = popupText.transform;
+        Vector3 start = popupTransform.position;
+        Vector3 end = start + Vector3.up * damagePopupRiseDistance;
+        float duration = Mathf.Max(0.05f, damagePopupDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration && popupText != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            popupTransform.position = Vector3.Lerp(start, end, t);
+
+            Color color = popupText.color;
+            color.a = 1f - t;
+            popupText.color = color;
+            yield return null;
+        }
+
+        if (popupText != null)
+            Destroy(popupText.gameObject);
+    }
+
+    private static SpriteRenderer GetCardSpriteRenderer(Transform card)
+    {
+        if (card == null)
+            return null;
+
+        SpriteRenderer[] renderers = card.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SpriteRenderer spriteRenderer = renderers[i];
+            if (spriteRenderer == null || spriteRenderer.sprite == null)
+                continue;
+
+            if (spriteRenderer.gameObject.name == "Shadow")
+                continue;
+
+            return spriteRenderer;
+        }
+
+        return null;
     }
 
     private static IEnumerator MoveTransform(

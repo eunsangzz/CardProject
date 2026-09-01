@@ -81,7 +81,7 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
 
     private void RefreshSceneUi()
     {
-        _canvas = FindObjectOfType<Canvas>();
+        _canvas = ResolveScreenUiCanvas();
         if (_canvas == null)
             return;
 
@@ -311,6 +311,47 @@ public sealed class RuntimeStackUiLayout : MonoBehaviour
             if (transform != null && transform.name == objectName)
                 Destroy(transform.gameObject);
         }
+    }
+
+    private static Canvas ResolveScreenUiCanvas()
+    {
+        Canvas[] canvases = FindObjectsOfType<Canvas>(true);
+        Canvas fallback = null;
+
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas == null || IsCardAttachedCanvas(canvas))
+                continue;
+
+            if (fallback == null)
+                fallback = canvas;
+
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay ||
+                canvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                return canvas;
+            }
+        }
+
+        return fallback;
+    }
+
+    private static bool IsCardAttachedCanvas(Canvas canvas)
+    {
+        Transform current = canvas.transform;
+        while (current != null)
+        {
+            if (current.name == "WorkProgressCanvas" ||
+                current.GetComponent<CardIdentity>() != null)
+            {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
     }
 
     private void SetSceneObjectActive(string objectName, bool active)

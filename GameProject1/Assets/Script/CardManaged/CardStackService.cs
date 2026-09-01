@@ -186,6 +186,41 @@ public static class CardStackService
             _groups[group.Cards[i]] = group;
 
         Arrange(group);
+        BringResidentsToFront(group);
+    }
+
+    private static void BringResidentsToFront(StackGroup group)
+    {
+        if (group == null || group.Cards.Count == 0)
+            return;
+
+        float frontZ = float.MaxValue;
+        for (int i = 0; i < group.Cards.Count; i++)
+        {
+            GameObject card = group.Cards[i];
+            if (card != null)
+                frontZ = Mathf.Min(frontZ, card.transform.position.z);
+        }
+
+        if (frontZ == float.MaxValue)
+            return;
+
+        frontZ += StackOffsetZ;
+        for (int i = 0; i < group.Cards.Count; i++)
+        {
+            GameObject card = group.Cards[i];
+            if (card == null ||
+                !card.TryGetComponent(out CardIdentity identity) ||
+                identity.cardId != CardId.Player)
+            {
+                continue;
+            }
+
+            Vector3 position = card.transform.position;
+            position.z = frontZ;
+            card.transform.position = position;
+            frontZ += StackOffsetZ;
+        }
     }
 
     private static List<GameObject> Merge(GameObject sourceCard, GameObject targetCard)

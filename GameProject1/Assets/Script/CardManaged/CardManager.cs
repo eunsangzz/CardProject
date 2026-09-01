@@ -143,6 +143,11 @@ public class CardManager : MonoBehaviour
             case "Armory": id = CardId.Armory; return true;
 
             case "Player": id = CardId.Player; return true;
+            case "woodshiled": id = CardId.WoodShield; return true;
+            case "WoodShield": id = CardId.WoodShield; return true;
+            case "IronShield": id = CardId.IronShield; return true;
+            case "WoodSword": id = CardId.WoodSword; return true;
+            case "IronSword": id = CardId.IronSword; return true;
             default:
                 id = CardId.Wood;
                 return false;

@@ -23,5 +23,9 @@ public enum CardId
     Branch = 18,
     Kitchen = 19,
     Armory = 20,
-    Player = 100
+    Player = 100,
+    WoodShield = 101,
+    IronShield = 102,
+    WoodSword = 103,
+    IronSword = 104
 }

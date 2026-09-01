@@ -11,6 +11,13 @@ public class EnemyCombatStats : MonoBehaviour
     public int CurrentHealth => currentHealth;
     public bool IsDead => currentHealth <= 0;
 
+    public void AddSpawnGrowth(int healthBonus)
+    {
+        int bonus = Mathf.Max(0, healthBonus);
+        maxHealth = Mathf.Max(1, maxHealth + bonus);
+        currentHealth = maxHealth;
+    }
+
     private void Awake()
     {
         if (maxHealth <= 0)
